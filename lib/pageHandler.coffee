@@ -5,11 +5,13 @@ util = require './util'
 state = require './state'
 revision = require './revision'
 addToJournal = require './addToJournal'
+createPage = require('./page').createPage
 
 module.exports = pageHandler = {}
 
 pageFromLocalStorage = (slug)->
   if json = localStorage[slug]
+    alert("do do local storage yet")
     JSON.parse(json)
   else
     undefined
@@ -22,6 +24,7 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
   else
     site = localContext.shift()
 
+  site = 'origin' if site is window.location.host
   site = null if site=='view'
 
   if site?
@@ -43,8 +46,9 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
     dataType: 'json'
     url: url + "?random=#{util.randomBytes(4)}"
     success: (page) ->
+      console.log "ajax success", page
       page = revision.create rev, page if rev
-      return whenGotten(page,site)
+      return whenGotten(createPage(page, site), null)
     error: (xhr, type, msg) ->
       if (xhr.status != 404) and (xhr.status != 0)
         wiki.log 'pageHandler.get error', xhr, xhr.status, type, msg
