@@ -11,7 +11,6 @@ module.exports = pageHandler = {}
 
 pageFromLocalStorage = (slug)->
   if json = localStorage[slug]
-    alert("do do local storage yet")
     JSON.parse(json)
   else
     undefined
@@ -30,7 +29,7 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
   if site?
     if site == 'local'
       if localPage = pageFromLocalStorage(pageInformation.slug)
-        return whenGotten( localPage, 'local' )
+        return whenGotten createPage(localPage, 'local' )
       else
         return whenNotGotten()
     else
@@ -46,9 +45,8 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
     dataType: 'json'
     url: url + "?random=#{util.randomBytes(4)}"
     success: (page) ->
-      console.log "ajax success", page
       page = revision.create rev, page if rev
-      return whenGotten(createPage(page, site), null)
+      return whenGotten createPage(page, site)
     error: (xhr, type, msg) ->
       if (xhr.status != 404) and (xhr.status != 0)
         wiki.log 'pageHandler.get error', xhr, xhr.status, type, msg
@@ -70,7 +68,7 @@ pageHandler.get = ({whenGotten,whenNotGotten,pageInformation}  ) ->
   unless pageInformation.site
     if localPage = pageFromLocalStorage(pageInformation.slug)
       localPage = revision.create pageInformation.rev, localPage if pageInformation.rev
-      return whenGotten( localPage, 'local' )
+      return whenGotten createPage( localPage, 'local' )
 
   pageHandler.context = ['view'] unless pageHandler.context.length
 

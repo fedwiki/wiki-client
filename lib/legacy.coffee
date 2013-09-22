@@ -5,6 +5,7 @@ plugin = require './plugin'
 state = require './state'
 active = require './active'
 refresh = require './refresh'
+createPage = require('./page').createPage
 
 Array::last = ->
   this[@length - 1]
@@ -266,7 +267,7 @@ $ ->
         page = $page.data('data')
         page.story = story||[]
         pageHandler.put $page, {type: 'create', id: page.id, item: {title:page.title, story: story||undefined}}
-        wiki.buildPage page, null, $page.empty()
+        wiki.buildPage createPage(page,null), $page.empty()
 
     .delegate '.ghost', 'rev', (e) ->
       wiki.log 'rev', e

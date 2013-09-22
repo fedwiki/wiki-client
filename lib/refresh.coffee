@@ -180,10 +180,11 @@ renderPageIntoPageElement = (pageObject, $page) ->
       <a href="#" class="button add-factory" title="add paragraph">#{util.symbols['add']}</a>
     </div>
   """
-
+  host = pageObject.getRemoteSite() || location.host
   $footer.append """
     <a id="license" href="http://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a> .
     <a class="show-page-source" href="/#{slug}.json?random=#{util.randomBytes(4)}" title="source">JSON</a> .
+    <a href= "//#{host}/#{slug}.html">#{host}</a>
   """
 
 
@@ -247,19 +248,10 @@ module.exports = refresh = wiki.refresh = ->
 
     wiki.buildPage( pageObject, $page ).addClass('ghost')
 
-  registerNeighbors = (data, site) ->
-    if _.include ['local', 'origin', 'view', null, undefined], site
-      neighborhood.registerNeighbor location.host
-    else
-      neighborhood.registerNeighbor site
-    for item in (data.story || [])
-      neighborhood.registerNeighbor item.site if item.site?
-    for action in (data.journal || [])
-      neighborhood.registerNeighbor action.site if action.site?
-
   whenGotten = (pageObject) ->
     wiki.buildPage( pageObject, $page )
-    # registerNeighbors( pageObject, siteFound )
+    for site in pageObject.getNeighbors(location.host)
+      neighborhood.registerNeighbor site
 
   pageHandler.get
     whenGotten: whenGotten

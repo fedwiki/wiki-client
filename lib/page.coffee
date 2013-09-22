@@ -37,6 +37,18 @@ createPage = (json, site) ->
 	getSlug = ->
 		asSlug page.title
 
+	getNeighbors = (host) ->
+		neighbors = []
+		if _.include ['local', 'origin', 'view', null, undefined], site
+      neighbors.push host if host?
+    else
+      neighbors.push site
+    for item in page.story
+      neighbors.push item.site if item.site?
+    for action in page.journal
+      neighbors.push action.site if action.site?
+    _.uniq neighbors
+
 	setTitle = (title) ->
 		page.title = title 
 
@@ -44,10 +56,14 @@ createPage = (json, site) ->
 		item = _.extend {}, {id: util.randomBytes(8)}, item
 		page.story.push item
 
+	addParagraph = (text) ->
+		type = "paragraph"
+		addItem {type, text}
+
 		# page.journal.push {type: 'add'}
 
 
-	{getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getSlug, setTitle, addItem}
+	{getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getSlug, getNeighbors, setTitle, addItem, addParagraph}
 
 
 module.exports = {createPage, emptyPage}
