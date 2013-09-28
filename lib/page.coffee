@@ -15,8 +15,7 @@ createPage = (json, site) ->
 		page
 
 	getContext = ->
-		context = ['view']
-		context.push site if site?
+		context = [ if site? then site else 'view']
 		addContext = (site) -> context.push site if site? and not _.include context, site
 		addContext action.site for action in page.journal.slice(0).reverse()
 		context
