@@ -5,6 +5,7 @@ util = require './util'
 state = require './state'
 revision = require './revision'
 addToJournal = require './addToJournal'
+createPage = require('./page').createPage
 
 module.exports = pageHandler = {}
 
@@ -22,12 +23,13 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
   else
     site = localContext.shift()
 
+  site = 'origin' if site is window.location.host
   site = null if site=='view'
 
   if site?
     if site == 'local'
       if localPage = pageFromLocalStorage(pageInformation.slug)
-        return whenGotten( localPage, 'local' )
+        return whenGotten createPage(localPage, 'local' )
       else
         return whenNotGotten()
     else
@@ -44,7 +46,7 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
     url: url + "?random=#{util.randomBytes(4)}"
     success: (page) ->
       page = revision.create rev, page if rev
-      return whenGotten(page,site)
+      return whenGotten createPage(page, site)
     error: (xhr, type, msg) ->
       if (xhr.status != 404) and (xhr.status != 0)
         wiki.log 'pageHandler.get error', xhr, xhr.status, type, msg
@@ -66,7 +68,7 @@ pageHandler.get = ({whenGotten,whenNotGotten,pageInformation}  ) ->
   unless pageInformation.site
     if localPage = pageFromLocalStorage(pageInformation.slug)
       localPage = revision.create pageInformation.rev, localPage if pageInformation.rev
-      return whenGotten( localPage, 'local' )
+      return whenGotten createPage( localPage, 'local' )
 
   pageHandler.context = ['view'] unless pageHandler.context.length
 

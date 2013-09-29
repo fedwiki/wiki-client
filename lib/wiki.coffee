@@ -10,9 +10,13 @@ wiki.log = (things...) ->
 wiki.asSlug = (name) ->
   name.replace(/\s/g, '-').replace(/[^A-Za-z0-9-]/g, '').toLowerCase()
 
-
 wiki.useLocalStorage = ->
-  $(".login").length > 0
+  # openId convention
+  return true if $(".login").length > 0
+  # persona convention
+  login = $("#persona-login-btn")
+  return true if login.is(':visible') and !login.text().match(/claim/i)
+  false
 
 wiki.resolutionContext = []
 

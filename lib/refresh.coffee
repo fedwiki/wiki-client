@@ -71,18 +71,18 @@ buildPageHeader = ({page,tooltip,header_href,favicon_src})->
   tooltip += "\n#{page.plugin} plugin" if page.plugin
   """<h1 title="#{tooltip}"><a href="#{header_href}"><img src="#{favicon_src}" height="32px" class="favicon"></a> #{page.title}</h1>"""
 
-emitHeader = ($header, $page, page) ->
-  site = $page.data('site')
-  isRemotePage = site? and site != 'local' and site != 'origin' and site != 'view'
+emitHeader = ($header, $page, pageObject) ->
+  page = pageObject.getRawPage()
+  isRemotePage = pageObject.isRemote()
   header = ''
 
   viewHere = if wiki.asSlug(page.title) is 'welcome-visitors' then ""
-  else "/view/#{wiki.asSlug(page.title)}"
+  else "/view/#{pageObject.getSlug()}"
   pageHeader = if isRemotePage
     buildPageHeader
-      tooltip: site
-      header_href: "//#{site}/view/welcome-visitors#{viewHere}"
-      favicon_src: "http://#{site}/favicon.png"
+      tooltip: pageObject.getRemoteSite()
+      header_href: "//#{pageObject.getRemoteSite()}/view/welcome-visitors#{viewHere}"
+      favicon_src: "http://#{pageObject.getRemoteSite()}/favicon.png"
       page: page
   else
     buildPageHeader
@@ -144,24 +144,18 @@ emitTwins = wiki.emitTwins = ($page) ->
       twins.push "#{flags.join '&nbsp;'} #{legend}"
     $page.find('.twins').html """<p>#{twins.join ", "}</p>""" if twins
 
-renderPageIntoPageElement = (pageData,$page, siteFound) ->
-  page = $.extend(util.emptyPage(), pageData)
+renderPageIntoPageElement = (pageObject, $page) ->
+  page = pageObject.getRawPage()
   $page.data("data", page)
   slug = $page.attr('id')
-  site = $page.data('site')
 
-  context = ['view']
-  context.push site if site?
-  addContext = (site) -> context.push site if site? and not _.include context, site
-  addContext action.site for action in page.journal.slice(0).reverse()
-
-  wiki.resolutionContext = context
+  wiki.resolutionContext = pageObject.getContext()
 
   $page.empty()
   [$twins, $header, $story, $journal, $footer] = ['twins', 'header', 'story', 'journal', 'footer'].map (className) ->
     $("<div />").addClass(className).appendTo($page)
 
-  emitHeader $header, $page, page
+  emitHeader $header, $page, pageObject
 
   emitItem = (i) ->
     return if i >= page.story.length
@@ -186,27 +180,21 @@ renderPageIntoPageElement = (pageData,$page, siteFound) ->
       <a href="#" class="button add-factory" title="add paragraph">#{util.symbols['add']}</a>
     </div>
   """
-
+  host = pageObject.getRemoteSite() || location.host
   $footer.append """
     <a id="license" href="http://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a> .
     <a class="show-page-source" href="/#{slug}.json?random=#{util.randomBytes(4)}" title="source">JSON</a> .
-    <a href= "//#{siteFound || location.host}/#{slug}.html">#{siteFound || location.host}</a>
+    <a href= "//#{host}/#{slug}.html">#{host}</a>
   """
 
 
-wiki.buildPage = (data,siteFound,$page) ->
+wiki.buildPage = (pageObject,$page) ->
 
-  if siteFound == 'local'
-    $page.addClass('local')
-  else if siteFound
-    siteFound = 'origin' if siteFound is window.location.host
-    $page.addClass('remote') unless siteFound in ['view', 'origin']
-    $page.data('site', siteFound)
-  if data.plugin?
-    $page.addClass('plugin')
+  $page.addClass('local') if pageObject.isLocal()
+  $page.addClass('remote') if pageObject.isRemote()
+  $page.addClass('plugin') if pageObject.isPlugin()
 
-  #TODO: avoid passing siteFound
-  renderPageIntoPageElement( data, $page, siteFound )
+  renderPageIntoPageElement( pageObject, $page )
 
   state.setUrl()
 
@@ -225,20 +213,12 @@ module.exports = refresh = wiki.refresh = ->
     site: $page.data('site')
   }
 
+  emptyPage = require('./page').emptyPage
   createGhostPage = ->
     title = $("""a[href="/#{slug}.html"]:last""").text() or slug
-    page =
-      'title': title
-      'story': [
-        'id': util.randomBytes 8
-        'type': 'future'
-        'text': 'We could not find this page.'
-        'title': title
-      ]
-    heading =
-      'type': 'paragraph'
-      'id': util.randomBytes(8)
-      'text': "We did find the page in your current neighborhood."
+    pageObject = emptyPage()
+    pageObject.setTitle(title)
+
     hits = []
     for site, info of wiki.neighborhood
       if info.sitemap?
@@ -247,30 +227,31 @@ module.exports = refresh = wiki.refresh = ->
         if result?
           hits.push
             "type": "reference"
-            "id": util.randomBytes(8)
             "site": site
             "slug": slug
             "title": result.title || slug
             "text": result.synopsis || ''
     if hits.length > 0
-      page.story.push heading, hits...
-      page.story[0].text = 'We could not find this page in the expected context.'
-
-    wiki.buildPage( page, undefined, $page ).addClass('ghost')
-
-  registerNeighbors = (data, site) ->
-    if _.include ['local', 'origin', 'view', null, undefined], site
-      neighborhood.registerNeighbor location.host
+      pageObject.addItem
+        'type': 'future'
+        'text': 'We could not find this page in the expected context.'
+        'title': title
+      pageObject.addItem
+        'type': 'paragraph'
+        'text': "We did find the page in your current neighborhood."
+      pageObject.addItem hit for hit in hits
     else
-      neighborhood.registerNeighbor site
-    for item in (data.story || [])
-      neighborhood.registerNeighbor item.site if item.site?
-    for action in (data.journal || [])
-      neighborhood.registerNeighbor action.site if action.site?
+       pageObject.addItem
+        'type': 'future'
+        'text': 'We could not find this page.'
+        'title': title
 
-  whenGotten = (data,siteFound) ->
-    wiki.buildPage( data, siteFound, $page )
-    registerNeighbors( data, siteFound )
+    wiki.buildPage( pageObject, $page ).addClass('ghost')
+
+  whenGotten = (pageObject) ->
+    wiki.buildPage( pageObject, $page )
+    for site in pageObject.getNeighbors(location.host)
+      neighborhood.registerNeighbor site
 
   pageHandler.get
     whenGotten: whenGotten
