@@ -41,11 +41,11 @@ createPage = (json, site) ->
 		asSlug page.title
 
 	getNeighbors = (host) ->
-		neighbors = []
-		if _.include ['local', 'origin', 'view', null, undefined], site
-      neighbors.push host if host?
-    else
+    neighbors = []
+    if isRemote()
       neighbors.push site
+    else
+      neighbors.push host if host?
     for item in page.story
       neighbors.push item.site if item.site?
     for action in page.journal
