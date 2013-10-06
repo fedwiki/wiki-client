@@ -34,7 +34,7 @@ describe 'page', ->
 					{ type: 'fork', site: 'one.org'},
 					{	type: 'fork', site: 'two.org'}
 				], 'example.com'
-			expect(pageObject.getContext()).to.eql(['example.com','two.org','one.org'])
+			expect(pageObject.getContext()).to.eql(['view','example.com','two.org','one.org'])
 
 		it 'should have context without duplicates', ->
 			pageObject = createPage
@@ -42,7 +42,7 @@ describe 'page', ->
 					{ type: 'fork', site: 'one.org'},
 					{	type: 'fork', site: 'one.org'}
 				], 'example.com'
-			expect(pageObject.getContext()).to.eql(['example.com','one.org'])
+			expect(pageObject.getContext()).to.eql(['view','example.com','one.org'])
 
 		it 'should have neighbors from site, reference and journal (in order, without duplicates)', ->
 			pageObject = createPage

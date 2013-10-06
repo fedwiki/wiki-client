@@ -15,7 +15,8 @@ createPage = (json, site) ->
 		page
 
 	getContext = ->
-		context = [ if site? then site else 'view']
+		context = ['view']
+		context.push site if isRemote()
 		addContext = (site) -> context.push site if site? and not _.include context, site
 		addContext action.site for action in page.journal.slice(0).reverse()
 		context
@@ -24,7 +25,7 @@ createPage = (json, site) ->
 		page.plugin?
 
 	isRemote = ->
-		! (site in [null, 'view', 'origin', 'local'])
+		! (site in [undefined, null, 'view', 'origin', 'local'])
 
 	isLocal = ->
 		site == 'local'
