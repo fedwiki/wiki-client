@@ -266,8 +266,10 @@ $ ->
         $page.removeClass 'ghost'
         page = $page.data('data')
         page.story = story||[]
-        pageHandler.put $page, {type: 'create', id: page.id, item: {title:page.title, story: story||undefined}}
-        wiki.buildPage createPage(page,null), $page.empty()
+        pageObject = createPage(page,null)
+        page = pageObject.getRawPage()
+        pageHandler.put $page, {type: 'create', id: page.id, item: {title:page.title, story:page.story}}
+        wiki.buildPage pageObject, $page.empty()
 
     .delegate '.ghost', 'rev', (e) ->
       wiki.log 'rev', e

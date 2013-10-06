@@ -82,15 +82,17 @@ pageHandler.get = ({whenGotten,whenNotGotten,pageInformation}  ) ->
 pageHandler.context = []
 
 pushToLocal = (pageElement, pagePutInfo, action) ->
-  page = pageFromLocalStorage pagePutInfo.slug
-  page = {title: action.item.title} if action.type == 'create'
-  page ||= pageElement.data("data")
-  page.journal = [] unless page.journal?
-  if (site=action['fork'])?
-    page.journal = page.journal.concat({'type':'fork','site':site})
-    delete action['fork']
+  if action.type == 'create'
+    page = {title: action.item.title, story:[], journal:[]}
+  else
+    page = pageFromLocalStorage pagePutInfo.slug
+    page ||= pageElement.data("data")
+    page.journal = [] unless page.journal?
+    if (site=action['fork'])?
+      page.journal = page.journal.concat({'type':'fork','site':site})
+      delete action['fork']
+    page.story = $(pageElement).find(".item").map(-> $(@).data("item")).get()
   page.journal = page.journal.concat(action)
-  page.story = $(pageElement).find(".item").map(-> $(@).data("item")).get()
   localStorage[pagePutInfo.slug] = JSON.stringify(page)
   addToJournal pageElement.find('.journal'), action
 
