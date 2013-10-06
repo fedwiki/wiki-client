@@ -16,6 +16,19 @@ describe 'page', ->
 			pageObject = createPage()
 			expect(pageObject.getContext()).to.eql(['view'])
 
+	describe 'defaults', ->
+
+		it 'should preserve id', ->
+			pageObject = createPage
+				title: "New Page"
+				id: '123456789abcdef'
+			expect(pageObject.getRawPage().id).to.eql('123456789abcdef')
+
+		it 'should create missing id', ->
+			pageObject = createPage
+				title: "New Page"
+			expect(pageObject.getRawPage().id).to.match(/^[0-9a-f]{16}$/)
+
 	describe 'from json', ->
 
 		it 'should have a title', ->
