@@ -5,7 +5,7 @@ plugin = require './plugin'
 state = require './state'
 active = require './active'
 refresh = require './refresh'
-createPage = require('./page').createPage
+newPage = require('./page').newPage
 
 Array::last = ->
   this[@length - 1]
@@ -266,7 +266,7 @@ $ ->
         $page.removeClass 'ghost'
         page = $page.data('data')
         page.story = story||[]
-        pageObject = createPage(page,null)
+        pageObject = newPage(page,null)
         page = pageObject.getRawPage()
         pageHandler.put $page, {type: 'create', id: page.id, item: {title:page.title, story:page.story}}
         wiki.buildPage pageObject, $page.empty()

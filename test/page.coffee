@@ -1,35 +1,35 @@
-createPage = require('../lib/page').createPage
+newPage = require('../lib/page').newPage
 
 describe 'page', ->
 
 	describe 'newly created', ->
 
 		it 'should start empty', -> 	
-			pageObject = createPage()
+			pageObject = newPage()
 			expect(pageObject.getSlug()).to.eql('empty')
 
 		it 'should not be remote', ->
-			pageObject = createPage()
+			pageObject = newPage()
 			expect(pageObject.isRemote()).to.be.false
 
 		it 'should have default contex', ->
-			pageObject = createPage()
+			pageObject = newPage()
 			expect(pageObject.getContext()).to.eql(['view'])
 
 	describe 'from json', ->
 
 		it 'should have a title', ->
-			pageObject = createPage
+			pageObject = newPage
 				title: "New Page"
 			expect(pageObject.getSlug()).to.eql('new-page')
 
 		it 'should have a default context', ->
-			pageObject = createPage
+			pageObject = newPage
 				title: "New Page"
 			expect(pageObject.getContext()).to.eql(['view'])
 
 		it 'should have context from site and (reversed) journal', ->
-			pageObject = createPage
+			pageObject = newPage
 				journal: [
 					{ type: 'fork', site: 'one.org'},
 					{	type: 'fork', site: 'two.org'}
@@ -37,7 +37,7 @@ describe 'page', ->
 			expect(pageObject.getContext()).to.eql(['view','example.com','two.org','one.org'])
 
 		it 'should have context without duplicates', ->
-			pageObject = createPage
+			pageObject = newPage
 				journal: [
 					{ type: 'fork', site: 'one.org'},
 					{	type: 'fork', site: 'one.org'}
@@ -45,7 +45,7 @@ describe 'page', ->
 			expect(pageObject.getContext()).to.eql(['view','example.com','one.org'])
 
 		it 'should have neighbors from site, reference and journal (in order, without duplicates)', ->
-			pageObject = createPage
+			pageObject = newPage
 				story: [
 					{ type: 'reference', site: 'one.org' },
 					{ type: 'reference', site: 'two.org' },

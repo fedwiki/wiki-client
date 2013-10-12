@@ -6,9 +6,9 @@ asSlug = (name) ->
   name.replace(/\s/g, '-').replace(/[^A-Za-z0-9-]/g, '').toLowerCase()
 
 emptyPage = ->
-	createPage({}, null)
+	newPage({}, null)
 
-createPage = (json, site) ->
+newPage = (json, site) ->
 	page = _.extend {}, util.emptyPage(), json
 	page.story ||= []
 	page.journal ||= []
@@ -68,4 +68,4 @@ createPage = (json, site) ->
 	{getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getSlug, getNeighbors, setTitle, addItem, addParagraph}
 
 
-module.exports = {createPage, emptyPage}
+module.exports = {newPage, emptyPage}
