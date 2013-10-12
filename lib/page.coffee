@@ -12,7 +12,6 @@ createPage = (json, site) ->
 	page = _.extend {}, util.emptyPage(), json
 	page.story ||= []
 	page.journal ||= []
-	page.id ||= util.randomBytes(8)
 
 	getRawPage = ->
 		page
