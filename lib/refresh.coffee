@@ -147,6 +147,7 @@ emitTwins = wiki.emitTwins = ($page) ->
 renderPageIntoPageElement = (pageObject, $page) ->
   page = pageObject.getRawPage()
   $page.data("data", page)
+  $page.data("site", pageObject.getRemoteSite()) if pageObject.isRemote()
   slug = $page.attr('id')
 
   wiki.resolutionContext = pageObject.getContext()
