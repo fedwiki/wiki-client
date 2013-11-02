@@ -50,7 +50,7 @@ wiki.createPage = (name, loc) ->
       </div>
     </div>
   """
-  $page.find('.page').attr('data-site', site) if site
+  $page.data('site', site) if site
   $page
 
 wiki.getItem = (element) ->
