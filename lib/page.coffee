@@ -58,14 +58,28 @@ newPage = (json, site) ->
 		item = _.extend {}, {id: util.randomBytes(8)}, item
 		page.story.push item
 
+	seqItems = (each) ->
+        emitItem = (i) ->
+            return if i >= page.story.length
+            console.log 'syncItem', i, page.story[i].type
+            each page.story[i], -> emitItem i+1
+        emitItem 0
+
 	addParagraph = (text) ->
 		type = "paragraph"
 		addItem {type, text}
 
 		# page.journal.push {type: 'add'}
 
+	seqActions = (each) ->
+		emitAction = (i) ->
+			return if i >= page.journal.length
+			console.log 'syncAction', i, page.journal[i].type
+			each page.journal[i], -> emitAction i+1
+		emitAction 0
 
-	{getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getSlug, getNeighbors, setTitle, addItem, addParagraph}
+
+	{getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getSlug, getNeighbors, setTitle, addItem, addParagraph, seqItems, seqActions}
 
 
 module.exports = {newPage, emptyPage}
