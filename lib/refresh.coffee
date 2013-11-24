@@ -166,8 +166,9 @@ renderPageIntoPageElement = (pageObject, $page) ->
       $story.append $ """<div><p class="error">Can't make sense of story[#{i}]</p></div>"""
       done()
 
-  pageObject.seqActions (action, done) ->
-    addToJournal $journal, action
+  pageObject.seqActions (each, done) ->
+    addToJournal $journal, each.separator if each.separator
+    addToJournal $journal, each.action
     done()
 
   emitTwins $page
