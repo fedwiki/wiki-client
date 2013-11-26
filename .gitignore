@@ -4,7 +4,11 @@
 .idea/
 .sass-cache
 .rvmrc
+
 node_modules
 npm-debug.log
+
+# ignore generated javascript - recreated by running grunt
 lib/*.js
 test/*.js
+client/*js
