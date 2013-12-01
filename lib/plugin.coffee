@@ -56,6 +56,8 @@ wiki.registerPlugin = (pluginName,pluginFn)->
 # PLUGINS for each story item type
 
 window.plugins =
+  reference: require './reference'
+  factory: require './factory'
   paragraph:
     emit: (div, item) ->
       for text in item.text.split /\n\n+/
