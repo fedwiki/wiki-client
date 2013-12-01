@@ -145,8 +145,7 @@ emitTwins = wiki.emitTwins = ($page) ->
     $page.find('.twins').html """<p>#{twins.join ", "}</p>""" if twins
 
 renderPageIntoPageElement = (pageObject, $page) ->
-  page = pageObject.getRawPage()
-  $page.data("data", page)
+  $page.data("data", pageObject.getRawPage())
   $page.data("site", pageObject.getRemoteSite()) if pageObject.isRemote()
   slug = $page.attr('id')
 
@@ -158,20 +157,19 @@ renderPageIntoPageElement = (pageObject, $page) ->
 
   emitHeader $header, $page, pageObject
 
-  emitItem = (i) ->
-    return if i >= page.story.length
-    item = page.story[i]
+  pageObject.seqItems (item, done) ->
     if item?.type and item?.id
       $item = $ """<div class="item #{item.type}" data-id="#{item.id}">"""
       $story.append $item
-      plugin.do $item, item, -> emitItem i+1
+      plugin.do $item, item, done
     else
       $story.append $ """<div><p class="error">Can't make sense of story[#{i}]</p></div>"""
-      emitItem i+1
-  emitItem 0
+      done()
 
-  for action in page.journal
-    addToJournal $journal, action
+  pageObject.seqActions (each, done) ->
+    addToJournal $journal, each.separator if each.separator
+    addToJournal $journal, each.action
+    done()
 
   emitTwins $page
 

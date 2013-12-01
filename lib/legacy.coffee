@@ -233,7 +233,8 @@ $ ->
       else
         $page = $(this).parents('.page')
         slug = wiki.asSlug($page.data('data').title)
-        rev = $(this).parent().children().index($action)
+        rev = $(this).parent().children().not('.separator').index($action)
+        return if rev < 0
         $page.nextAll().remove() unless e.shiftKey
         wiki.createPage("#{slug}_rev#{rev}", $page.data('site'))
           .appendTo($('.main'))

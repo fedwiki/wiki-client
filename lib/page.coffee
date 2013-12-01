@@ -8,6 +8,16 @@ asSlug = (name) ->
 emptyPage = ->
 	newPage({}, null)
 
+nowSections = (now) ->
+	[
+		{symbol: '❄', date: now-1000*60*60*24*366, period: 'a Year'}
+		{symbol: '⚘', date: now-1000*60*60*24*31*3, period: 'a Season'}
+		{symbol: '⚪', date: now-1000*60*60*24*31, period: 'a Month'}
+		{symbol: '☽', date: now-1000*60*60*24*7, period: 'a Week'}
+		{symbol: '☀', date: now-1000*60*60*24, period: 'a Day'}
+		{symbol: '⌚', date: now-1000*60*60, period: 'an Hour'}
+	]
+
 newPage = (json, site) ->
 	page = _.extend {}, util.emptyPage(), json
 	page.story ||= []
@@ -58,14 +68,35 @@ newPage = (json, site) ->
 		item = _.extend {}, {id: util.randomBytes(8)}, item
 		page.story.push item
 
+	seqItems = (each) ->
+		emitItem = (i) ->
+			return if i >= page.story.length
+			each page.story[i], -> emitItem i+1
+		emitItem 0
+
 	addParagraph = (text) ->
 		type = "paragraph"
 		addItem {type, text}
 
 		# page.journal.push {type: 'add'}
 
+	seqActions = (each) ->
+		smaller = 0
+		sections = nowSections (new Date).getTime()
+		emitAction = (i) ->
+			return if i >= page.journal.length
+			action = page.journal[i]
+			bigger = action.date || 0
+			separator = null
+			for section in sections
+				if section.date > smaller and section.date < bigger
+					separator = section
+			smaller = bigger
+			each {action, separator}, -> emitAction i+1
+		emitAction 0
 
-	{getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getSlug, getNeighbors, setTitle, addItem, addParagraph}
+
+	{getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getSlug, getNeighbors, setTitle, addItem, addParagraph, seqItems, seqActions}
 
 
 module.exports = {newPage, emptyPage}
