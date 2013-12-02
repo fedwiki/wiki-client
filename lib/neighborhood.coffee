@@ -101,8 +101,12 @@ $ ->
   $('body')
     .on 'new-neighbor', (e, site) ->
       $neighborhood.append flag site
+    .on 'new-neighbor-done', (e, site) ->
+      pageCount = wiki.neighborhood[site].sitemap.length
+      img = $(""".neighborhood .neighbor[data-site="#{site}"]""").find('img')
+      img.attr('title', "#{site}\n #{pageCount} pages")
     .delegate '.neighbor img', 'click', (e) ->
-      wiki.doInternalLink 'welcome-visitors', null, @.title
+      wiki.doInternalLink 'welcome-visitors', null, @.title.split("\n")[0]
 
   search = createSearch({neighborhood})
 
