@@ -40,3 +40,7 @@
   });
 
 }).call(this);
+
+/*
+//@ sourceMappingURL=plugin.js.map
+*/

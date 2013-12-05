@@ -24,3 +24,7 @@
   };
 
 }).call(this);
+
+/*
+//@ sourceMappingURL=mockServer.js.map
+*/
