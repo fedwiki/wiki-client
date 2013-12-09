@@ -1,6 +1,6 @@
 {
   "name": "wiki-client",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Client-side Javascript for a Federated Wiki",
   "keywords": [
     "wiki",
@@ -17,6 +17,11 @@
       "name": "Nick Niemeir",
       "email": "nick.niemeir@gmail.com",
       "url": "http://nrn.io"
+    },
+    {
+      "name": "Paul Rodwell",
+      "email": "paul.rodwell@btinternet.com",
+      "url": "http://wiki-paul90.rhcloud.com"
     }
   ],
   "dependencies": {
