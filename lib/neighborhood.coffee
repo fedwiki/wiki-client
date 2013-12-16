@@ -11,6 +11,7 @@ module.exports = neighborhood = {}
 wiki.neighborhood ?= {}
 nextAvailableFetch = 0
 nextFetchInterval = 2000
+totalPages = 0
 
 populateSiteInfoFor = (site,neighborInfo)->
   return if neighborInfo.sitemapRequestInflight
@@ -105,6 +106,8 @@ $ ->
       pageCount = wiki.neighborhood[site].sitemap.length
       img = $(""".neighborhood .neighbor[data-site="#{site}"]""").find('img')
       img.attr('title', "#{site}\n #{pageCount} pages")
+      totalPages += pageCount
+      $('.searchbox .pages').text "#{totalPages} pages"
     .delegate '.neighbor img', 'click', (e) ->
       wiki.doInternalLink 'welcome-visitors', null, @.title.split("\n")[0]
 
