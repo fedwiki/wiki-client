@@ -50,14 +50,24 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
     error: (xhr, type, msg) ->
       if (xhr.status != 404) and (xhr.status != 0)
         wiki.log 'pageHandler.get error', xhr, xhr.status, type, msg
-        report =
-          'title': "#{xhr.status} #{msg}"
-          'story': [
-            'type': 'paragraph'
-            'id': '928739187243'
-            'text': "<pre>#{xhr.responseText}"
-          ]
-        return whenGotten report, 'local'
+        troublePageObject = newPage {title: "Trouble: Can't Get Page"}, null
+        troublePageObject.addParagraph """
+The page handler has run into problems with this   request.
+<pre class=error>#{JSON.stringify pageInformation}</pre>
+The requested url.
+<pre class=error>#{url}</pre>
+The server reported status.
+<pre class=error>#{xhr.status}</pre>
+The error type.
+<pre class=error>#{type}</pre>
+The error message.
+<pre class=error>#{msg}</pre>
+These problems are rarely solved by reporting issues.
+There could be additional information reported in the browser's console.log.
+More information might be accessible by fetching the page outside of wiki.
+<a href="#{url}" target="_blank">try-now</a>
+"""
+        return whenGotten troublePageObject
       if localContext.length > 0
         recursiveGet( {pageInformation, whenGotten, whenNotGotten, localContext} )
       else

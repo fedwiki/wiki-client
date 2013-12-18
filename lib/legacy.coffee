@@ -175,11 +175,11 @@ $ ->
     .ajaxError (event, request, settings) ->
       return if request.status == 0 or request.status == 404
       wiki.log 'ajax error', event, request, settings
-      $('.main').prepend """
-        <li class='error'>
-          Error on #{settings.url}: #{request.responseText}
-        </li>
-      """
+      # $('.main').prepend """
+      #   <li class='error'>
+      #     Error on #{settings.url}: #{request.responseText}
+      #   </li>
+      # """
 
   getTemplate = (slug, done) ->
     return done(null) unless slug
