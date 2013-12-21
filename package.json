@@ -1,6 +1,6 @@
 {
   "name": "wiki-client",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Client-side Javascript for a Federated Wiki",
   "keywords": [
     "wiki",
@@ -8,9 +8,9 @@
     "wiki client"
   ],
   "author": {
-      "name": "Ward Cunningham",
-      "email": "ward@c2.com",
-      "url": "http://ward.fed.wiki.org"
+    "name": "Ward Cunningham",
+    "email": "ward@c2.com",
+    "url": "http://ward.fed.wiki.org"
   },
   "contributors": [
     {
@@ -53,4 +53,3 @@
     "node": ">0.8"
   }
 }
-
