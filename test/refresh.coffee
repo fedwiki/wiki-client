@@ -10,6 +10,8 @@ describe 'refresh', ->
   before ->
     $page = $('<div id="refresh" />')
     $page.appendTo('body')
+  after ->
+    $page.empty()
 
   it "creates a ghost page when page couldn't be found", ->
     mockServer.simulatePageNotFound()

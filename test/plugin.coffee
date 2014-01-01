@@ -4,9 +4,11 @@ expect = require 'expect.js'
 
 describe 'plugin', ->
   fakeDeferred = undefined
+  $page = null
 
   before ->
-    $('<div id="plugin" />').appendTo('body')
+    $page = $('<div id="plugin" />')
+    $page.appendTo('body')
     fakeDeferred = {}
     fakeDeferred.done = sinon.mock().returns(fakeDeferred)
     fakeDeferred.fail = sinon.mock().returns(fakeDeferred)
@@ -15,6 +17,7 @@ describe 'plugin', ->
 
   after ->
     jQuery.getScript.restore()
+    $page.empty()
 
   it 'should have default image type', ->
     expect(window.plugins).to.have.property('image')
