@@ -4,7 +4,13 @@
 .idea/
 .sass-cache
 .rvmrc
+
 node_modules
 npm-debug.log
-lib/*.js
-test/*.js
+
+# ignore generated javascript - recreated by running grunt
+
+# don't ignore so npm install from repo works...
+# lib/*.js
+# test/*.js
+# client/*js
