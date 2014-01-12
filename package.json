@@ -1,7 +1,7 @@
 {
   "name": "wiki-client",
   "version": "0.1.2",
-  "description": "Client-side Javascript for a Federated Wiki",
+  "description": "Federated Wiki - Client-side Javascript",
   "keywords": [
     "wiki",
     "federated wiki",
@@ -44,10 +44,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/WardCunningham/wiki-client"
+    "url": "https://github.com/fedwiki/wiki-client"
   },
   "bugs": {
-    "url": "https://github.com/WardCunningham/wiki-client/issues"
+    "url": "https://github.com/fedwiki/wiki-client/issues"
   },
   "engines": {
     "node": ">0.8"
