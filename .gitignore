@@ -15,3 +15,4 @@ lib/*.map
 test/*.js
 test/*.map
 client/*js
+client/test/testclient.js
