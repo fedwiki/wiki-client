@@ -10,7 +10,6 @@ npm-debug.log
 
 # ignore generated javascript - recreated by running grunt
 
-# don't ignore so npm install from repo works...
-# lib/*.js
-# test/*.js
-# client/*js
+lib/*.js
+test/*.js
+client/*js
