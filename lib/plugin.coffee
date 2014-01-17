@@ -6,14 +6,14 @@ module.exports = plugin = {}
 # TODO: Remove these methods from wiki object?
 #
 
-scripts = {}
+scripts = []
 getScript = wiki.getScript = (url, callback = () ->) ->
-  if scripts[url]?
+  if url in scripts
     callback()
   else
     $.getScript(url)
       .done ->
-        scripts[url] = true
+        scripts.push url
         callback()
       .fail ->
         callback()
