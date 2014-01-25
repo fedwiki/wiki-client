@@ -11,14 +11,14 @@ many ways that a wiki could embrace HTML5 and related technologies. Here
 we will cautiously reorganize this work as small independent modules that
 favor ongoing innovation.
 
-We will proceed by dividing SFW first into large pieces and then these into
+We proceed by dividing SFW first into large pieces and then these into
 smaller pieces as we simplify and regularize the communications between them.
 We now favor the node.js module and event conventions, dependency injection,
 and increased separation between the DOM and the logic that manages it.
 
 Federated wiki's single-page application reads page content from many sources
 and writes updates to a few. Read-write server backends are maintained in
-ruby (sinatra) and node (express). Read-only searvers have been realized
+ruby (sinatra) and node (express). Read-only servers have been realized
 with static files and cgi scripts. Encouraging experiments have exploited
 exotic service architectures such as CCNx content-addressable networks.
 
