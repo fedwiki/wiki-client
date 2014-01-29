@@ -6,14 +6,27 @@ module.exports = plugin = {}
 # TODO: Remove these methods from wiki object?
 #
 
-scripts = {}
+
+# define cachedScript that allows fetching a cached script.
+# see example in http://api.jquery.com/jQuery.getScript/ 
+
+cachedScript = (url, options) ->
+  options = $.extend(options or {},
+    dataType: "script"
+    cache: true
+    url: url
+  )
+  $.ajax options
+
+scripts = []
 getScript = wiki.getScript = (url, callback = () ->) ->
-  if scripts[url]?
+  # console.log "URL :", url, "\nCallback :", callback
+  if url in scripts
     callback()
-  else
-    $.getScript(url)
+  else 
+    cachedScript(url)
       .done ->
-        scripts[url] = true
+        scripts.push url
         callback()
       .fail ->
         callback()
