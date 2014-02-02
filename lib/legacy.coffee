@@ -185,7 +185,7 @@ $ ->
     return done(null) unless slug
     wiki.log 'getTemplate', slug
     pageHandler.get
-      whenGotten: (data,siteFound) -> done(data.story)
+      whenGotten: (pageObject,siteFound) -> done(pageObject.getRawPage().story)
       whenNotGotten: -> done(null)
       pageInformation: {slug: slug}
 
