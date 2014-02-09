@@ -9,23 +9,23 @@ addToJournal = require './addToJournal'
 wiki = require('./wiki')
 
 handleDragging = (evt, ui) ->
-  itemElement = ui.item
+  $item = ui.item
 
-  item = wiki.getItem(itemElement)
-  thisPageElement = $(this).parents('.page:first')
-  sourcePageElement = itemElement.data('pageElement')
-  sourceSite = sourcePageElement.data('site')
+  item = wiki.getItem($item)
+  $thisPage = $(this).parents('.page:first')
+  $sourcePage = $item.data('pageElement')
+  sourceSite = $sourcePage.data('site')
 
-  destinationPageElement = itemElement.parents('.page:first')
+  $destinationPage = $item.parents('.page:first')
   equals = (a, b) -> a and b and a.get(0) == b.get(0)
 
-  moveWithinPage = not sourcePageElement or equals(sourcePageElement, destinationPageElement)
-  moveFromPage = not moveWithinPage and equals(thisPageElement, sourcePageElement)
-  moveToPage = not moveWithinPage and equals(thisPageElement, destinationPageElement)
+  moveWithinPage = not $sourcePage or equals($sourcePage, $destinationPage)
+  moveFromPage = not moveWithinPage and equals($thisPage, $sourcePage)
+  moveToPage = not moveWithinPage and equals($thisPage, $destinationPage)
 
   if moveFromPage
-    if sourcePageElement.hasClass('ghost') or
-      sourcePageElement.attr('id') == destinationPageElement.attr('id')
+    if $sourcePage.hasClass('ghost') or
+      $sourcePage.attr('id') == $destinationPage.attr('id')
         # stem the damage, better ideas here:
         # http://stackoverflow.com/questions/3916089/jquery-ui-sortables-connect-lists-copy-items
         return
@@ -34,15 +34,15 @@ handleDragging = (evt, ui) ->
     order = $(this).children().map((_, value) -> $(value).attr('data-id')).get()
     {type: 'move', order: order}
   else if moveFromPage
-    wiki.log 'drag from', sourcePageElement.find('h1').text()
+    wiki.log 'drag from', $sourcePage.find('h1').text()
     {type: 'remove'}
   else if moveToPage
-    itemElement.data 'pageElement', thisPageElement
-    beforeElement = itemElement.prev('.item')
-    before = wiki.getItem(beforeElement)
+    $item.data 'pageElement', $thisPage
+    $before = $item.prev('.item')
+    before = wiki.getItem($before)
     {type: 'add', item: item, after: before?.id}
   action.id = item.id
-  pageHandler.put thisPageElement, action
+  pageHandler.put $thisPage, action
 
 initDragging = ($page) ->
   $story = $page.find('.story')
@@ -59,12 +59,12 @@ createFactory = ($page) ->
   item =
     type: "factory"
     id: util.randomBytes(8)
-  itemElement = $("<div />", class: "item factory").data('item',item).attr('data-id', item.id)
-  itemElement.data 'pageElement', $page
-  $page.find(".story").append(itemElement)
-  plugin.do itemElement, item
-  beforeElement = itemElement.prev('.item')
-  before = wiki.getItem(beforeElement)
+  $item = $("<div />", class: "item factory").data('item',item).attr('data-id', item.id)
+  $item.data 'pageElement', $page
+  $page.find(".story").append($item)
+  plugin.do $item, item
+  $before = $item.prev('.item')
+  before = wiki.getItem($before)
   pageHandler.put $page, {item: item, id: item.id, type: "add", after: before?.id}
 
 emitHeader = ($header, $page, pageObject) ->
