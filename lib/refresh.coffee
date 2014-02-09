@@ -45,8 +45,12 @@ handleDragging = (evt, ui) ->
   pageHandler.put $thisPage, action
 
 initDragging = ($page) ->
+  options =
+    connectWith: '.page .story'
+    placeholder: 'item-placeholder'
+    forcePlaceholderSize: true
   $story = $page.find('.story')
-  $story.sortable(connectWith: '.page .story').on("sortupdate", handleDragging)
+  $story.sortable(options).on('sortupdate', handleDragging)
 
 
 initAddButton = ($page) ->
