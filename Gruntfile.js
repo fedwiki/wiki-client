@@ -42,7 +42,7 @@ module.exports = function (grunt) {
 
     watch: {
       all: {
-        files: ['test/*.coffee', 'lib/*.coffee'],
+        files: ['test/*.coffee', 'lib/*.coffee', '*.coffee'],
         tasks: ['build']
       }
     }
