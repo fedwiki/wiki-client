@@ -67,13 +67,6 @@ createFactory = ($page) ->
   before = wiki.getItem(beforeElement)
   pageHandler.put $page, {item: item, id: item.id, type: "add", after: before?.id}
 
-
-generateFlag = ($page, pageObject) ->
-  unless pageObject.isRemote()
-    $('img.favicon',$page).error (e)->
-      plugin.get 'favicon', (favicon) ->
-        favicon.create()
-
 emitHeader = ($header, $page, pageObject) ->
   viewHere = if pageObject.getSlug() is 'welcome-visitors' then "" else "/view/#{pageObject.getSlug()}"
   absolute = if pageObject.isRemote() then "//#{pageObject.getRemoteSite()}" else ""
@@ -164,7 +157,6 @@ renderPageIntoPageElement = (pageObject, $page) ->
 
   emitHeader $header, $page, pageObject
   emitTimestamp $header, $page, pageObject
-  generateFlag $page, pageObject
 
   pageObject.seqItems (item, done) ->
     if item?.type and item?.id
@@ -185,13 +177,20 @@ renderPageIntoPageElement = (pageObject, $page) ->
   emitFooter $footer, pageObject
 
 
+createMissingFlag = ($page, pageObject) ->
+  unless pageObject.isRemote()
+    $('img.favicon',$page).error ->
+      plugin.get 'favicon', (favicon) ->
+        favicon.create()
+
 wiki.buildPage = (pageObject,$page) ->
 
   $page.addClass('local') if pageObject.isLocal()
   $page.addClass('remote') if pageObject.isRemote()
   $page.addClass('plugin') if pageObject.isPlugin()
 
-  renderPageIntoPageElement( pageObject, $page )
+  renderPageIntoPageElement pageObject, $page
+  createMissingFlag $page, pageObject
 
   state.setUrl()
 
