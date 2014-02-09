@@ -67,38 +67,29 @@ createFactory = ($page) ->
   before = wiki.getItem(beforeElement)
   pageHandler.put $page, {item: item, id: item.id, type: "add", after: before?.id}
 
-buildPageHeader = ({page,tooltip,header_href,favicon_src})->
-  tooltip += "\n#{page.plugin} plugin" if page.plugin
-  """<h1 title="#{tooltip}"><a href="#{header_href}"><img src="#{favicon_src}" height="32px" class="favicon"></a> #{page.title}</h1>"""
 
-emitHeader = ($header, $page, pageObject) ->
-  page = pageObject.getRawPage()
-  isRemotePage = pageObject.isRemote()
-  header = ''
-
-  viewHere = if wiki.asSlug(page.title) is 'welcome-visitors' then ""
-  else "/view/#{pageObject.getSlug()}"
-  pageHeader = if isRemotePage
-    buildPageHeader
-      tooltip: pageObject.getRemoteSite()
-      header_href: "//#{pageObject.getRemoteSite()}/view/welcome-visitors#{viewHere}"
-      favicon_src: "http://#{pageObject.getRemoteSite()}/favicon.png"
-      page: page
-  else
-    buildPageHeader
-      tooltip: location.host
-      header_href: "/view/welcome-visitors#{viewHere}"
-      favicon_src: "/favicon.png"
-      page: page
-
-  $header.append( pageHeader )
-  
-  unless isRemotePage
+generateFlag = ($page, pageObject) ->
+  unless pageObject.isRemote()
     $('img.favicon',$page).error (e)->
       plugin.get 'favicon', (favicon) ->
         favicon.create()
 
+emitHeader = ($header, $page, pageObject) ->
+  viewHere = if pageObject.getSlug() is 'welcome-visitors' then "" else "/view/#{pageObject.getSlug()}"
+  absolute = if pageObject.isRemote() then "//#{pageObject.getRemoteSite()}" else ""
+  tooltip = pageObject.getRemoteSite(location.host)
+  tooltip += "\n#{pageObject.getRawPage().plugin} plugin" if pageObject.isPlugin()
+  $header.append """
+    <h1 title="#{tooltip}">
+      <a href="#{absolute}/view/welcome-visitors#{viewHere}">
+        <img src="#{absolute}/favicon.png" height="32px" class="favicon">
+      </a> #{pageObject.getTitle()}
+    </h1>
+  """
+
+emitTimestamp = ($header, $page, pageObject) ->
   if $page.attr('id').match /_rev/
+    page = pageObject.getRawPage()
     rev = page.journal.length-1
     date = page.journal[rev].date
     $page.addClass('ghost').data('rev',rev)
@@ -109,6 +100,23 @@ emitHeader = ($header, $page, pageObject) ->
         </span>
       </h2>
     """
+
+emitControls = ($journal) ->
+  $journal.append """
+    <div class="control-buttons">
+      <a href="#" class="button fork-page" title="fork this page">#{util.symbols['fork']}</a>
+      <a href="#" class="button add-factory" title="add paragraph">#{util.symbols['add']}</a>
+    </div>
+  """
+
+emitFooter = ($footer, pageObject) ->
+  host = pageObject.getRemoteSite(location.host)
+  slug = pageObject.getSlug()
+  $footer.append """
+    <a id="license" href="http://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a> .
+    <a class="show-page-source" href="/#{slug}.json?random=#{util.randomBytes(4)}" title="source">JSON</a> .
+    <a href= "//#{host}/#{slug}.html">#{host}</a>
+  """
 
 emitTwins = wiki.emitTwins = ($page) ->
   page = $page.data 'data'
@@ -147,7 +155,6 @@ emitTwins = wiki.emitTwins = ($page) ->
 renderPageIntoPageElement = (pageObject, $page) ->
   $page.data("data", pageObject.getRawPage())
   $page.data("site", pageObject.getRemoteSite()) if pageObject.isRemote()
-  slug = $page.attr('id')
 
   wiki.resolutionContext = pageObject.getContext()
 
@@ -156,6 +163,8 @@ renderPageIntoPageElement = (pageObject, $page) ->
     $("<div />").addClass(className).appendTo($page)
 
   emitHeader $header, $page, pageObject
+  emitTimestamp $header, $page, pageObject
+  generateFlag $page, pageObject
 
   pageObject.seqItems (item, done) ->
     if item?.type and item?.id
@@ -172,19 +181,8 @@ renderPageIntoPageElement = (pageObject, $page) ->
     done()
 
   emitTwins $page
-
-  $journal.append """
-    <div class="control-buttons">
-      <a href="#" class="button fork-page" title="fork this page">#{util.symbols['fork']}</a>
-      <a href="#" class="button add-factory" title="add paragraph">#{util.symbols['add']}</a>
-    </div>
-  """
-  host = pageObject.getRemoteSite() || location.host
-  $footer.append """
-    <a id="license" href="http://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a> .
-    <a class="show-page-source" href="/#{slug}.json?random=#{util.randomBytes(4)}" title="source">JSON</a> .
-    <a href= "//#{host}/#{slug}.html">#{host}</a>
-  """
+  emitControls $journal
+  emitFooter $footer, pageObject
 
 
 wiki.buildPage = (pageObject,$page) ->
