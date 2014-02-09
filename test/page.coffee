@@ -1,4 +1,5 @@
 newPage = require('../lib/page').newPage
+expect = require 'expect.js'
 
 describe 'page', ->
 
@@ -56,7 +57,6 @@ describe 'page', ->
 					{	type: 'fork', site: 'four.org'},
 					{	type: 'fork', site: 'three.org'}
 				], 'example.com'
-			console.log pageObject.getRawPage()
 			expect(pageObject.getNeighbors()).to.eql(['example.com','one.org','two.org','three.org','four.org'])	
 
 

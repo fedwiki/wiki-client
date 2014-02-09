@@ -2,6 +2,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-mocha-test');
 
 /*
  TODO : sourcemaps? 
@@ -29,6 +30,15 @@ module.exports = function (grunt) {
       }
     },
 
+    mochaTest: {
+      test: {
+        options: {
+          reporter: 'spec'
+        },
+        src: ['test/util.js','test/page.js']
+      }
+    },
+
     coffee: {
       client: {
         expand: true,
@@ -48,7 +58,7 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('build', ['coffee', 'browserify']);
+  grunt.registerTask('build', ['coffee', 'mochaTest', 'browserify']);
   grunt.registerTask('default', ['build']);
 
 };
