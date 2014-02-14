@@ -1,0 +1,67 @@
+body {
+	font-family: ‘Times New Roman’, Georgia, serif;
+	font-size: 12pt;
+	line-height: 1.2;
+	background: white;
+	color: black;
+}
+
+.main {
+	width: auto;
+	border: 0;
+	margin: 0 5%;
+	padding: 0;
+	float: none !important;
+}
+
+.page {
+	page-break-after: always;
+}
+
+.story {
+	text-align: justify;
+}
+
+p {
+	orphans:3;
+	widows:2;
+}
+
+
+img.remote {
+	width: 16px;
+	height: 16px;
+}
+
+A:link, A:visited {
+	background: white;
+	color: black;
+	text-decoration: underline;
+	font-weight: 110%;
+}
+
+.story a:link:after,
+.story a:visited:after {
+	content: " (" attr(href) ") ";
+	font-size: 90%;
+}
+
+.journal {
+	display: none;
+}
+
+.footer {
+	padding-top: 24pt;
+	text-align: center;
+	float: bottom;
+	string-set: Footer self;
+}
+
+.footer a {
+	text-decoration: none;
+}
+
+
+footer {
+	display: none;
+}
