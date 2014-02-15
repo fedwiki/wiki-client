@@ -160,6 +160,7 @@ pageHandler.put = (pageElement, action) ->
     pageElement.find('h1 a').attr('href', '/')
     pageElement.data('site', null)
     pageElement.removeClass('remote')
+    #STATE -- update url when site changes
     state.setUrl()
     if action.type != 'fork'
       # bundle implicit fork with next action

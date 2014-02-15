@@ -169,6 +169,7 @@ $ ->
 
 # HANDLERS for jQuery events
 
+  #STATE -- reconfigure state based on url
   $(window).on 'popstate', state.show
 
   $(document)

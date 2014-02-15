@@ -197,6 +197,7 @@ wiki.buildPage = (pageObject,$page) ->
   renderPageIntoPageElement pageObject, $page
   createMissingFlag $page, pageObject
 
+  #STATE -- update url when adding new page, removing others
   state.setUrl()
 
   initDragging $page
