@@ -2,6 +2,7 @@ _ = require 'underscore'
 
 util = require './util'
 pageHandler = require './pageHandler'
+newPage = require('./page').newPage
 plugin = require './plugin'
 state = require './state'
 neighborhood = require './neighborhood'
@@ -213,10 +214,9 @@ module.exports = refresh = wiki.refresh = ->
     site: $page.data('site')
   }
 
-  emptyPage = require('./page').emptyPage
   createGhostPage = ->
     title = $("""a[href="/#{slug}.html"]:last""").text() or slug
-    pageObject = emptyPage()
+    pageObject = newPage()
     pageObject.setTitle(title)
 
     hits = []

@@ -5,9 +5,6 @@ _ = require 'underscore'
 asSlug = (name) ->
   name.replace(/\s/g, '-').replace(/[^A-Za-z0-9-]/g, '').toLowerCase()
 
-emptyPage = ->
-	newPage({}, null)
-
 nowSections = (now) ->
 	[
 		{symbol: '❄', date: now-1000*60*60*24*366, period: 'a Year'}
@@ -19,7 +16,8 @@ nowSections = (now) ->
 	]
 
 newPage = (json, site) ->
-	page = _.extend {}, util.emptyPage(), json
+	page = json || {}
+	page.title ||= 'empty'
 	page.story ||= []
 	page.journal ||= []
 
@@ -101,4 +99,4 @@ newPage = (json, site) ->
 	{getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getSlug, getNeighbors, getTitle, setTitle, addItem, addParagraph, seqItems, seqActions}
 
 
-module.exports = {newPage, emptyPage}
+module.exports = {newPage}
