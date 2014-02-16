@@ -29,6 +29,7 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
   if site?
     if site == 'local'
       if localPage = pageFromLocalStorage(pageInformation.slug)
+        #NEWPAGE local from pageHandler.get 
         return whenGotten newPage(localPage, 'local' )
       else
         return whenNotGotten()
@@ -46,10 +47,12 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
     url: url + "?random=#{util.randomBytes(4)}"
     success: (page) ->
       page = revision.create rev, page if rev
+      #NEWPAGE server from pageHandler.get
       return whenGotten newPage(page, site)
     error: (xhr, type, msg) ->
       if (xhr.status != 404) and (xhr.status != 0)
         wiki.log 'pageHandler.get error', xhr, xhr.status, type, msg
+        #NEWPAGE trouble from PageHandler.get
         troublePageObject = newPage {title: "Trouble: Can't Get Page"}, null
         troublePageObject.addParagraph """
 The page handler has run into problems with this   request.

@@ -149,6 +149,7 @@ $ ->
   doInternalLink = wiki.doInternalLink = (name, page, site=null) ->
     name = wiki.asSlug(name)
     $(page).nextAll().remove() if page?
+    #NEWPAGE (not) wiki.doInteralLink, wiki.createPage, appendTo('.main'), refresh
     wiki.createPage(name,site)
       .appendTo($('.main'))
       .each refresh
@@ -237,6 +238,7 @@ $ ->
         rev = $(this).parent().children().not('.separator').index($action)
         return if rev < 0
         $page.nextAll().remove() unless e.shiftKey
+        #NEWPAGE (not) action, wiki.createPage, appendTo('.main'), refresh
         wiki.createPage("#{slug}_rev#{rev}", $page.data('site'))
           .appendTo($('.main'))
           .each refresh
@@ -268,6 +270,7 @@ $ ->
         $page.removeClass 'ghost'
         page = $page.data('data')
         page.story = story||[]
+        #NEWPAGE -- from a future: via wiki.buildPage
         pageObject = newPage(page,null)
         page = pageObject.getRawPage()
         pageHandler.put $page, {type: 'create', id: page.id, item: {title:page.title, story:page.story}}

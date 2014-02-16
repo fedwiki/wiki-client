@@ -217,6 +217,7 @@ module.exports = refresh = wiki.refresh = ->
 
   createGhostPage = ->
     title = $("""a[href="/#{slug}.html"]:last""").text() or slug
+    #NEWPAGE future after failed pageHandler.get then buildPage
     pageObject = newPage()
     pageObject.setTitle(title)
 

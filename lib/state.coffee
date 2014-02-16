@@ -41,6 +41,7 @@ state.show = (e) ->
     unless name is oldPages[idx]
       old = $('.page').eq(idx)
       old.remove() if old
+      #NEWPAGE (not) state.show, wiki.createPage, wiki.refresh
       wiki.createPage(name, newLocs[idx]).insertAfter(previous).each wiki.refresh
     previous = $('.page').eq(idx)
 
@@ -55,5 +56,6 @@ state.first = ->
   firstUrlLocs = state.urlLocs()
   oldPages = state.pagesInDom()
   for urlPage, idx in firstUrlPages when urlPage not in oldPages
+    #NEWPAGE (not) state.first, wiki.createPage
     wiki.createPage(urlPage, firstUrlLocs[idx]).appendTo('.main') unless urlPage is ''
 
