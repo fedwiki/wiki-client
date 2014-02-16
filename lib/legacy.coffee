@@ -6,6 +6,7 @@ state = require './state'
 active = require './active'
 refresh = require './refresh'
 newPage = require('./page').newPage
+lineup = require './lineup'
 
 Array::last = ->
   this[@length - 1]
@@ -149,6 +150,7 @@ $ ->
   doInternalLink = wiki.doInternalLink = (name, page, site=null) ->
     name = wiki.asSlug(name)
     $(page).nextAll().remove() if page?
+    lineup.removeAllAfterKey $(page).data('key') if page?
     #NEWPAGE (not) wiki.doInteralLink, wiki.createPage, appendTo('.main'), refresh
     wiki.createPage(name,site)
       .appendTo($('.main'))
