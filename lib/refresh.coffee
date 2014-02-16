@@ -149,7 +149,6 @@ emitTwins = wiki.emitTwins = ($page) ->
     $page.find('.twins').html """<p>#{twins.join ", "}</p>""" if twins
 
 renderPageIntoPageElement = (pageObject, $page) ->
-  $page.data('key', lineup.addPage(pageObject))
   $page.data("data", pageObject.getRawPage())
   $page.data("site", pageObject.getRemoteSite()) if pageObject.isRemote()
 
@@ -190,8 +189,7 @@ createMissingFlag = ($page, pageObject) ->
       plugin.get 'favicon', (favicon) ->
         favicon.create()
 
-wiki.buildPage = (pageObject,$page) ->
-
+wiki.rebuildPage = (pageObject, $page) ->
   $page.addClass('local') if pageObject.isLocal()
   $page.addClass('remote') if pageObject.isRemote()
   $page.addClass('plugin') if pageObject.isPlugin()
@@ -206,6 +204,9 @@ wiki.buildPage = (pageObject,$page) ->
   initAddButton $page
   $page
 
+wiki.buildPage = (pageObject, $page) ->
+  $page.data('key', lineup.addPage(pageObject))
+  wiki.rebuildPage(pageObject, $page)
 
 module.exports = refresh = wiki.refresh = ->
   $page = $(this)
