@@ -8,9 +8,6 @@ refresh = require './refresh'
 newPage = require('./page').newPage
 lineup = require './lineup'
 
-Array::last = ->
-  this[@length - 1]
-
 $ ->
 # ELEMENTS used for details popup
 
