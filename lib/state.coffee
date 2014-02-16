@@ -1,5 +1,6 @@
 wiki = require './wiki'
 active = require './active'
+lineup = require './lineup'
 
 module.exports = state = {}
 
@@ -35,17 +36,22 @@ state.show = (e) ->
 
   return if (!location.pathname or location.pathname is '/')
 
-  previous = $('.page').eq(0)
+  matching = true
+  for name, idx in oldPages
+    continue if matching and= name is newPages[idx]
+    old = $('.page:last')
+    lineup.removeKey old.data('key')
+    old.remove()
 
+  matching = true
   for name, idx in newPages
-    unless name is oldPages[idx]
-      old = $('.page').eq(idx)
-      old.remove() if old
-      #NEWPAGE (not) state.show, wiki.createPage, wiki.refresh
-      wiki.createPage(name, newLocs[idx]).insertAfter(previous).each wiki.refresh
-    previous = $('.page').eq(idx)
+    continue if matching and= name is oldPages[idx]
+    console.log 'push', idx, name
+    #NEWPAGE (not) state.show, wiki.createPage, wiki.refresh
+    wiki.createPage(name, newLocs[idx]).appendTo($('.main')).each wiki.refresh
 
-  previous.nextAll().remove()
+  console.log 'a .page keys ', ($(each).data('key') for each in $('.page'))
+  console.log 'a lineup keys', lineup.debugKeys()
 
   active.set($('.page').last())
   document.title = $('.page:last').data('data')?.title
