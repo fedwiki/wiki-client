@@ -108,7 +108,9 @@ newPage = (json, site) ->
 			each {action, separator}, -> emitAction i+1
 		emitAction 0
 
+	become = (template) ->
+		page.story = template?.getRawPage().story || []
 
-	{getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, setTitle, getRevision, getTimestamp, addItem, addParagraph, seqItems, seqActions}
+	{getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, setTitle, getRevision, getTimestamp, addItem, addParagraph, seqItems, seqActions, become}
 
 module.exports = {newPage}

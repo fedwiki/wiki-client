@@ -169,7 +169,7 @@ $ ->
     return done(null) unless slug
     wiki.log 'getTemplate', slug
     pageHandler.get
-      whenGotten: (pageObject,siteFound) -> done(pageObject.getRawPage().story)
+      whenGotten: (pageObject,siteFound) -> done(pageObject)
       whenNotGotten: -> done(null)
       pageInformation: {slug: slug}
 
@@ -248,16 +248,15 @@ $ ->
       $(".action[data-id=#{id}]").toggleClass('target')
 
     .delegate 'button.create', 'click', (e) ->
-      getTemplate $(e.target).data('slug'), (story) ->
+      getTemplate $(e.target).data('slug'), (template) ->
         $page = $(e.target).parents('.page:first')
         $page.removeClass 'ghost'
-        page = $page.data('data')
-        page.story = story||[]
-        #NEWPAGE -- from a future: via wiki.buildPage
-        pageObject = newPage(page,null)
+        #NEWPAGE -- (not) from a future: via wiki.buildPage
+        pageObject = lineup.atKey $page.data('key')
+        pageObject.become(template)
         page = pageObject.getRawPage()
         pageHandler.put $page, {type: 'create', id: page.id, item: {title:page.title, story:page.story}}
-        wiki.buildPage pageObject, $page.empty()
+        wiki.rebuildPage pageObject, $page.empty()
 
     .delegate '.ghost', 'rev', (e) ->
       wiki.log 'rev', e
