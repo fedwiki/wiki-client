@@ -1,9 +1,25 @@
 digraph call_graph {
-node [style=filled; fillcolor=white; color=white];
-subgraph [style=filled; fillcolor=lightgray];
+	node [style=filled; fillcolor=white; color=white];
+	subgraph [style=filled; fillcolor=lightgray];
 
 	ready [shape=box];
 	ready -> begin;
+
+	subgraph cluster_page {
+		fillcolor=palegreen;
+		label = "page";
+		newPage;
+		become;
+	}
+
+	subgraph cluster_lineup {
+		fillcolor=palegreen;
+		label = "lineup";
+		addPage [label="add\nPage"];
+		removeKey [label="remove\nKey"];
+		removeAllAfter [label="remove\nAll\nAfter"];
+	}
+
 
 	subgraph cluster_legacy {
 		label = "legacy";
@@ -15,27 +31,20 @@ subgraph [style=filled; fillcolor=lightgray];
 	begin -> refresh;
 	doInternalLink -> createPage;
 	doInternalLink -> refresh;
+	doInternalLink -> removeAllAfter;
 	click_create_button -> get;
-	click_create_button -> newPage;
+	click_create_button -> become;
 	click_create_button -> put;
-	click_create_button -> buildPage;
+	click_create_button -> rebuildPage;
 	
 
 	subgraph cluster_wiki {
 		label = "wiki";
-		createPage;
+		createPage [label="create\nPage"];
 	}
 	createPage -> page;
 	page [shape=box]
 	
-
-	subgraph cluster_page {
-		fillcolor=palegreen;
-		label = "page";
-		newPage;
-	}
-
-
 	subgraph cluster_pageHandler {
 		label = "pageHandler";
 		get -> trouble; put;
@@ -46,13 +55,16 @@ subgraph [style=filled; fillcolor=lightgray];
 
 	subgraph cluster_refresh {
 		label = "refresh";
-		refresh -> missing -> buildPage;
+		buildPage [label="build\nPage"]
+		rebuildPage [label="rebuild\nPage"]
+		refresh -> missing -> buildPage -> rebuildPage;
 	}
 	missing -> newPage;
 	refresh -> get;
 	refresh -> buildPage;
-	buildPage -> story; story[shape=box];
-	buildPage -> journal; journal[shape=box];
+	buildPage -> addPage;
+	rebuildPage -> story; story[shape=box];
+	rebuildPage -> journal; journal[shape=box];
 	
 
 	subgraph cluster_search {
@@ -68,8 +80,9 @@ subgraph [style=filled; fillcolor=lightgray];
 		label = "state";
 		show; first;
 	}
-	show -> createPage;
 	show -> refresh;
+	show -> createPage;
+	show -> removeKey;
 	first -> createPage;
 
 
