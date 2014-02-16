@@ -4,6 +4,8 @@ emit = (div, item) ->
   div.append '<p>Double-Click to Edit<br>Drop Text or Image to Insert</p>'
   showMenu = ->
     menu = div.find('p').append "<br>Or Choose a Plugin"
+    menu.append (left = $ """<div style="text-align:left; padding-left: 40%"></div>""")
+    menu = left
     menuItem = (title, name) ->
       menu.append """
         <li><a class="menu" href="#" title="#{title}">#{name}</a></li>
