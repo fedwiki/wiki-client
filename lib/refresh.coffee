@@ -88,7 +88,7 @@ emitHeader = ($header, $page, pageObject) ->
 emitTimestamp = ($header, $page, pageObject) ->
   if $page.attr('id').match /_rev/
     $page.addClass('ghost')
-    # $page.data('rev', pageObject.getRevision())
+    $page.data('rev', pageObject.getRevision())
     $header.append $ """
       <h2 class="revision">
         <span>
