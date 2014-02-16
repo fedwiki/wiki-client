@@ -87,14 +87,12 @@ emitHeader = ($header, $page, pageObject) ->
 
 emitTimestamp = ($header, $page, pageObject) ->
   if $page.attr('id').match /_rev/
-    page = pageObject.getRawPage()
-    rev = page.journal.length-1
-    date = page.journal[rev].date
-    $page.addClass('ghost').data('rev',rev)
+    $page.addClass('ghost')
+    # $page.data('rev', pageObject.getRevision())
     $header.append $ """
       <h2 class="revision">
         <span>
-          #{if date? then util.formatDate(date) else "Revision #{rev}"}
+          #{pageObject.getTimestamp()}
         </span>
       </h2>
     """

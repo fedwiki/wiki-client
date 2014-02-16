@@ -68,7 +68,14 @@ newPage = (json, site) ->
 		page.title
 
 	setTitle = (title) ->
-		page.title = title 
+		page.title = title
+
+	getRevision = ->
+		page.journal.length-1
+
+	getTimestamp = ->
+		date = page.journal[getRevision()].date
+		if date? then util.formatDate(date) else "Revision #{getRevision()}"
 
 	addItem = (item) ->
 		item = _.extend {}, {id: util.randomBytes(8)}, item
@@ -102,6 +109,6 @@ newPage = (json, site) ->
 		emitAction 0
 
 
-	{getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, setTitle, addItem, addParagraph, seqItems, seqActions}
+	{getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, setTitle, getRevision, getTimestamp, addItem, addParagraph, seqItems, seqActions}
 
 module.exports = {newPage}
