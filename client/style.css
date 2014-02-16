@@ -48,6 +48,11 @@ footer form, .footer-item {
   display: inline;
 }
 
+.item-placeholder {
+  border: 2px dotted #bbb;
+  background: #eee;
+}
+
 .footer-item { margin-left: 8px; }
 
 .neighbor {

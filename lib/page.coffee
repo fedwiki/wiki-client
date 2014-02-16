@@ -42,9 +42,8 @@ newPage = (json, site) ->
 	isLocal = ->
 		site == 'local'
 
-	getRemoteSite = ->
-		return site if isRemote()
-		null
+	getRemoteSite = (host = null) ->
+		if isRemote() then site else host
 
 	getSlug = ->
 		asSlug page.title
@@ -60,6 +59,9 @@ newPage = (json, site) ->
     for action in page.journal
       neighbors.push action.site if action.site?
     _.uniq neighbors
+
+	getTitle = ->
+		page.title
 
 	setTitle = (title) ->
 		page.title = title 
@@ -96,7 +98,7 @@ newPage = (json, site) ->
 		emitAction 0
 
 
-	{getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getSlug, getNeighbors, setTitle, addItem, addParagraph, seqItems, seqActions}
+	{getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getSlug, getNeighbors, getTitle, setTitle, addItem, addParagraph, seqItems, seqActions}
 
 
 module.exports = {newPage, emptyPage}

@@ -116,7 +116,6 @@ pushToServer = (pageElement, pagePutInfo, action) ->
       addToJournal pageElement.find('.journal'), action
       if action.type == 'fork' # push
         localStorage.removeItem pageElement.attr('id')
-        state.setUrl
     error: (xhr, type, msg) ->
       wiki.log "pageHandler.put ajax error callback", type, msg
 
