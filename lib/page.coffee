@@ -43,6 +43,12 @@ newPage = (json, site) ->
 	getRemoteSite = (host = null) ->
 		if isRemote() then site else host
 
+	getRemoteSiteDetails = (host = null) ->
+		result = []
+		result.push(getRemoteSite host) if host or isRemote()
+		result.push("#{page.plugin} plugin") if isPlugin()
+		result.join "\n"
+
 	getSlug = ->
 		asSlug page.title
 
@@ -96,7 +102,6 @@ newPage = (json, site) ->
 		emitAction 0
 
 
-	{getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getSlug, getNeighbors, getTitle, setTitle, addItem, addParagraph, seqItems, seqActions}
-
+	{getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, setTitle, addItem, addParagraph, seqItems, seqActions}
 
 module.exports = {newPage}

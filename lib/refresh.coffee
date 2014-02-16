@@ -75,8 +75,7 @@ createFactory = ($page) ->
 emitHeader = ($header, $page, pageObject) ->
   viewHere = if pageObject.getSlug() is 'welcome-visitors' then "" else "/view/#{pageObject.getSlug()}"
   absolute = if pageObject.isRemote() then "//#{pageObject.getRemoteSite()}" else ""
-  tooltip = pageObject.getRemoteSite(location.host)
-  tooltip += "\n#{pageObject.getRawPage().plugin} plugin" if pageObject.isPlugin()
+  tooltip = pageObject.getRemoteSiteDetails(location.host)
   $header.append """
     <h1 title="#{tooltip}">
       <a href="#{absolute}/view/welcome-visitors#{viewHere}">
