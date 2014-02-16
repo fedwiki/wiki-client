@@ -220,6 +220,7 @@ $ ->
         rev = $(this).parent().children().not('.separator').index($action)
         return if rev < 0
         $page.nextAll().remove() unless e.shiftKey
+        lineup.removeAllAfterKey($page.data('key')) unless e.shiftKey
         #NEWPAGE (not) action, wiki.createPage, appendTo('.main'), refresh
         wiki.createPage("#{slug}_rev#{rev}", $page.data('site'))
           .appendTo($('.main'))
