@@ -1,0 +1,76 @@
+digraph call_graph {
+node [style=filled; fillcolor=white; color=white];
+subgraph [style=filled; fillcolor=lightgray];
+
+	ready [shape=box];
+	ready -> begin;
+
+	subgraph cluster_legacy {
+		label = "legacy";
+		doInternalLink [label="do\nInternal\nLink"];
+		click_create_button [label="click\ncreate\nbutton"];
+		begin;
+	}
+	begin -> first;
+	begin -> refresh;
+	doInternalLink -> createPage;
+	doInternalLink -> refresh;
+	click_create_button -> get;
+	click_create_button -> newPage;
+	click_create_button -> put;
+	click_create_button -> buildPage;
+	
+
+	subgraph cluster_wiki {
+		label = "wiki";
+		createPage;
+	}
+	createPage -> page;
+	page [shape=box]
+	
+
+	subgraph cluster_page {
+		fillcolor=palegreen;
+		label = "page";
+		newPage;
+	}
+
+
+	subgraph cluster_pageHandler {
+		label = "pageHandler";
+		get -> trouble; put;
+	}
+	get -> newPage;
+	trouble -> newPage;
+	
+
+	subgraph cluster_refresh {
+		label = "refresh";
+		refresh -> missing -> buildPage;
+	}
+	missing -> newPage;
+	refresh -> get;
+	refresh -> buildPage;
+	buildPage -> story; story[shape=box];
+	buildPage -> journal; journal[shape=box];
+	
+
+	subgraph cluster_search {
+		label = "search";
+		performSearch [label="perform\nSearch"];
+	}
+	performSearch -> newPage;
+	performSearch -> createPage;
+	performSearch -> buildPage;
+
+
+	subgraph cluster_state {
+		label = "state";
+		show; first;
+	}
+	show -> createPage;
+	show -> refresh;
+	first -> createPage;
+
+
+}
