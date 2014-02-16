@@ -8,6 +8,7 @@ state = require './state'
 neighborhood = require './neighborhood'
 addToJournal = require './addToJournal'
 wiki = require('./wiki')
+lineup = require './lineup'
 
 handleDragging = (evt, ui) ->
   $item = ui.item
@@ -150,8 +151,12 @@ emitTwins = wiki.emitTwins = ($page) ->
     $page.find('.twins').html """<p>#{twins.join ", "}</p>""" if twins
 
 renderPageIntoPageElement = (pageObject, $page) ->
+  $page.data('key', lineup.addPage(pageObject))
   $page.data("data", pageObject.getRawPage())
   $page.data("site", pageObject.getRemoteSite()) if pageObject.isRemote()
+
+  console.log '.page keys ', ($(each).data('key') for each in $('.page'))
+  console.log 'lineup keys', lineup.debugKeys()
 
   wiki.resolutionContext = pageObject.getContext()
 
