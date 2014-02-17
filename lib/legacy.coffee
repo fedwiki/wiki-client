@@ -1,5 +1,6 @@
 wiki = require './wiki'
 util = require './util'
+random = require './random'
 pageHandler = wiki.pageHandler = require './pageHandler'
 plugin = require './plugin'
 state = require './state'
@@ -29,7 +30,7 @@ $ ->
 
   wiki.createItem = ($page, $before, item) ->
     $page = $before.parents('.page') unless $page?
-    item.id = util.randomBytes(8)
+    item.id = random.randomBytes(8)
     $item = $ """
       <div class="item #{item.type}" data-id="#{}"</div>
     """
@@ -49,7 +50,7 @@ $ ->
   createTextElement = (pageElement, beforeElement, initialText) ->
     item =
       type: 'paragraph'
-      id: util.randomBytes(8)
+      id: random.randomBytes(8)
       text: initialText
     itemElement = $ """
       <div class="item paragraph" data-id=#{item.id}></div>

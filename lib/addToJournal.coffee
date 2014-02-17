@@ -1,9 +1,10 @@
 util = require './util'
+format = require './format'
 
 module.exports = (journalElement, action) ->
   pageElement = journalElement.parents('.page:first')
   actionTitle = action.type || 'separator'
-  actionTitle += " #{util.formatElapsedTime(action.date)}" if action.date?
+  actionTitle += " #{format.formatElapsedTime(action.date)}" if action.date?
   actionElement = $("""<a href="#" /> """).addClass("action").addClass(action.type || 'separator')
     .text(action.symbol || util.symbols[action.type])
     .attr('title',actionTitle)

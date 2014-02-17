@@ -1,4 +1,5 @@
-util = require './util'
+random = require './random'
+format = require './format'
 _ = require 'underscore'
 
 # TODO: better home for asSlug
@@ -75,10 +76,10 @@ newPage = (json, site) ->
 
 	getTimestamp = ->
 		date = page.journal[getRevision()].date
-		if date? then util.formatDate(date) else "Revision #{getRevision()}"
+		if date? then format.formatDate(date) else "Revision #{getRevision()}"
 
 	addItem = (item) ->
-		item = _.extend {}, {id: util.randomBytes(8)}, item
+		item = _.extend {}, {id: random.randomBytes(8)}, item
 		page.story.push item
 
 	seqItems = (each) ->

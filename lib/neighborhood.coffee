@@ -2,7 +2,6 @@ _ = require 'underscore'
 
 wiki = require './wiki'
 active = require './active'
-util = require './util'
 createSearch = require './search'
 
 module.exports = neighborhood = {}
