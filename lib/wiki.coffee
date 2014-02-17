@@ -3,6 +3,7 @@ createSynopsis = require './synopsis'
 wiki = { createSynopsis }
 
 wiki.persona = require './persona'
+wiki.util = require './util'
 
 wiki.log = (things...) ->
   console.log things... if console?.log?
