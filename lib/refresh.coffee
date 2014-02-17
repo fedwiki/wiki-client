@@ -126,7 +126,7 @@ emitTwins = wiki.emitTwins = refresh.emitTwins = ($page) ->
     viewing = Math.floor(viewing/1000)*1000
     bins = {newer:[], same:[], older:[]}
     # {fed.wiki.org: [{slug: "happenings", title: "Happenings", date: 1358975303000, synopsis: "Changes here ..."}]}
-    for remoteSite, info of wiki.neighborhood
+    for remoteSite, info of neighborhood.sitemaps
       if remoteSite != site and info.sitemap?
         for item in info.sitemap
           if item.slug == slug
@@ -228,7 +228,7 @@ refresh.refresh = ->
     pageObject.setTitle(title)
 
     hits = []
-    for site, info of wiki.neighborhood
+    for site, info of neighborhood.sitemaps
       if info.sitemap?
         result = _.find info.sitemap, (each) ->
           each.slug == slug

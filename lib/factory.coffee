@@ -1,5 +1,7 @@
 # See fed.wiki.org/about-factory-plugin.html
 
+neighborhood = require './neighborhood'
+
 emit = (div, item) ->
   div.append '<p>Double-Click to Edit<br>Drop Text or Image to Insert</p>'
   showMenu = ->
@@ -113,7 +115,7 @@ bind = (div, item) ->
             item.title = remote.title || item.slug
             item.text = wiki.createSynopsis remote
             syncEditAction()
-            wiki.registerNeighbor item.site if item.site?
+            neighborhood.registerNeighbor item.site if item.site?
         else
           punt
             number: 4
