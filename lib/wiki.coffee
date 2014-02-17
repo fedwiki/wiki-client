@@ -53,8 +53,7 @@ wiki.createPage = (name, loc) ->
   $page.data('site', site) if site
   $page
 
-wiki.getItem = (element) ->
-  $(element).data("item") or $(element).data('staticItem') if $(element).length > 0
+wiki.getItem = require('./dom').getItem
 
 wiki.resolveLinks = (string) ->
   renderInternalLink = (match, name) ->

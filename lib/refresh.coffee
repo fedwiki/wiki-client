@@ -1,6 +1,7 @@
 _ = require 'underscore'
 
 util = require './util'
+dom = require './dom'
 pageHandler = require './pageHandler'
 newPage = require('./page').newPage
 plugin = require './plugin'
@@ -13,7 +14,7 @@ lineup = require './lineup'
 handleDragging = (evt, ui) ->
   $item = ui.item
 
-  item = wiki.getItem($item)
+  item = dom.getItem($item)
   $thisPage = $(this).parents('.page:first')
   $sourcePage = $item.data('pageElement')
   sourceSite = $sourcePage.data('site')
@@ -41,7 +42,7 @@ handleDragging = (evt, ui) ->
   else if moveToPage
     $item.data 'pageElement', $thisPage
     $before = $item.prev('.item')
-    before = wiki.getItem($before)
+    before = dom.getItem($before)
     {type: 'add', item: item, after: before?.id}
   action.id = item.id
   pageHandler.put $thisPage, action
@@ -70,7 +71,7 @@ createFactory = ($page) ->
   $page.find(".story").append($item)
   plugin.do $item, item
   $before = $item.prev('.item')
-  before = wiki.getItem($before)
+  before = dom.getItem($before)
   pageHandler.put $page, {item: item, id: item.id, type: "add", after: before?.id}
 
 emitHeader = ($header, $page, pageObject) ->

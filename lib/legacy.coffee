@@ -1,5 +1,6 @@
 wiki = require './wiki'
 util = require './util'
+dom = require './dom'
 random = require './random'
 pageHandler = wiki.pageHandler = require './pageHandler'
 plugin = require './plugin'
@@ -42,7 +43,7 @@ $ ->
     else
       $page.find('.story').append $item
     plugin.do $item, item
-    before = wiki.getItem $before
+    before = dom.getItem $before
     sleep 500, ->
       pageHandler.put $page, {item, id: item.id, type: 'add', after: before?.id}
     $item
@@ -60,7 +61,7 @@ $ ->
       .data('pageElement', pageElement)
     beforeElement.after itemElement
     plugin.do itemElement, item
-    itemBefore = wiki.getItem beforeElement
+    itemBefore = dom.getItem beforeElement
     wiki.textEditor itemElement, item
     sleep 500, -> pageHandler.put pageElement, {item: item, id: item.id, type: 'add', after: itemBefore?.id}
 
@@ -94,7 +95,7 @@ $ ->
         if item.type is 'paragraph' 
           sel = util.getSelectionPos(textarea) # position of caret or selected text coords
           if e.which is $.ui.keyCode.BACKSPACE and sel.start is 0 and sel.start is sel.end 
-            prevItem = wiki.getItem(div.prev())
+            prevItem = dom.getItem(div.prev())
             return false unless prevItem.type is 'paragraph'
             prevTextLen = prevItem.text.length
             prevItem.text += textarea.val()
