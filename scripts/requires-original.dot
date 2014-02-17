@@ -1,0 +1,83 @@
+digraph { node [style=filled shape=box];
+
+active [fillcolor=gold];
+
+addToJournal [fillcolor=gold];
+util -> addToJournal;
+
+factory [fillcolor=gold];
+
+legacy [fillcolor=gold];
+wiki -> legacy;
+util -> legacy;
+pageHandler -> legacy;
+plugin -> legacy;
+state -> legacy;
+active -> legacy;
+refresh -> legacy;
+page -> legacy;
+lineup -> legacy;
+
+lineup [fillcolor=gold];
+util -> lineup;
+
+neighborhood [fillcolor=gold];
+wiki -> neighborhood;
+active -> neighborhood;
+util -> neighborhood;
+search -> neighborhood;
+
+page [fillcolor=gold];
+util -> page;
+
+pageHandler [fillcolor=gold];
+wiki -> pageHandler;
+util -> pageHandler;
+state -> pageHandler;
+revision -> pageHandler;
+addToJournal -> pageHandler;
+page -> pageHandler;
+
+persona [fillcolor=gold];
+
+plugin [fillcolor=gold];
+util -> plugin;
+wiki -> plugin;
+reference -> plugin;
+factory -> plugin;
+
+reference [fillcolor=gold];
+
+refresh [fillcolor=gold];
+util -> refresh;
+pageHandler -> refresh;
+page -> refresh;
+plugin -> refresh;
+state -> refresh;
+neighborhood -> refresh;
+addToJournal -> refresh;
+wiki -> refresh;
+lineup -> refresh;
+
+revision [fillcolor=gold];
+
+search [fillcolor=gold];
+wiki -> search;
+util -> search;
+active -> search;
+page -> search;
+
+state [fillcolor=gold];
+wiki -> state;
+active -> state;
+lineup -> state;
+
+synopsis [fillcolor=gold];
+
+util [fillcolor=gold];
+wiki -> util;
+
+wiki [fillcolor=gold];
+synopsis -> wiki;
+persona -> wiki;
+}
