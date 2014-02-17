@@ -136,7 +136,7 @@ $ ->
     #NEWPAGE (not) wiki.doInteralLink, wiki.createPage, appendTo('.main'), refresh
     wiki.createPage(name,site)
       .appendTo($('.main'))
-      .each refresh
+      .each refresh.refresh
     active.set($('.page').last())
 
   LEFTARROW = 37
@@ -226,7 +226,7 @@ $ ->
         #NEWPAGE (not) action, wiki.createPage, appendTo('.main'), refresh
         wiki.createPage("#{slug}_rev#{rev}", $page.data('site'))
           .appendTo($('.main'))
-          .each refresh
+          .each refresh.refresh
         active.set($('.page').last())
 
     .delegate '.fork-page', 'click', (e) ->
@@ -277,10 +277,10 @@ $ ->
 
   $('body').on 'new-neighbor-done', (e, neighbor) ->
     $('.page').each (index, element) ->
-      wiki.emitTwins $(element)
+      refresh.emitTwins $(element)
 
   $ ->
     state.first()
-    $('.page').each refresh
+    $('.page').each refresh.refresh
     active.set($('.page').last())
 

@@ -11,6 +11,8 @@ addToJournal = require './addToJournal'
 wiki = require('./wiki')
 lineup = require './lineup'
 
+module.exports = refresh = {}
+
 handleDragging = (evt, ui) ->
   $item = ui.item
 
@@ -115,7 +117,7 @@ emitFooter = ($footer, pageObject) ->
     <a href= "//#{host}/#{slug}.html">#{host}</a>
   """
 
-emitTwins = wiki.emitTwins = ($page) ->
+emitTwins = wiki.emitTwins = refresh.emitTwins = ($page) ->
   page = $page.data 'data'
   site = $page.data('site') or window.location.host
   site = window.location.host if site in ['view', 'origin']
@@ -209,7 +211,7 @@ wiki.buildPage = (pageObject, $page) ->
   $page.data('key', lineup.addPage(pageObject))
   wiki.rebuildPage(pageObject, $page)
 
-module.exports = refresh = wiki.refresh = ->
+refresh.refresh = ->
   $page = $(this)
 
   [slug, rev] = $page.attr('id').split('_rev')

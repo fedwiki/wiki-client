@@ -48,7 +48,7 @@ state.show = (e) ->
     continue if matching and= name is oldPages[idx]
     console.log 'push', idx, name
     #NEWPAGE (not) state.show, wiki.createPage, wiki.refresh
-    wiki.createPage(name, newLocs[idx]).appendTo($('.main')).each wiki.refresh
+    wiki.createPage(name, newLocs[idx]).appendTo($('.main')).each wiki.refresh.refresh
 
   console.log 'a .page keys ', ($(each).data('key') for each in $('.page'))
   console.log 'a lineup keys', lineup.debugKeys()
