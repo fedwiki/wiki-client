@@ -8,7 +8,7 @@ digraph call_graph {
 	subgraph cluster_page {
 		fillcolor=palegreen;
 		label = "page";
-		newPage;
+		newPage [label="new\nPage"];
 		become;
 	}
 
