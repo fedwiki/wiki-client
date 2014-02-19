@@ -10,6 +10,7 @@ findScrollContainer = ->
     $("body, html").scrollLeft(12).filter(-> $(this).scrollLeft() > 0).scrollTop(0)
 
 scrollTo = (el) ->
+  return unless el.position()?
   active.scrollContainer ?= findScrollContainer()
   bodyWidth = $("body").width()
   minX = active.scrollContainer.scrollLeft()

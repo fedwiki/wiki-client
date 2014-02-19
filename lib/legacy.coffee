@@ -6,30 +6,11 @@ state = require './state'
 active = require './active'
 refresh = require './refresh'
 newPage = require('./page').newPage
-
-Array::last = ->
-  this[@length - 1]
+lineup = require './lineup'
 
 $ ->
 # ELEMENTS used for details popup
 
-  # # extension from http://www.droptoframe.com/?p=35
-  #   # .ui-dialog .ui-dialog-titlebar-transfer{ position: absolute; right: 23px; top: 50%; width: 19px; margin: -10px 0 0 0; padding: 1px; height: 18px; }
-  #   # .ui-dialog .ui-dialog-titlebar-transfer span { display: block; margin: 1px; }
-  #   # .ui-dialog .ui-dialog-titlebar-transfer:hover, .ui-dialog .ui-dialog-titlebar-min:focus { padding: 0; }
-  # _init = $.ui.dialog.prototype._init
-  # _uiDialogTitlebar = null
-  # $.ui.dialog.prototype._init = ->
-  #   self = this
-  #   _init.apply this, arguments
-  #   uiDialogTitlebar = this.uiDialogTitlebar
-  #   uiDialogTitlebar.append '<a href="#" id="dialog-transfer" class="dialog-transfer ui-dialog-titlebar-transfer"><span class="ui-icon ui-icon-transferthick-e-w"></span></a>'
-  # $.extend $.ui.dialog.prototype, ->
-  #   $('.dialog-transfer', this.uiDialogTitlebar)
-  #     .hover -> $(this).toggleClass('ui-state-hover')
-  #     .click() ->
-  #       self.transfer()
-  #       return false
   window.dialog = $('<div></div>')
 	  .html('This dialog will show every time!')
 	  .dialog { autoOpen: false, title: 'Basic Dialog', height: 600, width: 800 }
@@ -149,6 +130,8 @@ $ ->
   doInternalLink = wiki.doInternalLink = (name, page, site=null) ->
     name = wiki.asSlug(name)
     $(page).nextAll().remove() if page?
+    lineup.removeAllAfterKey $(page).data('key') if page?
+    #NEWPAGE (not) wiki.doInteralLink, wiki.createPage, appendTo('.main'), refresh
     wiki.createPage(name,site)
       .appendTo($('.main'))
       .each refresh
@@ -169,6 +152,7 @@ $ ->
 
 # HANDLERS for jQuery events
 
+  #STATE -- reconfigure state based on url
   $(window).on 'popstate', state.show
 
   $(document)
@@ -185,7 +169,7 @@ $ ->
     return done(null) unless slug
     wiki.log 'getTemplate', slug
     pageHandler.get
-      whenGotten: (pageObject,siteFound) -> done(pageObject.getRawPage().story)
+      whenGotten: (pageObject,siteFound) -> done(pageObject)
       whenNotGotten: -> done(null)
       pageInformation: {slug: slug}
 
@@ -236,6 +220,8 @@ $ ->
         rev = $(this).parent().children().not('.separator').index($action)
         return if rev < 0
         $page.nextAll().remove() unless e.shiftKey
+        lineup.removeAllAfterKey($page.data('key')) unless e.shiftKey
+        #NEWPAGE (not) action, wiki.createPage, appendTo('.main'), refresh
         wiki.createPage("#{slug}_rev#{rev}", $page.data('site'))
           .appendTo($('.main'))
           .each refresh
@@ -262,15 +248,15 @@ $ ->
       $(".action[data-id=#{id}]").toggleClass('target')
 
     .delegate 'button.create', 'click', (e) ->
-      getTemplate $(e.target).data('slug'), (story) ->
+      getTemplate $(e.target).data('slug'), (template) ->
         $page = $(e.target).parents('.page:first')
         $page.removeClass 'ghost'
-        page = $page.data('data')
-        page.story = story||[]
-        pageObject = newPage(page,null)
+        #NEWPAGE -- (not) from a future: via wiki.buildPage
+        pageObject = lineup.atKey $page.data('key')
+        pageObject.become(template)
         page = pageObject.getRawPage()
         pageHandler.put $page, {type: 'create', id: page.id, item: {title:page.title, story:page.story}}
-        wiki.buildPage pageObject, $page.empty()
+        wiki.rebuildPage pageObject, $page.empty()
 
     .delegate '.ghost', 'rev', (e) ->
       wiki.log 'rev', e
