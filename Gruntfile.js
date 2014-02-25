@@ -16,7 +16,7 @@ module.exports = function (grunt) {
         src: ['./client.coffee'],
         dest: 'client/client.js',
         options: {
-          debug: true,
+          debug: false,
           transform: ['coffeeify']
         }
       },
@@ -24,7 +24,7 @@ module.exports = function (grunt) {
         src: ['./testclient.coffee'],
         dest: 'client/test/testclient.js',
         options: {
-          debug: true,
+          debug: false,
           transform: ['coffeeify']
         }
       }
@@ -43,7 +43,7 @@ module.exports = function (grunt) {
       client: {
         expand: true,
         options: {
-          sourceMap: true
+          sourceMap: false
         },
         src: ['test/*.coffee', 'lib/*.coffee'],
         ext: '.js'
