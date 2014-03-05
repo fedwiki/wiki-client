@@ -37,10 +37,10 @@
     "sinon": "1.7.1",
     "expect.js": "*",
     "grunt": "~0.4",
-    "grunt-browserify": "*",
-    "grunt-contrib-watch": "*",
-    "grunt-mocha-test": "*",
-    "grunt-exorcise": "*"
+    "grunt-browserify": "~1.3",
+    "grunt-contrib-watch": "~0.5",
+    "grunt-mocha-test": "~0.9",
+    "grunt-exorcise": "~0.1"
   },
   "license": "MIT",
   "repository": {
