@@ -19,9 +19,8 @@ module.exports = function (grunt) {
       },
       testClient: {
         src: ['./testclient.coffee'],
-        dest: 'build/testclient.js',
+        dest: 'client/test/testclient.js',
         options: {
-          debug: true,
           extensions: ".coffee",
           transform: ['coffeeify']
         }
