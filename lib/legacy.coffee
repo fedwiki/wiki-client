@@ -207,6 +207,8 @@ $ ->
 
     .delegate '.internal', 'click', (e) ->
       name = $(e.target).data 'pageName'
+      # ensure that name is a string (using string interpolation)
+      name = "#{name}"
       pageHandler.context = $(e.target).attr('title').split(' => ')
       finishClick e, name
 
