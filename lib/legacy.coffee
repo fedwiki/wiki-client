@@ -85,21 +85,24 @@ $ ->
   textEditor = wiki.textEditor = (div, item, caretPos, doubleClicked) ->
     return if div.hasClass 'textEditing'
     div.addClass 'textEditing'
+    endEditing = ->
+      div.removeClass 'textEditing'
+      if item.text = textarea.val()
+        plugin.do div.empty(), item
+        return if item.text == original
+        pageHandler.put div.parents('.page:first'), {type: 'edit', id: item.id, item: item}
+      else
+        pageHandler.put div.parents('.page:first'), {type: 'remove', id: item.id}
+        div.remove()
+      null
     textarea = $("<textarea>#{original = item.text ? ''}</textarea>")
-      .focusout ->
-        div.removeClass 'textEditing'
-        if item.text = textarea.val()
-          plugin.do div.empty(), item
-          return if item.text == original
-          pageHandler.put div.parents('.page:first'), {type: 'edit', id: item.id, item: item}
-        else
-          pageHandler.put div.parents('.page:first'), {type: 'remove', id: item.id}
-          div.remove()
-        null
+      .focusout endEditing
       # .bind 'paste', (e) ->
       #   wiki.log 'textedit paste', e
       #   wiki.log e.originalEvent.clipboardData.getData('text')
       .bind 'keydown', (e) ->
+        if e.keyCode == $.ui.keyCode.ESCAPE
+          endEditing()
         if (e.altKey || e.ctlKey || e.metaKey) and e.which == 83 #alt-s
           textarea.focusout()
           return false
