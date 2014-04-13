@@ -1,22 +1,19 @@
 module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-browserify');
-  grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-mocha-test');
+  grunt.loadNpmTasks('grunt-exorcise');
 
-/*
- TODO : sourcemaps? 
-           - not sure if possible with grunt-browserify
-           - if not investigate grunt-coffee-build.
-*/
 
   grunt.initConfig({
+
     browserify: {
       client: {
         src: ['./client.coffee'],
-        dest: 'client/client.js',
+        dest: 'build/client.js',
         options: {
           debug: true,
+          extensions: ".coffee",
           transform: ['coffeeify']
         }
       },
@@ -24,7 +21,7 @@ module.exports = function (grunt) {
         src: ['./testclient.coffee'],
         dest: 'client/test/testclient.js',
         options: {
-          debug: true,
+          extensions: ".coffee",
           transform: ['coffeeify']
         }
       }
@@ -38,16 +35,24 @@ module.exports = function (grunt) {
         src: ['test/util.js','test/page.js', 'test/lineup.js']
       }
     },
+    exorcise: {
+      options: {
+        bundleDest: 'client/client.js',
+      },
+      files: {
+        src: ['build/client.js'],
+        dest: 'client/client.map'
+      }
+    },
 
-    coffee: {
-      client: {
-        expand: true,
+    mochaTest: {
+      test: {
         options: {
-          sourceMap: true
+          reporter: 'spec',
+          require: 'coffee-script/register'
         },
-        src: ['test/*.coffee', 'lib/*.coffee'],
-        ext: '.js'
-      } 
+        src: ['test/util.coffee','test/page.coffee']
+      }
     },
 
     watch: {
@@ -58,7 +63,7 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('build', ['coffee', 'mochaTest', 'browserify']);
+  grunt.registerTask('build', ['mochaTest', 'browserify', 'exorcise']);
   grunt.registerTask('default', ['build']);
 
 };
