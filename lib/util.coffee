@@ -50,14 +50,6 @@ util.formatElapsedTime = (msSinceEpoch) ->
   return "#{Math.floor months} months ago" if (years = days/365) < 2
   return "#{Math.floor years} years ago"
 
-# DEFAULTS for required fields
-
-util.emptyPage = () ->
-  title: 'empty'
-  story: []
-  journal: []
-
-
 # If the selection start and selection end are both the same,
 # then you have the caret position. If there is selected text, 
 # the browser will not tell you where the caret is, but it will 

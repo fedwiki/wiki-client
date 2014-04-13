@@ -2,11 +2,13 @@ _ = require 'underscore'
 
 util = require './util'
 pageHandler = require './pageHandler'
+newPage = require('./page').newPage
 plugin = require './plugin'
 state = require './state'
 neighborhood = require './neighborhood'
 addToJournal = require './addToJournal'
 wiki = require('./wiki')
+lineup = require './lineup'
 
 handleDragging = (evt, ui) ->
   $item = ui.item
@@ -74,8 +76,7 @@ createFactory = ($page) ->
 emitHeader = ($header, $page, pageObject) ->
   viewHere = if pageObject.getSlug() is 'welcome-visitors' then "" else "/view/#{pageObject.getSlug()}"
   absolute = if pageObject.isRemote() then "//#{pageObject.getRemoteSite()}" else ""
-  tooltip = pageObject.getRemoteSite(location.host)
-  tooltip += "\n#{pageObject.getRawPage().plugin} plugin" if pageObject.isPlugin()
+  tooltip = pageObject.getRemoteSiteDetails(location.host)
   $header.append """
     <h1 title="#{tooltip}">
       <a href="#{absolute}/view/welcome-visitors#{viewHere}">
@@ -86,14 +87,12 @@ emitHeader = ($header, $page, pageObject) ->
 
 emitTimestamp = ($header, $page, pageObject) ->
   if $page.attr('id').match /_rev/
-    page = pageObject.getRawPage()
-    rev = page.journal.length-1
-    date = page.journal[rev].date
-    $page.addClass('ghost').data('rev',rev)
+    $page.addClass('ghost')
+    $page.data('rev', pageObject.getRevision())
     $header.append $ """
       <h2 class="revision">
         <span>
-          #{if date? then util.formatDate(date) else "Revision #{rev}"}
+          #{pageObject.getTimestamp()}
         </span>
       </h2>
     """
@@ -153,6 +152,9 @@ renderPageIntoPageElement = (pageObject, $page) ->
   $page.data("data", pageObject.getRawPage())
   $page.data("site", pageObject.getRemoteSite()) if pageObject.isRemote()
 
+  console.log '.page keys ', ($(each).data('key') for each in $('.page'))
+  console.log 'lineup keys', lineup.debugKeys()
+
   wiki.resolutionContext = pageObject.getContext()
 
   $page.empty()
@@ -187,8 +189,7 @@ createMissingFlag = ($page, pageObject) ->
       plugin.get 'favicon', (favicon) ->
         favicon.create()
 
-wiki.buildPage = (pageObject,$page) ->
-
+wiki.rebuildPage = (pageObject, $page) ->
   $page.addClass('local') if pageObject.isLocal()
   $page.addClass('remote') if pageObject.isRemote()
   $page.addClass('plugin') if pageObject.isPlugin()
@@ -196,12 +197,16 @@ wiki.buildPage = (pageObject,$page) ->
   renderPageIntoPageElement pageObject, $page
   createMissingFlag $page, pageObject
 
+  #STATE -- update url when adding new page, removing others
   state.setUrl()
 
   initDragging $page
   initAddButton $page
   $page
 
+wiki.buildPage = (pageObject, $page) ->
+  $page.data('key', lineup.addPage(pageObject))
+  wiki.rebuildPage(pageObject, $page)
 
 module.exports = refresh = wiki.refresh = ->
   $page = $(this)
@@ -213,10 +218,10 @@ module.exports = refresh = wiki.refresh = ->
     site: $page.data('site')
   }
 
-  emptyPage = require('./page').emptyPage
   createGhostPage = ->
     title = $("""a[href="/#{slug}.html"]:last""").text() or slug
-    pageObject = emptyPage()
+    #NEWPAGE future after failed pageHandler.get then buildPage
+    pageObject = newPage()
     pageObject.setTitle(title)
 
     hits = []

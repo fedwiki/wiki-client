@@ -69,14 +69,3 @@ describe 'util', ->
     s = util.formatDate(1333843344000 + timezoneOffset() * 1000)
     expect(s).to.be 'Sun Apr 8, 2012<br>12:02:24 AM'
 
-  it 'should make emptyPage page with title, story and journal', ->
-    page = util.emptyPage()
-    expect(page.title).to.be 'empty'
-    expect(page.story).to.eql []
-    expect(page.journal).to.eql []
-  it 'should make fresh empty page each call', ->
-    page = util.emptyPage()
-    page.story.push {type: 'junk'}
-    page = util.emptyPage()
-    expect(page.story).to.eql []
-

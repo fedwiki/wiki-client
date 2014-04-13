@@ -59,5 +59,30 @@ describe 'page', ->
 				], 'example.com'
 			expect(pageObject.getNeighbors()).to.eql(['example.com','one.org','two.org','three.org','four.org'])	
 
+	describe 'site info', ->
 
+		it 'should report null if local', ->
+			pageObject = newPage()
+			expect(pageObject.getRemoteSite()).to.be null
 
+		it 'should report local host if provided', ->
+			pageObject = newPage()
+			expect(pageObject.getRemoteSite('fed.wiki.org')).to.be 'fed.wiki.org'
+
+		it 'should report remote host if remote', ->
+			pageObject = newPage {}, 'sfw.c2.com'
+			expect(pageObject.getRemoteSite('fed.wiki.org')).to.be 'sfw.c2.com'
+
+	describe 'site details', ->
+
+		it 'should report residence only if local', ->
+			pageObject = newPage {plugin: 'method'}
+			expect(pageObject.getRemoteSiteDetails()).to.be 'method plugin'
+
+		it 'should report residence and local host if provided', ->
+			pageObject = newPage {plugin: 'method'}
+			expect(pageObject.getRemoteSiteDetails('fed.wiki.org')).to.be 'fed.wiki.org\nmethod plugin'
+
+		it 'should report residence and remote host if remote', ->
+			pageObject = newPage {plugin: 'method'}, 'sfw.c2.com'
+			expect(pageObject.getRemoteSiteDetails('fed.wiki.org')).to.be 'sfw.c2.com\nmethod plugin'

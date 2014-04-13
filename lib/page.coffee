@@ -5,9 +5,6 @@ _ = require 'underscore'
 asSlug = (name) ->
   name.replace(/\s/g, '-').replace(/[^A-Za-z0-9-]/g, '').toLowerCase()
 
-emptyPage = ->
-	newPage({}, null)
-
 nowSections = (now) ->
 	[
 		{symbol: '❄', date: now-1000*60*60*24*366, period: 'a Year'}
@@ -19,7 +16,8 @@ nowSections = (now) ->
 	]
 
 newPage = (json, site) ->
-	page = _.extend {}, util.emptyPage(), json
+	page = json || {}
+	page.title ||= 'empty'
 	page.story ||= []
 	page.journal ||= []
 
@@ -45,6 +43,12 @@ newPage = (json, site) ->
 	getRemoteSite = (host = null) ->
 		if isRemote() then site else host
 
+	getRemoteSiteDetails = (host = null) ->
+		result = []
+		result.push(getRemoteSite host) if host or isRemote()
+		result.push("#{page.plugin} plugin") if isPlugin()
+		result.join "\n"
+
 	getSlug = ->
 		asSlug page.title
 
@@ -64,7 +68,14 @@ newPage = (json, site) ->
 		page.title
 
 	setTitle = (title) ->
-		page.title = title 
+		page.title = title
+
+	getRevision = ->
+		page.journal.length-1
+
+	getTimestamp = ->
+		date = page.journal[getRevision()].date
+		if date? then util.formatDate(date) else "Revision #{getRevision()}"
 
 	addItem = (item) ->
 		item = _.extend {}, {id: util.randomBytes(8)}, item
@@ -97,8 +108,9 @@ newPage = (json, site) ->
 			each {action, separator}, -> emitAction i+1
 		emitAction 0
 
+	become = (template) ->
+		page.story = template?.getRawPage().story || []
 
-	{getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getSlug, getNeighbors, getTitle, setTitle, addItem, addParagraph, seqItems, seqActions}
+	{getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, setTitle, getRevision, getTimestamp, addItem, addParagraph, seqItems, seqActions, become}
 
-
-module.exports = {newPage, emptyPage}
+module.exports = {newPage}

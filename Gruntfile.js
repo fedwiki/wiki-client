@@ -27,6 +27,14 @@ module.exports = function (grunt) {
       }
     },
 
+    mochaTest: {
+      test: {
+        options: {
+          reporter: 'spec'
+        },
+        src: ['test/util.js','test/page.js', 'test/lineup.js']
+      }
+    },
     exorcise: {
       options: {
         bundleDest: 'client/client.js',

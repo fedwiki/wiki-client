@@ -1,14 +1,15 @@
 wiki = require './wiki'
 util = require './util'
 active = require './active'
-emptyPage = require('./page').emptyPage
+newPage = require('./page').newPage
 
 createSearch = ({neighborhood})->
   performSearch = (searchQuery)->
     searchResults = neighborhood.search(searchQuery)
     tally = searchResults.tally
 
-    resultPage = emptyPage()
+    #NEWPAGE search results then wiki.createPage, wiki.buildPage
+    resultPage = newPage()
     resultPage.setTitle "Search for '#{searchQuery}'"
     resultPage.addParagraph """
         String '#{searchQuery}' found on #{tally.finds||'none'} of #{tally.pages||'no'} pages from #{tally.sites||'no'} sites.
