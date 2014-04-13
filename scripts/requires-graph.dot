@@ -1,0 +1,83 @@
+digraph { node [style=filled shape=box];
+
+active [fillcolor=gold];
+
+addToJournal [fillcolor=gold];
+util -> addToJournal [dir=back];
+
+factory [fillcolor=gold];
+
+legacy [fillcolor=gold];
+wiki -> legacy [dir=back];
+util -> legacy [dir=back];
+pageHandler -> legacy [dir=back];
+plugin -> legacy [dir=back];
+state -> legacy [dir=back];
+active -> legacy [dir=back];
+refresh -> legacy [dir=back];
+page -> legacy [dir=back];
+lineup -> legacy [dir=back];
+
+lineup [fillcolor=gold];
+util -> lineup [dir=back];
+
+neighborhood [fillcolor=gold];
+wiki -> neighborhood [dir=back];
+active -> neighborhood [dir=back];
+util -> neighborhood [dir=back];
+search -> neighborhood [dir=back];
+
+page [fillcolor=gold];
+util -> page [dir=back];
+
+pageHandler [fillcolor=gold];
+wiki -> pageHandler [dir=back];
+util -> pageHandler [dir=back];
+state -> pageHandler [dir=back];
+revision -> pageHandler [dir=back];
+addToJournal -> pageHandler [dir=back];
+page -> pageHandler [dir=back];
+
+persona [fillcolor=gold];
+
+plugin [fillcolor=gold];
+util -> plugin [dir=back];
+wiki -> plugin [dir=back];
+reference -> plugin [dir=back];
+factory -> plugin [dir=back];
+
+reference [fillcolor=gold];
+
+refresh [fillcolor=gold];
+util -> refresh [dir=back];
+pageHandler -> refresh [dir=back];
+page -> refresh [dir=back];
+plugin -> refresh [dir=back];
+state -> refresh [dir=back];
+neighborhood -> refresh [dir=back];
+addToJournal -> refresh [dir=back];
+wiki -> refresh [dir=back];
+lineup -> refresh [dir=back];
+
+revision [fillcolor=gold];
+
+search [fillcolor=gold];
+wiki -> search [dir=back];
+util -> search [dir=back];
+active -> search [dir=back];
+page -> search [dir=back];
+
+state [fillcolor=gold];
+wiki -> state [dir=back];
+active -> state [dir=back];
+lineup -> state [dir=back];
+
+synopsis [fillcolor=gold];
+
+util [fillcolor=gold];
+wiki -> util [dir=back];
+
+wiki [fillcolor=gold];
+synopsis -> wiki [dir=back];
+persona -> wiki [dir=back];
+}
