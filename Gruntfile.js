@@ -27,14 +27,6 @@ module.exports = function (grunt) {
       }
     },
 
-    mochaTest: {
-      test: {
-        options: {
-          reporter: 'spec'
-        },
-        src: ['test/util.js','test/page.js', 'test/lineup.js']
-      }
-    },
     exorcise: {
       options: {
         bundleDest: 'client/client.js',
@@ -51,7 +43,7 @@ module.exports = function (grunt) {
           reporter: 'spec',
           require: 'coffee-script/register'
         },
-        src: ['test/util.coffee','test/page.coffee']
+        src: ['test/util.coffee','test/page.coffee', 'test/lineup.coffee', 'test/drop.coffee']
       }
     },
 
