@@ -99,6 +99,7 @@ bind = (div, item) ->
           types: dropEvent.originalEvent.dataTransfer.types
 
     dropEvent.preventDefault()
+    dropEvent.stopPropagation()
     if (dt = dropEvent.originalEvent.dataTransfer)?
       if dt.types? and ('text/uri-list' in dt.types or 'text/x-moz-url' in dt.types) and not ('Files' in dt.types)
         url = dt.getData 'URL'
