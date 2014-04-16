@@ -7,6 +7,7 @@ active = require './active'
 refresh = require './refresh'
 newPage = require('./page').newPage
 lineup = require './lineup'
+drop = require './drop'
 
 $ ->
 # ELEMENTS used for details popup
@@ -270,6 +271,11 @@ $ ->
 
     .delegate '.score', 'hover', (e) ->
       $('.main').trigger 'thumb', $(e.target).data('thumb')
+
+    .bind 'dragenter', (evt) -> evt.preventDefault()
+    .bind 'dragover', (evt) -> evt.preventDefault()
+    .bind "drop", drop.dispatch
+        page: (item) -> doInternalLink item.slug, null, item.site
 
   $(".provider input").click ->
     $("footer input:first").val $(this).attr('data-provider')
