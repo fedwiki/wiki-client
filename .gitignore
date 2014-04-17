@@ -17,6 +17,8 @@ lib/*.map
 test/*.js
 test/*.map
 client/client.js
+client/client.min.js
 client/client.map
+client/client.min.map
 client/test/testclient.js
 client/test/testclient.map
