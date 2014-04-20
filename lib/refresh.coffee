@@ -27,10 +27,11 @@ handleDragging = (evt, ui) ->
 
   if moveFromPage
     if $sourcePage.hasClass('ghost') or
-      $sourcePage.attr('id') == $destinationPage.attr('id')
-        # stem the damage, better ideas here:
-        # http://stackoverflow.com/questions/3916089/jquery-ui-sortables-connect-lists-copy-items
-        return
+      $sourcePage.attr('id') == $destinationPage.attr('id') or
+        evt.shiftKey
+          # stem the damage, better ideas here:
+          # http://stackoverflow.com/questions/3916089/jquery-ui-sortables-connect-lists-copy-items
+          return
 
   action = if moveWithinPage
     order = $(this).children().map((_, value) -> $(value).attr('data-id')).get()
