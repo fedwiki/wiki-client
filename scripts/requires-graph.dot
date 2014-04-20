@@ -5,6 +5,10 @@ active [fillcolor=gold];
 addToJournal [fillcolor=gold];
 util -> addToJournal [dir=back];
 
+dialog [fillcolor=paleGreen];
+
+drop [fillcolor=paleGreen];
+
 factory [fillcolor=gold];
 
 legacy [fillcolor=gold];
@@ -17,8 +21,10 @@ active -> legacy [dir=back];
 refresh -> legacy [dir=back];
 page -> legacy [dir=back];
 lineup -> legacy [dir=back];
+drop -> legacy [dir=back];
+dialog -> legacy [dir=back];
 
-lineup [fillcolor=gold];
+lineup [fillcolor=paleGreen];
 util -> lineup [dir=back];
 
 neighborhood [fillcolor=gold];
@@ -27,7 +33,7 @@ active -> neighborhood [dir=back];
 util -> neighborhood [dir=back];
 search -> neighborhood [dir=back];
 
-page [fillcolor=gold];
+page [fillcolor=paleGreen];
 util -> page [dir=back];
 
 pageHandler [fillcolor=gold];
@@ -43,6 +49,7 @@ persona [fillcolor=gold];
 plugin [fillcolor=gold];
 util -> plugin [dir=back];
 wiki -> plugin [dir=back];
+dialog -> plugin [dir=back];
 reference -> plugin [dir=back];
 factory -> plugin [dir=back];
 
@@ -80,4 +87,44 @@ wiki -> util [dir=back];
 wiki [fillcolor=gold];
 synopsis -> wiki [dir=back];
 persona -> wiki [dir=back];
+
+"test\nactive" [fillcolor=lightBlue];
+active -> "test\nactive" [dir=back];
+
+"test\ndrop" [fillcolor=paleGreen];
+drop -> "test\ndrop" [dir=back];
+
+"test\nlineup" [fillcolor=paleGreen];
+lineup -> "test\nlineup" [dir=back];
+page -> "test\nlineup" [dir=back];
+
+"test\nmockServer" [fillcolor=lightBlue];
+
+"test\nneighborhood" [fillcolor=lightBlue];
+wiki -> "test\nneighborhood" [dir=back];
+neighborhood -> "test\nneighborhood" [dir=back];
+
+"test\npage" [fillcolor=paleGreen];
+page -> "test\npage" [dir=back];
+
+"test\npageHandler" [fillcolor=lightBlue];
+wiki -> "test\npageHandler" [dir=back];
+pageHandler -> "test\npageHandler" [dir=back];
+
+"test\nplugin" [fillcolor=lightBlue];
+plugin -> "test\nplugin" [dir=back];
+
+"test\nrefresh" [fillcolor=lightBlue];
+refresh -> "test\nrefresh" [dir=back];
+
+"test\nrevision" [fillcolor=lightBlue];
+page -> "test\nrevision" [dir=back];
+revision -> "test\nrevision" [dir=back];
+
+"test\nsearch" [fillcolor=lightBlue];
+search -> "test\nsearch" [dir=back];
+
+"test\nutil" [fillcolor=lightBlue];
+wiki -> "test\nutil" [dir=back];
+util -> "test\nutil" [dir=back];
 }

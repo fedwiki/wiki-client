@@ -1,7 +1,7 @@
 # read all source files in lib, generate graph of require dependencies
 # usage: perl require-graph.pl
 
-@new = qw" format random dom emit ";
+@new = qw" page lineup drop dialog ";
 
 for (<../lib/*.coffee>) {
   $from = $1 if /(\w+)\.coffee/;
@@ -12,6 +12,20 @@ for (<../lib/*.coffee>) {
   for (<F>) {
     if (/\brequire\b.+\.\/(\w+)\b/) {
       $dot .= "$1 -> $from [dir=back];\n";
+
+    }
+  }
+}
+
+for (<../test/*.coffee>) {
+  $from = $1 if /(\w+)\.coffee/;
+  $color = $from ~~ @new ? 'paleGreen' : 'lightBlue';
+  $dot .= "\n\"test\\n$from\" [fillcolor=$color];\n";
+  open F, $_;
+
+  for (<F>) {
+    if (/\brequire\b.+\.\.\/lib\/(\w+)\b/) {
+      $dot .= "$1 -> \"test\\n$from\" [dir=back];\n";
 
     }
   }
