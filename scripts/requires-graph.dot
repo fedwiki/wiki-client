@@ -10,6 +10,7 @@ dialog [fillcolor=paleGreen];
 drop [fillcolor=paleGreen];
 
 factory [fillcolor=gold];
+neighborhood -> factory [dir=back];
 
 legacy [fillcolor=gold];
 wiki -> legacy [dir=back];
