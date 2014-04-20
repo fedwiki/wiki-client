@@ -1,0 +1,13 @@
+$dialog = null
+
+emit = ->
+  $dialog = $('<div></div>')
+    .html('This dialog will show every time!')
+    .dialog { autoOpen: false, title: 'Basic Dialog', height: 600, width: 800 }
+
+open = (title, html) ->
+  $dialog.html html
+  $dialog.dialog "option", "title", wiki.resolveLinks(title)
+  $dialog.dialog 'open'
+
+module.exports = {emit, open}

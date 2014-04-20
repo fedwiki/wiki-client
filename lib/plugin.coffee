@@ -1,5 +1,6 @@
-util = require('./util')
+util = require './util'
 wiki = require './wiki'
+dialog = require './dialog'
 
 module.exports = plugin = {}
 
@@ -83,7 +84,7 @@ window.plugins =
       div.append "<img class=thumbnail src=\"#{item.url}\"> <p>#{wiki.resolveLinks(item.text)}</p>"
     bind: (div, item) ->
       div.dblclick -> wiki.textEditor div, item
-      div.find('img').dblclick -> wiki.dialog item.text, this
+      div.find('img').dblclick -> dialog.open item.text, this
   future:
     emit: (div, item) ->
       div.append """#{item.text}<br><br><button class="create">create</button> new blank page"""

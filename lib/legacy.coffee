@@ -8,17 +8,12 @@ refresh = require './refresh'
 newPage = require('./page').newPage
 lineup = require './lineup'
 drop = require './drop'
+dialog = dialog = require './dialog'
 
 $ ->
-# ELEMENTS used for details popup
 
-  window.dialog = $('<div></div>')
-	  .html('This dialog will show every time!')
-	  .dialog { autoOpen: false, title: 'Basic Dialog', height: 600, width: 800 }
-  wiki.dialog = (title, html) ->
-    window.dialog.html html
-    window.dialog.dialog "option", "title", wiki.resolveLinks(title)
-    window.dialog.dialog 'open'
+  dialog.emit()
+  wiki.dialog = dialog.open
 
 # FUNCTIONS used by plugins and elsewhere
 
@@ -185,7 +180,7 @@ $ ->
       e.preventDefault()
       $page = $(this).parent().parent()
       json = $page.data('data')
-      wiki.dialog "JSON for #{json.title}",  $('<pre/>').text(JSON.stringify(json, null, 2))
+      dialog.open "JSON for #{json.title}",  $('<pre/>').text(JSON.stringify(json, null, 2))
 
     .delegate '.page', 'click', (e) ->
       active.set this unless $(e.target).is("a")
@@ -209,7 +204,7 @@ $ ->
       rev = page.journal.length-1
       action = page.journal[rev]
       json = JSON.stringify(action, null, 2)
-      wiki.dialog "Revision #{rev}, #{action.type} action", $('<pre/>').text(json)
+      dialog.open "Revision #{rev}, #{action.type} action", $('<pre/>').text(json)
 
     .delegate '.action', 'click', (e) ->
       e.preventDefault()
