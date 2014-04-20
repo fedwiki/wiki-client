@@ -47,7 +47,7 @@ $ ->
       pageHandler.put $page, {item, id: item.id, type: 'add', after: before?.id}
     $item
 
-  createTextElement = (pageElement, beforeElement, initialText) ->
+  createTextElement = ($page, beforeElement, initialText) ->
     item =
       type: 'paragraph'
       id: util.randomBytes(8)
@@ -57,12 +57,12 @@ $ ->
                     """
     itemElement
       .data('item', item)
-      .data('pageElement', pageElement)
+      .data('pageElement', $page)
     beforeElement.after itemElement
     plugin.do itemElement, item
     itemBefore = wiki.getItem beforeElement
     wiki.textEditor itemElement, item
-    sleep 500, -> pageHandler.put pageElement, {item: item, id: item.id, type: 'add', after: itemBefore?.id}
+    sleep 500, -> pageHandler.put $page, {item: item, id: item.id, type: 'add', after: itemBefore?.id}
 
   textEditor = wiki.textEditor = (div, item, caretPos, doubleClicked) ->
     return if div.hasClass 'textEditing'
@@ -113,10 +113,10 @@ $ ->
             else
               textarea.val(prefix)
             textarea.focusout()
-            pageElement = div.parent().parent()
-            createTextElement(pageElement, div, suffix)
-            createTextElement(pageElement, div, middle) if middle?
-            createTextElement(pageElement, div, '') if prefix is ''
+            $page = div.parent().parent()
+            createTextElement($page, div, suffix)
+            createTextElement($page, div, middle) if middle?
+            createTextElement($page, div, '') if prefix is ''
             return false
     div.html textarea
     if caretPos?
@@ -183,8 +183,8 @@ $ ->
   $('.main')
     .delegate '.show-page-source', 'click', (e) ->
       e.preventDefault()
-      pageElement = $(this).parent().parent()
-      json = pageElement.data('data')
+      $page = $(this).parent().parent()
+      json = $page.data('data')
       wiki.dialog "JSON for #{json.title}",  $('<pre/>').text(JSON.stringify(json, null, 2))
 
     .delegate '.page', 'click', (e) ->
@@ -231,15 +231,15 @@ $ ->
         active.set($('.page').last())
 
     .delegate '.fork-page', 'click', (e) ->
-      pageElement = $(e.target).parents('.page')
-      if pageElement.hasClass('local')
+      $page = $(e.target).parents('.page')
+      if $page.hasClass('local')
         unless wiki.useLocalStorage()
-          item = pageElement.data('data')
-          pageElement.removeClass('local')
-          pageHandler.put pageElement, {type: 'fork', item} # push
+          item = $page.data('data')
+          $page.removeClass('local')
+          pageHandler.put $page, {type: 'fork', item} # push
       else
-        if (remoteSite = pageElement.data('site'))?
-          pageHandler.put pageElement, {type:'fork', site: remoteSite} # pull
+        if (remoteSite = $page.data('site'))?
+          pageHandler.put $page, {type:'fork', site: remoteSite} # pull
 
     .delegate '.action', 'hover', ->
       id = $(this).attr('data-id')

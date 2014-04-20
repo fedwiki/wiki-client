@@ -1,9 +1,9 @@
 # See fed.wiki.org/about-factory-plugin.html
 
-emit = (div, item) ->
-  div.append '<p>Double-Click to Edit<br>Drop Text or Image to Insert</p>'
+emit = ($item, item) ->
+  $item.append '<p>Double-Click to Edit<br>Drop Text or Image to Insert</p>'
   showMenu = ->
-    menu = div.find('p').append "<br>Or Choose a Plugin"
+    menu = $item.find('p').append "<br>Or Choose a Plugin"
     menu.append (left = $ """<div style="text-align:left; padding-left: 40%"></div>""")
     menu = left
     menuItem = (title, name) ->
@@ -15,12 +15,12 @@ emit = (div, item) ->
     else  # deprecated
       menuItem(info.menu, name) for name, info of window.catalog
     menu.find('a.menu').click (evt)->
-      div.removeClass('factory').addClass(item.type=evt.target.text.toLowerCase())
-      div.unbind()
-      wiki.textEditor div, item
+      $item.removeClass('factory').addClass(item.type=evt.target.text.toLowerCase())
+      $item.unbind()
+      wiki.textEditor $item, item
 
   showPrompt = ->
-    div.append "<p>#{wiki.resolveLinks(item.prompt)}</b>"
+    $item.append "<p>#{wiki.resolveLinks(item.prompt)}</b>"
 
   if item.prompt
     showPrompt()
@@ -31,31 +31,31 @@ emit = (div, item) ->
       window.catalog = data
       showMenu()
 
-bind = (div, item) ->
+bind = ($item, item) ->
 
   syncEditAction = () ->
     wiki.log 'factory item', item
-    div.empty().unbind()
-    div.removeClass("factory").addClass(item.type)
-    pageElement = div.parents('.page:first')
+    $item.empty().unbind()
+    $item.removeClass("factory").addClass(item.type)
+    $page = $item.parents('.page:first')
     try
-      div.data 'pageElement', pageElement
-      div.data 'item', item
+      $item.data 'pageElement', $page
+      $item.data 'item', item
       wiki.getPlugin item.type, (plugin) ->
-        plugin.emit div, item
-        plugin.bind div, item
+        plugin.emit $item, item
+        plugin.bind $item, item
     catch err
-      div.append "<p class='error'>#{err}</p>"
-    wiki.pageHandler.put pageElement, {type: 'edit', id: item.id, item: item}
+      $item.append "<p class='error'>#{err}</p>"
+    wiki.pageHandler.put $page, {type: 'edit', id: item.id, item: item}
 
-  div.dblclick ->
-    div.removeClass('factory').addClass(item.type='paragraph')
-    div.unbind()
-    wiki.textEditor div, item
+  $item.dblclick ->
+    $item.removeClass('factory').addClass(item.type='paragraph')
+    $item.unbind()
+    wiki.textEditor $item, item
 
-  div.bind 'dragenter', (evt) -> evt.preventDefault()
-  div.bind 'dragover', (evt) -> evt.preventDefault()
-  div.bind "drop", (dropEvent) ->
+  $item.bind 'dragenter', (evt) -> evt.preventDefault()
+  $item.bind 'dragover', (evt) -> evt.preventDefault()
+  $item.bind "drop", (dropEvent) ->
 
     punt = (data) ->
       item.prompt = "<b>Unexpected Item</b><br>We can't make sense of the drop.<br>#{JSON.stringify data}<br>Try something else or see [[About Factory Plugin]]."

@@ -94,48 +94,48 @@ pageHandler.get = ({whenGotten,whenNotGotten,pageInformation}  ) ->
 
 pageHandler.context = []
 
-pushToLocal = (pageElement, pagePutInfo, action) ->
+pushToLocal = ($page, pagePutInfo, action) ->
   if action.type == 'create'
     page = {title: action.item.title, story:[], journal:[]}
   else
     page = pageFromLocalStorage pagePutInfo.slug
-    page ||= pageElement.data("data")
+    page ||= $page.data("data")
     page.journal = [] unless page.journal?
     if (site=action['fork'])?
       page.journal = page.journal.concat({'type':'fork','site':site})
       delete action['fork']
-    page.story = $(pageElement).find(".item").map(-> $(@).data("item")).get()
+    page.story = $($page).find(".item").map(-> $(@).data("item")).get()
   page.journal = page.journal.concat(action)
   localStorage[pagePutInfo.slug] = JSON.stringify(page)
-  addToJournal pageElement.find('.journal'), action
+  addToJournal $page.find('.journal'), action
 
-pushToServer = (pageElement, pagePutInfo, action) ->
+pushToServer = ($page, pagePutInfo, action) ->
   $.ajax
     type: 'PUT'
     url: "/page/#{pagePutInfo.slug}/action"
     data:
       'action': JSON.stringify(action)
     success: () ->
-      addToJournal pageElement.find('.journal'), action
+      addToJournal $page.find('.journal'), action
       if action.type == 'fork' # push
-        localStorage.removeItem pageElement.attr('id')
+        localStorage.removeItem $page.attr('id')
     error: (xhr, type, msg) ->
       wiki.log "pageHandler.put ajax error callback", type, msg
 
-pageHandler.put = (pageElement, action) ->
+pageHandler.put = ($page, action) ->
 
   checkedSite = () ->
-    switch site = pageElement.data('site')
+    switch site = $page.data('site')
       when 'origin', 'local', 'view' then null
       when location.host then null
       else site
 
   # about the page we have
   pagePutInfo = {
-    slug: pageElement.attr('id').split('_rev')[0]
-    rev: pageElement.attr('id').split('_rev')[1]
+    slug: $page.attr('id').split('_rev')[0]
+    rev: $page.attr('id').split('_rev')[1]
     site: checkedSite()
-    local: pageElement.hasClass('local')
+    local: $page.hasClass('local')
   }
   forkFrom = pagePutInfo.site
   wiki.log 'pageHandler.put', action, pagePutInfo
@@ -159,24 +159,24 @@ pageHandler.put = (pageElement, action) ->
   # update dom when forking
   if forkFrom
     # pull remote site closer to us
-    pageElement.find('h1 img').attr('src', '/favicon.png')
-    pageElement.find('h1 a').attr('href', '/')
-    pageElement.data('site', null)
-    pageElement.removeClass('remote')
+    $page.find('h1 img').attr('src', '/favicon.png')
+    $page.find('h1 a').attr('href', '/')
+    $page.data('site', null)
+    $page.removeClass('remote')
     #STATE -- update url when site changes
     state.setUrl()
     if action.type != 'fork'
       # bundle implicit fork with next action
       action.fork = forkFrom
-      addToJournal pageElement.find('.journal'),
+      addToJournal $page.find('.journal'),
         type: 'fork'
         site: forkFrom
         date: action.date
 
   # store as appropriate
   if wiki.useLocalStorage() or pagePutInfo.site == 'local'
-    pushToLocal(pageElement, pagePutInfo, action)
-    pageElement.addClass("local")
+    pushToLocal($page, pagePutInfo, action)
+    $page.addClass("local")
   else
-    pushToServer(pageElement, pagePutInfo, action)
+    pushToServer($page, pagePutInfo, action)
 

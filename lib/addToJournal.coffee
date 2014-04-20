@@ -1,23 +1,23 @@
 util = require './util'
 
-module.exports = (journalElement, action) ->
-  pageElement = journalElement.parents('.page:first')
-  actionTitle = action.type || 'separator'
-  actionTitle += " #{util.formatElapsedTime(action.date)}" if action.date?
-  actionElement = $("""<a href="#" /> """).addClass("action").addClass(action.type || 'separator')
+module.exports = ($journal, action) ->
+  $page = $journal.parents('.page:first')
+  title = action.type || 'separator'
+  title += " #{util.formatElapsedTime(action.date)}" if action.date?
+  $action = $("""<a href="#" /> """).addClass("action").addClass(action.type || 'separator')
     .text(action.symbol || util.symbols[action.type])
-    .attr('title',actionTitle)
+    .attr('title',title)
     .attr('data-id', action.id || "0")
     .data('action', action)
-  controls = journalElement.children('.control-buttons')
+  controls = $journal.children('.control-buttons')
   if controls.length > 0
-    actionElement.insertBefore(controls)
+    $action.insertBefore(controls)
   else
-    actionElement.appendTo(journalElement)
+    $action.appendTo($journal)
   if action.type == 'fork' and action.site?
-    actionElement
+    $action
       .css("background-image", "url(//#{action.site}/favicon.png)")
-      .attr("href", "//#{action.site}/#{pageElement.attr('id')}.html")
+      .attr("href", "//#{action.site}/#{$page.attr('id')}.html")
       .data("site", action.site)
-      .data("slug", pageElement.attr('id'))
+      .data("slug", $page.attr('id'))
 
