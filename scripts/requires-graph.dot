@@ -51,6 +51,7 @@ plugin [fillcolor=gold];
 util -> plugin [dir=back];
 wiki -> plugin [dir=back];
 dialog -> plugin [dir=back];
+neighborhood -> plugin [dir=back];
 reference -> plugin [dir=back];
 factory -> plugin [dir=back];
 
@@ -92,10 +93,10 @@ persona -> wiki [dir=back];
 "test\nactive" [fillcolor=lightBlue];
 active -> "test\nactive" [dir=back];
 
-"test\ndrop" [fillcolor=paleGreen];
+"test\ndrop" [fillcolor=lightBlue];
 drop -> "test\ndrop" [dir=back];
 
-"test\nlineup" [fillcolor=paleGreen];
+"test\nlineup" [fillcolor=lightBlue];
 lineup -> "test\nlineup" [dir=back];
 page -> "test\nlineup" [dir=back];
 
@@ -105,7 +106,7 @@ page -> "test\nlineup" [dir=back];
 wiki -> "test\nneighborhood" [dir=back];
 neighborhood -> "test\nneighborhood" [dir=back];
 
-"test\npage" [fillcolor=paleGreen];
+"test\npage" [fillcolor=lightBlue];
 page -> "test\npage" [dir=back];
 
 "test\npageHandler" [fillcolor=lightBlue];

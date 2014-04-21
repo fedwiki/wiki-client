@@ -19,7 +19,7 @@ for (<../lib/*.coffee>) {
 
 for (<../test/*.coffee>) {
   $from = $1 if /(\w+)\.coffee/;
-  $color = $from ~~ @new ? 'paleGreen' : 'lightBlue';
+  $color = 'lightBlue';
   $dot .= "\n\"test\\n$from\" [fillcolor=$color];\n";
   open F, $_;
 
