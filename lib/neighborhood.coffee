@@ -7,8 +7,7 @@ createSearch = require './search'
 
 module.exports = neighborhood = {}
 
-
-wiki.neighborhood ?= {}
+neighborhood.sites = {}
 nextAvailableFetch = 0
 nextFetchInterval = 2000
 totalPages = 0
@@ -49,14 +48,14 @@ populateSiteInfoFor = (site,neighborInfo)->
 
 
 neighborhood.registerNeighbor = (site)->
-  return if wiki.neighborhood[site]?
+  return if neighborhood.sites[site]?
   neighborInfo = {}
-  wiki.neighborhood[site] = neighborInfo
+  neighborhood.sites[site] = neighborInfo
   populateSiteInfoFor( site, neighborInfo )
   $('body').trigger 'new-neighbor', site
 
 neighborhood.listNeighbors = ()->
-  _.keys( wiki.neighborhood )
+  _.keys( neighborhood.sites )
 
 neighborhood.search = (searchQuery)->
   finds = []
@@ -71,7 +70,7 @@ neighborhood.search = (searchQuery)->
     hit
 
   start = Date.now()
-  for own neighborSite,neighborInfo of wiki.neighborhood
+  for own neighborSite,neighborInfo of neighborhood.sites
     sitemap = neighborInfo.sitemap
     tick 'sites' if sitemap?
     matchingPages = _.each sitemap, (page)->
@@ -103,7 +102,7 @@ $ ->
     .on 'new-neighbor', (e, site) ->
       $neighborhood.append flag site
     .on 'new-neighbor-done', (e, site) ->
-      pageCount = wiki.neighborhood[site].sitemap.length
+      pageCount = neighborhood.sites[site].sitemap.length
       img = $(""".neighborhood .neighbor[data-site="#{site}"]""").find('img')
       img.attr('title', "#{site}\n #{pageCount} pages")
       totalPages += pageCount

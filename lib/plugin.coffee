@@ -1,6 +1,7 @@
 util = require './util'
 wiki = require './wiki'
 dialog = require './dialog'
+neighborhood = require './neighborhood'
 
 module.exports = plugin = {}
 
@@ -88,7 +89,7 @@ window.plugins =
   future:
     emit: (div, item) ->
       div.append """#{item.text}<br><br><button class="create">create</button> new blank page"""
-      if (info = wiki.neighborhood[location.host])? and info.sitemap?
+      if (info = neighborhood.sites[location.host])? and info.sitemap?
         for item in info.sitemap
           if item.slug.match /-template$/
             div.append """<br><button class="create" data-slug=#{item.slug}>create</button> from #{wiki.resolveLinks "[[#{item.title}]]"}"""

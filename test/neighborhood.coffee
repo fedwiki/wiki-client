@@ -24,8 +24,8 @@ describe 'neighborhood', ->
         sitemap: fakeSitemap
       }
 
-      wiki.neighborhood = {}
-      wiki.neighborhood['my-site'] = neighbor
+      neighborhood.sites = {}
+      neighborhood.sites['my-site'] = neighbor
 
     it 'returns all pages that match the query', ->
       searchResult = neighborhood.search( "Page" )
@@ -51,8 +51,8 @@ describe 'neighborhood', ->
 
   describe 'more than one neighbor', ->
     before ->
-      wiki.neighborhood = {}
-      wiki.neighborhood['site-one'] = {
+      neighborhood.sites = {}
+      neighborhood.sites['site-one'] = {
         sitemap: [
           { title: 'Page One from Site 1' },
           { title: 'Page Two from Site 1' },
@@ -60,7 +60,7 @@ describe 'neighborhood', ->
         ]
       }
 
-      wiki.neighborhood['site-two'] = {
+      neighborhood.sites['site-two'] = {
         sitemap: [
           { title: 'Page One from Site 2' },
           { title: 'Page Two from Site 2' },
@@ -77,8 +77,8 @@ describe 'neighborhood', ->
 
   describe 'an unpopulated neighbor', ->
     before ->
-      wiki.neighborhood = {}
-      wiki.neighborhood['unpopulated-site'] = {}
+      neighborhood.sites = {}
+      neighborhood.sites['unpopulated-site'] = {}
 
     it 'gracefully ignores unpopulated neighbors', ->
       searchResult = neighborhood.search( "some search query" )
