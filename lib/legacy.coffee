@@ -5,7 +5,6 @@ plugin = require './plugin'
 state = require './state'
 active = require './active'
 refresh = require './refresh'
-newPage = require('./page').newPage
 lineup = require './lineup'
 drop = require './drop'
 dialog = dialog = require './dialog'

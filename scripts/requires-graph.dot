@@ -20,7 +20,6 @@ plugin -> legacy [dir=back];
 state -> legacy [dir=back];
 active -> legacy [dir=back];
 refresh -> legacy [dir=back];
-page -> legacy [dir=back];
 lineup -> legacy [dir=back];
 drop -> legacy [dir=back];
 dialog -> legacy [dir=back];
