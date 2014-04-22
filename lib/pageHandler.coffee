@@ -1,3 +1,7 @@
+# The pageHandler bundles fetching and storing json pages
+# from origin, remote and browser local storage. It handles
+# incremental updates and implicit forks when pages are edited.
+
 _ = require 'underscore'
 
 util = require './util'

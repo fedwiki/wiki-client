@@ -1,3 +1,7 @@
+# Editor provides a small textarea for editing wiki markup.
+# It can split and join paragraphs markup but leaves other
+# types alone assuming they will interpret multiple lines.
+
 plugin = require './plugin'
 itemz = require './itemz'
 util = require './util'

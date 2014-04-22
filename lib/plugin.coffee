@@ -1,3 +1,6 @@
+# The plugin module manages the dynamic retrieval of plugin
+# javascript including additional scripts that may be requested.
+
 util = require './util'
 
 module.exports = plugin = {}

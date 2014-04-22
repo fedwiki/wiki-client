@@ -1,3 +1,7 @@
+# A wiki page has a journal of actions that have been completed.
+# The addToJournal function is called when the origin server
+# response that the network operation is complete.
+
 util = require './util'
 
 module.exports = ($journal, action) ->

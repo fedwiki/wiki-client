@@ -1,3 +1,7 @@
+# An Image plugin presents a picture with a caption. The image source
+# can be any URL but we have been using "data urls" so as to get the
+# proper sharing semantics if not storage efficency.
+
 dialog = require './dialog'
 editor = require './editor'
 resolve = require './resolve'

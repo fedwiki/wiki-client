@@ -1,4 +1,6 @@
-# See fed.wiki.org/about-factory-plugin.html
+# A Factory plugin provides a drop zone for desktop content
+# destine to be one or another kind of item. Double click
+# will turn it into a normal paragraph.
 
 neighborhood = require './neighborhood'
 plugin = require './plugin'

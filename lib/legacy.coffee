@@ -1,3 +1,8 @@
+# The legacy module is what is left of the single javascript
+# file that once was Smallest Federated Wiki. Execution still
+# starts here and many event dispatchers are set up before
+# the user takes control.
+
 util = require './util'
 pageHandler = require './pageHandler'
 state = require './state'

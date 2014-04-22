@@ -1,3 +1,8 @@
+# The Reference plugin holds a site and page name to be
+# found on that site. Search, for example, produces a page of
+# references. Double click will edit the body of a reference
+# but not the name and site.
+
 editor = require './editor'
 resolve = require './resolve'
 

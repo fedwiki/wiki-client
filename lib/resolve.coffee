@@ -1,3 +1,7 @@
+# The function resolveLinks converts link markup to html syntax.
+# The html will have a search path (the resolutionContext) encoded
+# into the title of <a> tags it generates.
+
 asSlug = require('./page').asSlug
 
 resolutionContext = []

@@ -1,3 +1,8 @@
+# Here is where we attach federated semantics to internal
+# links. Call doInternalLink to add a new page to the display
+# given a page name, a place to put it an an optional site
+# to retrieve it from.
+
 lineup = require './lineup'
 active = require './active'
 refresh = require './refresh'

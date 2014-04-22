@@ -1,3 +1,7 @@
+# Dialog manages a single <div> that is used to present a
+# jQuery UI dialog used for detail display, usually on
+# double click.
+
 resolve = require './resolve'
 
 $dialog = null

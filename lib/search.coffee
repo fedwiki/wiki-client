@@ -1,3 +1,7 @@
+# The search module invokes neighborhood's query function,
+# formats the results as story items, and then opens a
+# page to present them.
+
 link = require './link'
 util = require './util'
 active = require './active'

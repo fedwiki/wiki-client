@@ -1,3 +1,7 @@
+# A Future plugin represents a page that hasn't been written
+# or wasn't found where expected. It recognizes template pages
+# and offers to clone them or make a blank page.
+
 resolve = require './resolve'
 neighborhood = require './neighborhood'
 

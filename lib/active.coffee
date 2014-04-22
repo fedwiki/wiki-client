@@ -1,7 +1,10 @@
+# Wiki considers one page to be active. Use active.set to change which
+# page this is. A page need not be active to be edited.
+
 module.exports = active = {}
-# FUNCTIONS and HANDLERS to manage the active page, and scroll viewport to show it
 
 active.scrollContainer = undefined
+
 findScrollContainer = ->
   scrolled = $("body, html").filter -> $(this).scrollLeft() > 0
   if scrolled.length > 0

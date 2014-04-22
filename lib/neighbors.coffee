@@ -1,3 +1,8 @@
+# This module manages the display of site flags representing
+# fetched sitemaps stored in the neighborhood. It progresses
+# through a series of states which, when attached to the flags,
+# cause them to animate as an indication of work in progress.
+
 link = require './link'
 
 sites = null

@@ -1,3 +1,17 @@
+# Refresh will fetch a page and use it to fill a dom
+# element that has been ready made to hold it.
+#
+# cycle: have a div, $(this), with id = slug
+# whenGotten: have a pageObject we just fetched
+# buildPage: have a pageObject from somewhere
+# rebuildPage: have a key from saving pageObject in lineup
+# renderPageIntoPageElement: have $page annotated from pageObject
+# pageObject.seqItems: get back each item sequentially
+# plugin.do: have $item in dom for item
+#
+# The various calling conventions are due to async
+# requirements and the work of many hands.
+
 _ = require 'underscore'
 
 util = require './util'

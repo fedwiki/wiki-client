@@ -1,3 +1,8 @@
+# The Persona module handles the user login in a side cooperation
+# with the origin server independent of fetching pages. It signals
+# login success by specifically recognizable markup in its user
+# prompts.
+
 module.exports = (owner) ->
   $("#user-email").hide()
   $("#persona-login-btn").hide()

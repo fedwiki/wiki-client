@@ -1,6 +1,8 @@
-# This file duplicates wiki.coffee but exists to break dependency loops
-# while incrementally removing dependencies on wiki.coffee. Eventually
-# no file in wiki-client will depend on wiki.coffee, save client.coffee.
+# We have exposed many parts of the core javascript to dynamically
+# loaded plugins through bindings in the global "wiki". We expect
+# to deprecate many of these as the plugin api matures. We once used
+# the global to communicate between core modules but have now
+# moved all of that responsibility onto browserify.
 
 wiki = {}
 

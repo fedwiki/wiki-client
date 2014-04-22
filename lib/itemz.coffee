@@ -1,3 +1,7 @@
+# The itemz module understands how we have been keeping track of
+# story items and their corresponding divs. It offers utility
+# functions used elsewere. We anticipate a more proper model eventually.
+
 pageHandler = require './pageHandler'
 util = require './util'
 plugin = require './plugin'

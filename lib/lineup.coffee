@@ -1,3 +1,9 @@
+# The lineup represents a sequence of pages with possible
+# duplication. We maintain the lineup in parallel with
+# the DOM list of .page elements. Eventually lineup will
+# play a more central role managing calculations and
+# display updates.
+
 util = require './util'
 
 pageByKey = {}

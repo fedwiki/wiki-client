@@ -1,3 +1,7 @@
+# The state module saves the .page lineup in the browser's location
+# bar and history. It also reconstructs that state when the browser
+# notifies us that the user has changed this sequence.
+
 active = require './active'
 lineup = require './lineup'
 link = null

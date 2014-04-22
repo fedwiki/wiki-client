@@ -1,3 +1,7 @@
+# The synopsis module extracts a summary from the json derrived
+# representation of a page. This might be from a "synopsys:" field,
+# but more likely it comes from text found in the first or second item.
+
 module.exports = (page) ->
   synopsis = page.synopsis
   if page? && page.story?

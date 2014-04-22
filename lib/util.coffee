@@ -1,3 +1,9 @@
+# This module collects various functions that might belong
+# better elsewhere. At one point we thought of uniformity
+# of representations but that hasn't been a strong influency.
+# The carot selection code it probaby here because the
+# text editor was looking too long.
+
 module.exports = util = {}
 
 util.symbols =

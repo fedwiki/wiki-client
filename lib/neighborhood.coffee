@@ -1,3 +1,7 @@
+# The neighborhood provides a cache of site maps read from
+# various federated wiki sites. It is careful to fetch maps
+# slowly and keeps track of get requests in flight.
+
 _ = require 'underscore'
 
 util = require './util'

@@ -1,3 +1,7 @@
+# Page provides a factory for pageObjects, a model that combines
+# the json derrived object and the site from which it came.
+
+
 util = require './util'
 _ = require 'underscore'
 
