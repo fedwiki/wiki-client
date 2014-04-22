@@ -1,6 +1,11 @@
 # See fed.wiki.org/about-factory-plugin.html
 
 neighborhood = require './neighborhood'
+plugin = require './plugin'
+resolve = require './resolve'
+pageHandler = require './pageHandler'
+editor = require './editor'
+synopsis = require './synopsis'
 
 emit = ($item, item) ->
   $item.append '<p>Double-Click to Edit<br>Drop Text or Image to Insert</p>'
@@ -19,10 +24,10 @@ emit = ($item, item) ->
     menu.find('a.menu').click (evt)->
       $item.removeClass('factory').addClass(item.type=evt.target.text.toLowerCase())
       $item.unbind()
-      wiki.textEditor $item, item
+      editor.textEditor $item, item
 
   showPrompt = ->
-    $item.append "<p>#{wiki.resolveLinks(item.prompt)}</b>"
+    $item.append "<p>#{resolve.resolveLinks(item.prompt)}</b>"
 
   if item.prompt
     showPrompt()
@@ -36,24 +41,24 @@ emit = ($item, item) ->
 bind = ($item, item) ->
 
   syncEditAction = () ->
-    wiki.log 'factory item', item
+    console.log 'factory item', item
     $item.empty().unbind()
     $item.removeClass("factory").addClass(item.type)
     $page = $item.parents('.page:first')
     try
       $item.data 'pageElement', $page
       $item.data 'item', item
-      wiki.getPlugin item.type, (plugin) ->
+      plugin.getPlugin item.type, (plugin) ->
         plugin.emit $item, item
         plugin.bind $item, item
     catch err
       $item.append "<p class='error'>#{err}</p>"
-    wiki.pageHandler.put $page, {type: 'edit', id: item.id, item: item}
+    pageHandler.put $page, {type: 'edit', id: item.id, item: item}
 
   $item.dblclick ->
     $item.removeClass('factory').addClass(item.type='paragraph')
     $item.unbind()
-    wiki.textEditor $item, item
+    editor.textEditor $item, item
 
   $item.bind 'dragenter', (evt) -> evt.preventDefault()
   $item.bind 'dragover', (evt) -> evt.preventDefault()
@@ -63,7 +68,7 @@ bind = ($item, item) ->
       item.prompt = "<b>Unexpected Item</b><br>We can't make sense of the drop.<br>#{JSON.stringify data}<br>Try something else or see [[About Factory Plugin]]."
       data.userAgent = navigator.userAgent
       item.punt = data
-      wiki.log 'factory punt', dropEvent
+      console.log 'factory punt', dropEvent
       syncEditAction()
 
     readFile = (file) ->
@@ -106,15 +111,15 @@ bind = ($item, item) ->
       if dt.types? and ('text/uri-list' in dt.types or 'text/x-moz-url' in dt.types) and not ('Files' in dt.types)
         url = dt.getData 'URL'
         if found = url.match /^http:\/\/([a-zA-Z0-9:.-]+)(\/([a-zA-Z0-9:.-]+)\/([a-z0-9-]+(_rev\d+)?))+$/
-          wiki.log 'factory drop url', found
+          console.log 'factory drop url', found
           [ignore, origin, ignore, item.site, item.slug, ignore] = found
           if $.inArray(item.site,['view','local','origin']) >= 0
             item.site = origin
           $.getJSON "http://#{item.site}/#{item.slug}.json", (remote) ->
-            wiki.log 'factory remote', remote
+            console.log 'factory remote', remote
             item.type = 'reference'
             item.title = remote.title || item.slug
-            item.text = wiki.createSynopsis remote
+            item.text = synopsis.createSynopsis remote
             syncEditAction()
             neighborhood.registerNeighbor item.site if item.site?
         else

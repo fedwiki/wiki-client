@@ -2,18 +2,25 @@ _ = require 'underscore'
 
 util = require './util'
 pageHandler = require './pageHandler'
-newPage = require('./page').newPage
 plugin = require './plugin'
 state = require './state'
 neighborhood = require './neighborhood'
 addToJournal = require './addToJournal'
-wiki = require('./wiki')
 lineup = require './lineup'
+resolve = require './resolve'
+
+pageModule = require('./page')
+newPage = pageModule.newPage
+asSlug = pageModule.asSlug
+
+
+getItem = (element) ->
+  $(element).data("item") or $(element).data('staticItem') if $(element).length > 0
 
 handleDragging = (evt, ui) ->
   $item = ui.item
 
-  item = wiki.getItem($item)
+  item = getItem($item)
   $thisPage = $(this).parents('.page:first')
   $sourcePage = $item.data('pageElement')
   sourceSite = $sourcePage.data('site')
@@ -37,12 +44,12 @@ handleDragging = (evt, ui) ->
     order = $(this).children().map((_, value) -> $(value).attr('data-id')).get()
     {type: 'move', order: order}
   else if moveFromPage
-    wiki.log 'drag from', $sourcePage.find('h1').text()
+    console.log 'drag from', $sourcePage.find('h1').text()
     {type: 'remove'}
   else if moveToPage
     $item.data 'pageElement', $thisPage
     $before = $item.prev('.item')
-    before = wiki.getItem($before)
+    before = getItem($before)
     {type: 'add', item: item, after: before?.id}
   action.id = item.id
   pageHandler.put $thisPage, action
@@ -71,7 +78,7 @@ createFactory = ($page) ->
   $page.find(".story").append($item)
   plugin.do $item, item
   $before = $item.prev('.item')
-  before = wiki.getItem($before)
+  before = getItem($before)
   pageHandler.put $page, {item: item, id: item.id, type: "add", after: before?.id}
 
 emitHeader = ($header, $page, pageObject) ->
@@ -115,11 +122,12 @@ emitFooter = ($footer, pageObject) ->
     <a href= "//#{host}/#{slug}.html">#{host}</a>
   """
 
-emitTwins = wiki.emitTwins = ($page) ->
+emitTwins = ($page) ->
   page = $page.data 'data'
+  return unless page
   site = $page.data('site') or window.location.host
   site = window.location.host if site in ['view', 'origin']
-  slug = wiki.asSlug page.title
+  slug = asSlug page.title
   if (actions = page.journal?.length)? and (viewing = page.journal[actions-1]?.date)?
     viewing = Math.floor(viewing/1000)*1000
     bins = {newer:[], same:[], older:[]}
@@ -156,7 +164,7 @@ renderPageIntoPageElement = (pageObject, $page) ->
   console.log '.page keys ', ($(each).data('key') for each in $('.page'))
   console.log 'lineup keys', lineup.debugKeys()
 
-  wiki.resolutionContext = pageObject.getContext()
+  resolve.resolutionContext = pageObject.getContext()
 
   $page.empty()
   [$twins, $header, $story, $journal, $footer] = ['twins', 'header', 'story', 'journal', 'footer'].map (className) ->
@@ -190,7 +198,7 @@ createMissingFlag = ($page, pageObject) ->
       plugin.get 'favicon', (favicon) ->
         favicon.create()
 
-wiki.rebuildPage = (pageObject, $page) ->
+rebuildPage = (pageObject, $page) ->
   $page.addClass('local') if pageObject.isLocal()
   $page.addClass('remote') if pageObject.isRemote()
   $page.addClass('plugin') if pageObject.isPlugin()
@@ -205,11 +213,11 @@ wiki.rebuildPage = (pageObject, $page) ->
   initAddButton $page
   $page
 
-wiki.buildPage = (pageObject, $page) ->
+buildPage = (pageObject, $page) ->
   $page.data('key', lineup.addPage(pageObject))
-  wiki.rebuildPage(pageObject, $page)
+  rebuildPage(pageObject, $page)
 
-module.exports = refresh = wiki.refresh = ->
+cycle = ->
   $page = $(this)
 
   [slug, rev] = $page.attr('id').split('_rev')
@@ -252,10 +260,10 @@ module.exports = refresh = wiki.refresh = ->
         'text': 'We could not find this page.'
         'title': title
 
-    wiki.buildPage( pageObject, $page ).addClass('ghost')
+    buildPage( pageObject, $page ).addClass('ghost')
 
   whenGotten = (pageObject) ->
-    wiki.buildPage( pageObject, $page )
+    buildPage( pageObject, $page )
     for site in pageObject.getNeighbors(location.host)
       neighborhood.registerNeighbor site
 
@@ -264,3 +272,4 @@ module.exports = refresh = wiki.refresh = ->
     whenNotGotten: createGhostPage
     pageInformation: pageInformation
 
+module.exports = {cycle, emitTwins, buildPage, rebuildPage}

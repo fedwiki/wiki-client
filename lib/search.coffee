@@ -8,7 +8,6 @@ createSearch = ({neighborhood})->
     searchResults = neighborhood.search(searchQuery)
     tally = searchResults.tally
 
-    #NEWPAGE search results then wiki.createPage, wiki.buildPage
     resultPage = newPage()
     resultPage.setTitle "Search for '#{searchQuery}'"
     resultPage.addParagraph """

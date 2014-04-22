@@ -17,20 +17,19 @@ createPage = (name, loc) ->
   $page
 
 showPage = (name, loc) ->
-  createPage(name, loc).appendTo('.main').each refresh
+  createPage(name, loc).appendTo('.main').each refresh.cycle
 
 doInternalLink = (name, page, site=null) ->
   name = asSlug(name)
   $(page).nextAll().remove() if page?
   lineup.removeAllAfterKey $(page).data('key') if page?
-  #NEWPAGE (not) wiki.doInteralLink, wiki.createPage, appendTo('.main'), refresh
   showPage(name,site)
   active.set($('.page').last())
 
 showResult = (resultPage) ->
-  $resultPage = wiki.createPage(resultPage.getSlug()).addClass('ghost')
+  $resultPage = createPage(resultPage.getSlug()).addClass('ghost')
   $resultPage.appendTo($('.main'))
-  wiki.buildPage( resultPage, $resultPage )
+  refresh.buildPage( resultPage, $resultPage )
   active.set($('.page').last())
 
 

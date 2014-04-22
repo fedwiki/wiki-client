@@ -1,3 +1,5 @@
+resolve = require './resolve'
+
 $dialog = null
 
 emit = ->
@@ -7,7 +9,7 @@ emit = ->
 
 open = (title, html) ->
   $dialog.html html
-  $dialog.dialog "option", "title", wiki.resolveLinks(title)
+  $dialog.dialog "option", "title", resolve.resolveLinks(title)
   $dialog.dialog 'open'
 
 module.exports = {emit, open}

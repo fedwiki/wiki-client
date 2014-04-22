@@ -1,37 +1,17 @@
-# This file duplicates wiki.coffee but exists to break dependency loops
-# while incrementally removing dependencies on wiki.coffee. Eventually
-# no file in wiki-client will depend on wiki.coffee, save client.coffee.
-
 wiki = {}
 
-wiki.createSynopsis = require './synopsis'
-wiki.persona = require './persona'
 wiki.util = require './util'
-wiki.pageHandler = require './pageHandler'
-
-link = require('./link')
-wiki.createPage = link.createPage
-wiki.doInternalLink = link.doInternalLink
-
-wiki.asSlug = require('./page').asSlug
-
-wiki.neighborhood = require('./neighborhood').sites
-wiki.mumble = 'foo'
 
 wiki.log = (things...) ->
   console.log things... if console?.log?
+
+wiki.asSlug = (name) ->
+  name.replace(/\s/g, '-').replace(/[^A-Za-z0-9-]/g, '').toLowerCase()
 
 wiki.useLocalStorage = ->
   $(".login").length > 0
 
 wiki.resolutionContext = []
-
-wiki.resolveFrom = (addition, callback) ->
-  wiki.resolutionContext.push addition
-  try
-    callback()
-  finally
-    wiki.resolutionContext.pop()
 
 wiki.getData = (vis) ->
   if vis
@@ -50,6 +30,20 @@ wiki.getDataNodes = (vis) ->
   else
     who = $('.chart,.data,.calculator').toArray().reverse()
     $(who)
+
+# wiki.createPage = link.createPage
+wiki.createPage = (name, loc) ->
+  site = loc if loc and loc isnt 'view'
+  $page = $ """
+    <div class="page" id="#{name}">
+      <div class="twins"> <p> </p> </div>
+      <div class="header">
+        <h1> <img class="favicon" src="#{ if site then "//#{site}" else "" }/favicon.png" height="32px"> #{name} </h1>
+      </div>
+    </div>
+  """
+  $page.data('site', site) if site
+  $page
 
 wiki.getItem = (element) ->
   $(element).data("item") or $(element).data('staticItem') if $(element).length > 0

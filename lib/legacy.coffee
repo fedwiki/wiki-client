@@ -1,7 +1,5 @@
-wiki = require './wiki'
 util = require './util'
 pageHandler = require './pageHandler'
-plugin = require './plugin'
 state = require './state'
 active = require './active'
 refresh = require './refresh'
@@ -10,119 +8,13 @@ drop = require './drop'
 dialog = require './dialog'
 link = require './link'
 
-require './bind'
+asSlug = require('./page').asSlug
 
 $ ->
   dialog.emit()
-  wiki.dialog = dialog.open
 
 # FUNCTIONS used by plugins and elsewhere
 
-  sleep = (time, done) -> setTimeout done, time
-
-  wiki.removeItem = ($item, item) ->
-    pageHandler.put $item.parents('.page:first'), {type: 'remove', id: item.id}
-    $item.remove()
-
-  wiki.createItem = ($page, $before, item) ->
-    $page = $before.parents('.page') unless $page?
-    item.id = util.randomBytes(8)
-    $item = $ """
-      <div class="item #{item.type}" data-id="#{}"</div>
-    """
-    $item
-      .data('item', item)
-      .data('pageElement', $page)
-    if $before?
-      $before.after $item
-    else
-      $page.find('.story').append $item
-    plugin.do $item, item
-    before = wiki.getItem $before
-    sleep 500, ->
-      pageHandler.put $page, {item, id: item.id, type: 'add', after: before?.id}
-    $item
-
-  createTextElement = ($page, beforeElement, initialText) ->
-    item =
-      type: 'paragraph'
-      id: util.randomBytes(8)
-      text: initialText
-    itemElement = $ """
-      <div class="item paragraph" data-id=#{item.id}></div>
-                    """
-    itemElement
-      .data('item', item)
-      .data('pageElement', $page)
-    beforeElement.after itemElement
-    plugin.do itemElement, item
-    itemBefore = wiki.getItem beforeElement
-    wiki.textEditor itemElement, item
-    sleep 500, -> pageHandler.put $page, {item: item, id: item.id, type: 'add', after: itemBefore?.id}
-
-  textEditor = wiki.textEditor = (div, item, caretPos, doubleClicked) ->
-    return if div.hasClass 'textEditing'
-    div.addClass 'textEditing'
-    textarea = $("<textarea>#{original = item.text ? ''}</textarea>")
-      .focusout ->
-        div.removeClass 'textEditing'
-        if item.text = textarea.val()
-          plugin.do div.empty(), item
-          return if item.text == original
-          pageHandler.put div.parents('.page:first'), {type: 'edit', id: item.id, item: item}
-        else
-          pageHandler.put div.parents('.page:first'), {type: 'remove', id: item.id}
-          div.remove()
-        null
-      # .bind 'paste', (e) ->
-      #   wiki.log 'textedit paste', e
-      #   wiki.log e.originalEvent.clipboardData.getData('text')
-      .bind 'keydown', (e) ->
-        if (e.altKey || e.ctlKey || e.metaKey) and e.which == 83 #alt-s
-          textarea.focusout()
-          return false
-        if (e.altKey || e.ctlKey || e.metaKey) and e.which == 73 #alt-i
-          e.preventDefault()
-          page = $(e.target).parents('.page') unless e.shiftKey
-          link.doInternalLink "about #{item.type} plugin", page
-          return false
-        # provides automatic new paragraphs on enter and concatenation on backspace
-        if item.type is 'paragraph' 
-          sel = util.getSelectionPos(textarea) # position of caret or selected text coords
-          if e.which is $.ui.keyCode.BACKSPACE and sel.start is 0 and sel.start is sel.end 
-            prevItem = wiki.getItem(div.prev())
-            return false unless prevItem.type is 'paragraph'
-            prevTextLen = prevItem.text.length
-            prevItem.text += textarea.val()
-            textarea.val('') # Need current text area to be empty. Item then gets deleted.
-            # caret needs to be between the old text and the new appended text
-            textEditor div.prev(), prevItem, prevTextLen
-            return false
-          else if e.which is $.ui.keyCode.ENTER and item.type is 'paragraph'
-            return false unless sel
-            text = textarea.val()
-            prefix = text.substring 0, sel.start
-            middle = text.substring(sel.start, sel.end) if sel.start isnt sel.end
-            suffix = text.substring(sel.end)
-            if prefix is ''
-              textarea.val(' ')
-            else
-              textarea.val(prefix)
-            textarea.focusout()
-            $page = div.parent().parent()
-            createTextElement($page, div, suffix)
-            createTextElement($page, div, middle) if middle?
-            createTextElement($page, div, '') if prefix is ''
-            return false
-    div.html textarea
-    if caretPos?
-      util.setCaretPosition textarea, caretPos
-    else if doubleClicked # we want the caret to be at the end
-      util.setCaretPosition textarea, textarea.val().length
-      #scrolls to bottom of text area
-      textarea.scrollTop(textarea[0].scrollHeight - textarea.height())
-    else
-      textarea.focus()
 
   LEFTARROW = 37
   RIGHTARROW = 39
@@ -145,7 +37,7 @@ $ ->
   $(document)
     .ajaxError (event, request, settings) ->
       return if request.status == 0 or request.status == 404
-      wiki.log 'ajax error', event, request, settings
+      console.log 'ajax error', event, request, settings
       # $('.main').prepend """
       #   <li class='error'>
       #     Error on #{settings.url}: #{request.responseText}
@@ -154,7 +46,7 @@ $ ->
 
   getTemplate = (slug, done) ->
     return done(null) unless slug
-    wiki.log 'getTemplate', slug
+    console.log 'getTemplate', slug
     pageHandler.get
       whenGotten: (pageObject,siteFound) -> done(pageObject)
       whenNotGotten: -> done(null)
@@ -205,21 +97,20 @@ $ ->
         finishClick e, (name.split '_')[0]
       else
         $page = $(this).parents('.page')
-        slug = wiki.asSlug($page.data('data').title)
+        slug = asSlug($page.data('data').title)
         rev = $(this).parent().children().not('.separator').index($action)
         return if rev < 0
         $page.nextAll().remove() unless e.shiftKey
         lineup.removeAllAfterKey($page.data('key')) unless e.shiftKey
-        #NEWPAGE (not) action, wiki.createPage, appendTo('.main'), refresh
-        wiki.createPage("#{slug}_rev#{rev}", $page.data('site'))
+        link.createPage("#{slug}_rev#{rev}", $page.data('site'))
           .appendTo($('.main'))
-          .each refresh
+          .each refresh.cycle
         active.set($('.page').last())
 
     .delegate '.fork-page', 'click', (e) ->
       $page = $(e.target).parents('.page')
       if $page.hasClass('local')
-        unless wiki.useLocalStorage()
+        unless pageHandler.useLocalStorage()
           item = $page.data('data')
           $page.removeClass('local')
           pageHandler.put $page, {type: 'fork', item} # push
@@ -240,19 +131,18 @@ $ ->
       getTemplate $(e.target).data('slug'), (template) ->
         $page = $(e.target).parents('.page:first')
         $page.removeClass 'ghost'
-        #NEWPAGE -- (not) from a future: via wiki.buildPage
         pageObject = lineup.atKey $page.data('key')
         pageObject.become(template)
         page = pageObject.getRawPage()
         pageHandler.put $page, {type: 'create', id: page.id, item: {title:page.title, story:page.story}}
-        wiki.rebuildPage pageObject, $page.empty()
+        refresh.rebuildPage pageObject, $page.empty()
 
     .delegate '.ghost', 'rev', (e) ->
-      wiki.log 'rev', e
+      console.log 'rev', e
       $page = $(e.target).parents('.page:first')
       $item = $page.find('.target')
       position = $item.offset().top + $page.scrollTop() - $page.height()/2
-      wiki.log 'scroll', $page, $item, position
+      console.log 'scroll', $page, $item, position
       $page.stop().animate {scrollTop: postion}, 'slow'
 
     .delegate '.score', 'hover', (e) ->
@@ -269,10 +159,10 @@ $ ->
 
   $('body').on 'new-neighbor-done', (e, neighbor) ->
     $('.page').each (index, element) ->
-      wiki.emitTwins $(element)
+      refresh.emitTwins $(element)
 
   $ ->
     state.first()
-    $('.page').each refresh
+    $('.page').each refresh.cycle
     active.set($('.page').last())
 

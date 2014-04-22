@@ -13,17 +13,41 @@ state -> bind [dir=back];
 link -> bind [dir=back];
 
 dialog [fillcolor=paleGreen];
+resolve -> dialog [dir=back];
 
 drop [fillcolor=paleGreen];
 
+editor [fillcolor=paleGreen];
+plugin -> editor [dir=back];
+itemz -> editor [dir=back];
+util -> editor [dir=back];
+pageHandler -> editor [dir=back];
+
 factory [fillcolor=gold];
 neighborhood -> factory [dir=back];
+plugin -> factory [dir=back];
+resolve -> factory [dir=back];
+pageHandler -> factory [dir=back];
+editor -> factory [dir=back];
+synopsis -> factory [dir=back];
+
+future [fillcolor=paleGreen];
+resolve -> future [dir=back];
+neighborhood -> future [dir=back];
+
+image [fillcolor=paleGreen];
+dialog -> image [dir=back];
+editor -> image [dir=back];
+resolve -> image [dir=back];
+
+itemz [fillcolor=paleGreen];
+pageHandler -> itemz [dir=back];
+util -> itemz [dir=back];
+plugin -> itemz [dir=back];
 
 legacy [fillcolor=gold];
-wiki -> legacy [dir=back];
 util -> legacy [dir=back];
 pageHandler -> legacy [dir=back];
-plugin -> legacy [dir=back];
 state -> legacy [dir=back];
 active -> legacy [dir=back];
 refresh -> legacy [dir=back];
@@ -31,7 +55,7 @@ lineup -> legacy [dir=back];
 drop -> legacy [dir=back];
 dialog -> legacy [dir=back];
 link -> legacy [dir=back];
-bind -> legacy [dir=back];
+page -> legacy [dir=back];
 
 lineup [fillcolor=paleGreen];
 util -> lineup [dir=back];
@@ -58,28 +82,39 @@ revision -> pageHandler [dir=back];
 addToJournal -> pageHandler [dir=back];
 page -> pageHandler [dir=back];
 
+paragraph [fillcolor=paleGreen];
+editor -> paragraph [dir=back];
+resolve -> paragraph [dir=back];
+
 persona [fillcolor=gold];
 
 plugin [fillcolor=gold];
 util -> plugin [dir=back];
-wiki -> plugin [dir=back];
-dialog -> plugin [dir=back];
-neighborhood -> plugin [dir=back];
-reference -> plugin [dir=back];
-factory -> plugin [dir=back];
+
+plugins [fillcolor=paleGreen];
+reference -> plugins [dir=back];
+factory -> plugins [dir=back];
+paragraph -> plugins [dir=back];
+image -> plugins [dir=back];
+future -> plugins [dir=back];
 
 reference [fillcolor=gold];
+editor -> reference [dir=back];
+resolve -> reference [dir=back];
 
 refresh [fillcolor=gold];
 util -> refresh [dir=back];
 pageHandler -> refresh [dir=back];
-page -> refresh [dir=back];
 plugin -> refresh [dir=back];
 state -> refresh [dir=back];
 neighborhood -> refresh [dir=back];
 addToJournal -> refresh [dir=back];
-wiki -> refresh [dir=back];
 lineup -> refresh [dir=back];
+resolve -> refresh [dir=back];
+page -> refresh [dir=back];
+
+resolve [fillcolor=paleGreen];
+page -> resolve [dir=back];
 
 revision [fillcolor=gold];
 
@@ -98,17 +133,5 @@ lineup -> state [dir=back];
 
 synopsis [fillcolor=gold];
 
-tempwiki [fillcolor=paleGreen];
-synopsis -> tempwiki [dir=back];
-persona -> tempwiki [dir=back];
-util -> tempwiki [dir=back];
-pageHandler -> tempwiki [dir=back];
-link -> tempwiki [dir=back];
-page -> tempwiki [dir=back];
-neighborhood -> tempwiki [dir=back];
-
 util [fillcolor=gold];
-
-wiki [fillcolor=gold];
-util -> wiki [dir=back];
 }

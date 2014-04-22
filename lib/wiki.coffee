@@ -1,24 +1,55 @@
+# This file duplicates wiki.coffee but exists to break dependency loops
+# while incrementally removing dependencies on wiki.coffee. Eventually
+# no file in wiki-client will depend on wiki.coffee, save client.coffee.
+
 wiki = {}
 
+wiki.createSynopsis = require './synopsis'
+wiki.persona = require './persona'
 wiki.util = require './util'
+wiki.pageHandler = require './pageHandler'
+
+link = require('./link')
+wiki.createPage = link.createPage
+wiki.doInternalLink = link.doInternalLink
+
+wiki.asSlug = require('./page').asSlug
+
+wiki.neighborhood = require('./neighborhood').sites
+
+refresh = require './refresh'
+wiki.emitTwins = refresh.emitTwins
+wiki.buildPage = refresh.buildPage
+rebuildPage = refresh.rebuildPage
+
+resolve = require './resolve'
+wiki.resolveLinks = resolve.resolveLinks
+wiki.resolveFrom = resolve.resolveFrom
+
+plugin = require './plugin'
+wiki.getScript = plugin.getScript
+wiki.getPlugin = plugin.getPlugin
+wiki.doPlugin = plugin.doPlugin
+wiki.registerPlugin = plugin.registerPlugin
+
+itemz = require './itemz'
+wiki.removeItem = itemz.removeItem
+wiki.createItem = itemz.createItem
+
+editor = require './editor'
+wiki.textEditor = editor.textEditor
+
+dialog = require './dialog'
+wiki.dialog = dialog.open
+
 
 wiki.log = (things...) ->
   console.log things... if console?.log?
-
-wiki.asSlug = (name) ->
-  name.replace(/\s/g, '-').replace(/[^A-Za-z0-9-]/g, '').toLowerCase()
 
 wiki.useLocalStorage = ->
   $(".login").length > 0
 
 wiki.resolutionContext = []
-
-wiki.resolveFrom = (addition, callback) ->
-  wiki.resolutionContext.push addition
-  try
-    callback()
-  finally
-    wiki.resolutionContext.pop()
 
 wiki.getData = (vis) ->
   if vis
@@ -38,31 +69,10 @@ wiki.getDataNodes = (vis) ->
     who = $('.chart,.data,.calculator').toArray().reverse()
     $(who)
 
-# wiki.createPage = link.createPage
-wiki.createPage = (name, loc) ->
-  site = loc if loc and loc isnt 'view'
-  $page = $ """
-    <div class="page" id="#{name}">
-      <div class="twins"> <p> </p> </div>
-      <div class="header">
-        <h1> <img class="favicon" src="#{ if site then "//#{site}" else "" }/favicon.png" height="32px"> #{name} </h1>
-      </div>
-    </div>
-  """
-  $page.data('site', site) if site
-  $page
-
+# getItem duplicated in refresh.coffee
 wiki.getItem = (element) ->
   $(element).data("item") or $(element).data('staticItem') if $(element).length > 0
 
-wiki.resolveLinks = (string) ->
-  renderInternalLink = (match, name) ->
-    # spaces become 'slugs', non-alpha-num get removed
-    slug = wiki.asSlug name
-    "<a class=\"internal\" href=\"/#{slug}.html\" data-page-name=\"#{slug}\" title=\"#{wiki.resolutionContext.join(' => ')}\">#{name}</a>"
-  string
-    .replace(/\[\[([^\]]+)\]\]/gi, renderInternalLink)
-    .replace(/\[((http|https|ftp):.*?) (.*?)\]/gi, """<a class="external" target="_blank" href="$1" title="$1" rel="nofollow">$3 <img src="/images/external-link-ltr-icon.png"></a>""")
 
 module.exports = wiki
 

@@ -50,7 +50,6 @@ state.show = (e) ->
   for name, idx in newPages
     continue if matching and= name is oldPages[idx]
     console.log 'push', idx, name
-    #NEWPAGE (not) state.show, wiki.createPage, wiki.refresh
     link.showPage(name, newLocs[idx])
 
   console.log 'a .page keys ', ($(each).data('key') for each in $('.page'))
@@ -65,6 +64,5 @@ state.first = ->
   firstUrlLocs = state.urlLocs()
   oldPages = state.pagesInDom()
   for urlPage, idx in firstUrlPages when urlPage not in oldPages
-    #NEWPAGE (not) state.first, wiki.createPage
     link.createPage(urlPage, firstUrlLocs[idx]) unless urlPage is ''
 

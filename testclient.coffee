@@ -1,6 +1,9 @@
 mocha.setup('bdd')
 
 window.wiki = require('./lib/wiki')
+require './lib/bind'
+require './lib/plugins'
+
 
 require('./test/util')
 require('./test/active')
