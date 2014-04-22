@@ -1,16 +1,18 @@
 wiki = require './wiki'
 util = require './util'
-pageHandler = wiki.pageHandler = require './pageHandler'
+pageHandler = require './pageHandler'
 plugin = require './plugin'
 state = require './state'
 active = require './active'
 refresh = require './refresh'
 lineup = require './lineup'
 drop = require './drop'
-dialog = dialog = require './dialog'
+dialog = require './dialog'
+link = require './link'
+
+require './bind'
 
 $ ->
-
   dialog.emit()
   wiki.dialog = dialog.open
 
@@ -82,7 +84,7 @@ $ ->
         if (e.altKey || e.ctlKey || e.metaKey) and e.which == 73 #alt-i
           e.preventDefault()
           page = $(e.target).parents('.page') unless e.shiftKey
-          doInternalLink "about #{item.type} plugin", page
+          link.doInternalLink "about #{item.type} plugin", page
           return false
         # provides automatic new paragraphs on enter and concatenation on backspace
         if item.type is 'paragraph' 
@@ -121,16 +123,6 @@ $ ->
       textarea.scrollTop(textarea[0].scrollHeight - textarea.height())
     else
       textarea.focus()
-
-  doInternalLink = wiki.doInternalLink = (name, page, site=null) ->
-    name = wiki.asSlug(name)
-    $(page).nextAll().remove() if page?
-    lineup.removeAllAfterKey $(page).data('key') if page?
-    #NEWPAGE (not) wiki.doInteralLink, wiki.createPage, appendTo('.main'), refresh
-    wiki.createPage(name,site)
-      .appendTo($('.main'))
-      .each refresh
-    active.set($('.page').last())
 
   LEFTARROW = 37
   RIGHTARROW = 39
@@ -171,7 +163,7 @@ $ ->
   finishClick = (e, name) ->
     e.preventDefault()
     page = $(e.target).parents('.page') unless e.shiftKey
-    doInternalLink name, page, $(e.target).data('site')
+    link.doInternalLink name, page, $(e.target).data('site')
     return false
 
   $('.main')
@@ -269,7 +261,7 @@ $ ->
     .bind 'dragenter', (evt) -> evt.preventDefault()
     .bind 'dragover', (evt) -> evt.preventDefault()
     .bind "drop", drop.dispatch
-        page: (item) -> doInternalLink item.slug, null, item.site
+        page: (item) -> link.doInternalLink item.slug, null, item.site
 
   $(".provider input").click ->
     $("footer input:first").val $(this).attr('data-provider')

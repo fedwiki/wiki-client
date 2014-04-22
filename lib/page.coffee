@@ -113,4 +113,4 @@ newPage = (json, site) ->
 
 	{getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, setTitle, getRevision, getTimestamp, addItem, addParagraph, seqItems, seqActions, become}
 
-module.exports = {newPage}
+module.exports = {newPage, asSlug}

@@ -1,16 +1,12 @@
 _ = require 'underscore'
 
-wiki = require './wiki'
-active = require './active'
 util = require './util'
-createSearch = require './search'
 
 module.exports = neighborhood = {}
 
 neighborhood.sites = {}
 nextAvailableFetch = 0
 nextFetchInterval = 2000
-totalPages = 0
 
 populateSiteInfoFor = (site,neighborInfo)->
   return if neighborInfo.sitemapRequestInflight
@@ -84,36 +80,3 @@ neighborhood.search = (searchQuery)->
   tally['msec'] = Date.now() - start
   { finds, tally }
 
-
-$ ->
-  $neighborhood = $('.neighborhood')
-
-  flag = (site) ->
-    # status class progression: .wait, .fetch, .fail or .done
-    """
-      <span class="neighbor" data-site="#{site}">
-        <div class="wait">
-          <img src="http://#{site}/favicon.png" title="#{site}">
-        </div>
-      </span>
-    """
-
-  $('body')
-    .on 'new-neighbor', (e, site) ->
-      $neighborhood.append flag site
-    .on 'new-neighbor-done', (e, site) ->
-      pageCount = neighborhood.sites[site].sitemap.length
-      img = $(""".neighborhood .neighbor[data-site="#{site}"]""").find('img')
-      img.attr('title', "#{site}\n #{pageCount} pages")
-      totalPages += pageCount
-      $('.searchbox .pages').text "#{totalPages} pages"
-    .delegate '.neighbor img', 'click', (e) ->
-      wiki.doInternalLink 'welcome-visitors', null, @.title.split("\n")[0]
-
-  search = createSearch({neighborhood})
-
-  $('input.search').on 'keypress', (e)->
-    return if e.keyCode != 13 # 13 == return
-    searchQuery = $(this).val()
-    search.performSearch( searchQuery )
-    $(this).val("")

@@ -1,5 +1,4 @@
-wiki = require './wiki'
-module.exports = wiki.util = util = {}
+module.exports = util = {}
 
 util.symbols =
   create: '☼'

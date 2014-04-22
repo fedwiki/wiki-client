@@ -1,2 +1,2 @@
-window.wiki = require('./lib/wiki')
+window.wiki = require('./lib/tempwiki')
 require('./lib/legacy')

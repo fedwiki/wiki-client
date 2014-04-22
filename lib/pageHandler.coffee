@@ -1,6 +1,5 @@
 _ = require 'underscore'
 
-wiki = require './wiki'
 util = require './util'
 state = require './state'
 revision = require './revision'
@@ -8,6 +7,9 @@ addToJournal = require './addToJournal'
 newPage = require('./page').newPage
 
 module.exports = pageHandler = {}
+
+pageHandler.useLocalStorage = ->
+  $(".login").length > 0
 
 pageFromLocalStorage = (slug)->
   if json = localStorage[slug]
@@ -51,7 +53,7 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
       return whenGotten newPage(page, site)
     error: (xhr, type, msg) ->
       if (xhr.status != 404) and (xhr.status != 0)
-        wiki.log 'pageHandler.get error', xhr, xhr.status, type, msg
+        console.log 'pageHandler.get error', xhr, xhr.status, type, msg
         #NEWPAGE trouble from PageHandler.get
         troublePageObject = newPage {title: "Trouble: Can't Get Page"}, null
         troublePageObject.addParagraph """
@@ -120,7 +122,7 @@ pushToServer = ($page, pagePutInfo, action) ->
       if action.type == 'fork' # push
         localStorage.removeItem $page.attr('id')
     error: (xhr, type, msg) ->
-      wiki.log "pageHandler.put ajax error callback", type, msg
+      console.log "pageHandler.put ajax error callback", type, msg
 
 pageHandler.put = ($page, action) ->
 
@@ -138,19 +140,19 @@ pageHandler.put = ($page, action) ->
     local: $page.hasClass('local')
   }
   forkFrom = pagePutInfo.site
-  wiki.log 'pageHandler.put', action, pagePutInfo
+  console.log 'pageHandler.put', action, pagePutInfo
 
   # detect when fork to local storage
-  if wiki.useLocalStorage()
+  if pageHandler.useLocalStorage()
     if pagePutInfo.site?
-      wiki.log 'remote => local'
+      console.log 'remote => local'
     else if !pagePutInfo.local
-      wiki.log 'origin => local'
+      console.log 'origin => local'
       action.site = forkFrom = location.host
     # else if !pageFromLocalStorage(pagePutInfo.slug)
-    #   wiki.log ''
+    #   console.log ''
     #   action.site = forkFrom = pagePutInfo.site
-    #   wiki.log 'local storage first time', action, 'forkFrom', forkFrom
+    #   console.log 'local storage first time', action, 'forkFrom', forkFrom
 
   # tweek action before saving
   action.date = (new Date()).getTime()
@@ -174,7 +176,7 @@ pageHandler.put = ($page, action) ->
         date: action.date
 
   # store as appropriate
-  if wiki.useLocalStorage() or pagePutInfo.site == 'local'
+  if pageHandler.useLocalStorage() or pagePutInfo.site == 'local'
     pushToLocal($page, pagePutInfo, action)
     $page.addClass("local")
   else

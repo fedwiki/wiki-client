@@ -5,6 +5,13 @@ active [fillcolor=gold];
 addToJournal [fillcolor=gold];
 util -> addToJournal [dir=back];
 
+bind [fillcolor=paleGreen];
+neighborhood -> bind [dir=back];
+neighbors -> bind [dir=back];
+searchbox -> bind [dir=back];
+state -> bind [dir=back];
+link -> bind [dir=back];
+
 dialog [fillcolor=paleGreen];
 
 drop [fillcolor=paleGreen];
@@ -23,21 +30,28 @@ refresh -> legacy [dir=back];
 lineup -> legacy [dir=back];
 drop -> legacy [dir=back];
 dialog -> legacy [dir=back];
+link -> legacy [dir=back];
+bind -> legacy [dir=back];
 
 lineup [fillcolor=paleGreen];
 util -> lineup [dir=back];
 
+link [fillcolor=paleGreen];
+lineup -> link [dir=back];
+active -> link [dir=back];
+refresh -> link [dir=back];
+page -> link [dir=back];
+
 neighborhood [fillcolor=gold];
-wiki -> neighborhood [dir=back];
-active -> neighborhood [dir=back];
 util -> neighborhood [dir=back];
-search -> neighborhood [dir=back];
+
+neighbors [fillcolor=paleGreen];
+link -> neighbors [dir=back];
 
 page [fillcolor=paleGreen];
 util -> page [dir=back];
 
 pageHandler [fillcolor=gold];
-wiki -> pageHandler [dir=back];
 util -> pageHandler [dir=back];
 state -> pageHandler [dir=back];
 revision -> pageHandler [dir=back];
@@ -70,62 +84,31 @@ lineup -> refresh [dir=back];
 revision [fillcolor=gold];
 
 search [fillcolor=gold];
-wiki -> search [dir=back];
+link -> search [dir=back];
 util -> search [dir=back];
 active -> search [dir=back];
 page -> search [dir=back];
 
+searchbox [fillcolor=paleGreen];
+search -> searchbox [dir=back];
+
 state [fillcolor=gold];
-wiki -> state [dir=back];
 active -> state [dir=back];
 lineup -> state [dir=back];
 
 synopsis [fillcolor=gold];
 
+tempwiki [fillcolor=paleGreen];
+synopsis -> tempwiki [dir=back];
+persona -> tempwiki [dir=back];
+util -> tempwiki [dir=back];
+pageHandler -> tempwiki [dir=back];
+link -> tempwiki [dir=back];
+page -> tempwiki [dir=back];
+neighborhood -> tempwiki [dir=back];
+
 util [fillcolor=gold];
-wiki -> util [dir=back];
 
 wiki [fillcolor=gold];
-synopsis -> wiki [dir=back];
-persona -> wiki [dir=back];
-
-"test\nactive" [fillcolor=lightBlue];
-active -> "test\nactive" [dir=back];
-
-"test\ndrop" [fillcolor=lightBlue];
-drop -> "test\ndrop" [dir=back];
-
-"test\nlineup" [fillcolor=lightBlue];
-lineup -> "test\nlineup" [dir=back];
-page -> "test\nlineup" [dir=back];
-
-"test\nmockServer" [fillcolor=lightBlue];
-
-"test\nneighborhood" [fillcolor=lightBlue];
-wiki -> "test\nneighborhood" [dir=back];
-neighborhood -> "test\nneighborhood" [dir=back];
-
-"test\npage" [fillcolor=lightBlue];
-page -> "test\npage" [dir=back];
-
-"test\npageHandler" [fillcolor=lightBlue];
-wiki -> "test\npageHandler" [dir=back];
-pageHandler -> "test\npageHandler" [dir=back];
-
-"test\nplugin" [fillcolor=lightBlue];
-plugin -> "test\nplugin" [dir=back];
-
-"test\nrefresh" [fillcolor=lightBlue];
-refresh -> "test\nrefresh" [dir=back];
-
-"test\nrevision" [fillcolor=lightBlue];
-page -> "test\nrevision" [dir=back];
-revision -> "test\nrevision" [dir=back];
-
-"test\nsearch" [fillcolor=lightBlue];
-search -> "test\nsearch" [dir=back];
-
-"test\nutil" [fillcolor=lightBlue];
-wiki -> "test\nutil" [dir=back];
-util -> "test\nutil" [dir=back];
+util -> wiki [dir=back];
 }

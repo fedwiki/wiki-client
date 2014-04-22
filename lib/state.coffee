@@ -1,10 +1,13 @@
-wiki = require './wiki'
 active = require './active'
 lineup = require './lineup'
+link = null
 
 module.exports = state = {}
 
 # FUNCTIONS and HANDLERS to manage location bar and back button
+
+state.inject = (link_) ->
+  link = link_
 
 state.pagesInDom = ->
   $.makeArray $(".page").map (_, el) -> el.id
@@ -48,7 +51,7 @@ state.show = (e) ->
     continue if matching and= name is oldPages[idx]
     console.log 'push', idx, name
     #NEWPAGE (not) state.show, wiki.createPage, wiki.refresh
-    wiki.createPage(name, newLocs[idx]).appendTo($('.main')).each wiki.refresh
+    link.showPage(name, newLocs[idx])
 
   console.log 'a .page keys ', ($(each).data('key') for each in $('.page'))
   console.log 'a lineup keys', lineup.debugKeys()
@@ -63,5 +66,5 @@ state.first = ->
   oldPages = state.pagesInDom()
   for urlPage, idx in firstUrlPages when urlPage not in oldPages
     #NEWPAGE (not) state.first, wiki.createPage
-    wiki.createPage(urlPage, firstUrlLocs[idx]).appendTo('.main') unless urlPage is ''
+    link.createPage(urlPage, firstUrlLocs[idx]) unless urlPage is ''
 

@@ -2,13 +2,11 @@ _ = require 'underscore'
 expect = require 'expect.js'
 sinon = require 'sinon'
 
-wiki = require '../lib/wiki'
 pageHandler = require '../lib/pageHandler'
 mockServer = require './mockServer'
 
-# Fakes for things still stuck in legacy.coffee
-# TODO: Remove these ASAP
-wiki.useLocalStorage = -> false
+# disable reference to dom
+pageHandler.useLocalStorage = -> false
 
 describe 'pageHandler.get', ->
 

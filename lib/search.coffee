@@ -1,4 +1,4 @@
-wiki = require './wiki'
+link = require './link'
 util = require './util'
 active = require './active'
 newPage = require('./page').newPage
@@ -24,10 +24,7 @@ createSearch = ({neighborhood})->
         "title": result.page.title
         "text": result.page.synopsis || ''
 
-    $resultPage = wiki.createPage(resultPage.getSlug()).addClass('ghost')
-    $resultPage.appendTo($('.main'))
-    wiki.buildPage( resultPage, $resultPage )
-    active.set($('.page').last())
+    link.showResult resultPage
 
 
   {
