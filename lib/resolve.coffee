@@ -4,22 +4,24 @@
 
 asSlug = require('./page').asSlug
 
-resolutionContext = []
+module.exports = resolve = {}
 
-resolveFrom = (addition, callback) ->
-  resolutionContext.push addition
+resolve.resolutionContext = []
+
+resolve.resolveFrom = (addition, callback) ->
+  resolve.resolutionContext.push addition
   try
     callback()
   finally
-    resolutionContext.pop()
+    resolve.resolutionContext.pop()
 
-resolveLinks = (string) ->
+resolve.resolveLinks = (string) ->
   renderInternalLink = (match, name) ->
     # spaces become 'slugs', non-alpha-num get removed
     slug = asSlug name
-    "<a class=\"internal\" href=\"/#{slug}.html\" data-page-name=\"#{slug}\" title=\"#{resolutionContext.join(' => ')}\">#{name}</a>"
+    "<a class=\"internal\" href=\"/#{slug}.html\" data-page-name=\"#{slug}\" title=\"#{resolve.resolutionContext.join(' => ')}\">#{name}</a>"
   string
     .replace(/\[\[([^\]]+)\]\]/gi, renderInternalLink)
     .replace(/\[((http|https|ftp):.*?) (.*?)\]/gi, """<a class="external" target="_blank" href="$1" title="$1" rel="nofollow">$3 <img src="/images/external-link-ltr-icon.png"></a>""")
 
-module.exports = {resolutionContext, resolveFrom, resolveLinks}
+
