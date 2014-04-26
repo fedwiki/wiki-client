@@ -38,4 +38,4 @@ showResult = (resultPage) ->
   active.set($('.page').last())
 
 
-module.exports = {createPage, doInternalLink, showResult}
+module.exports = {createPage, doInternalLink, showPage, showResult}
