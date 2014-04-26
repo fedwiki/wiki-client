@@ -14,7 +14,6 @@
 
 _ = require 'underscore'
 
-util = require './util'
 pageHandler = require './pageHandler'
 plugin = require './plugin'
 state = require './state'
@@ -23,6 +22,7 @@ addToJournal = require './addToJournal'
 actionSymbols = require './actionSymbols'
 lineup = require './lineup'
 resolve = require './resolve'
+random = require './random'
 
 pageModule = require('./page')
 newPage = pageModule.newPage
@@ -87,7 +87,7 @@ initAddButton = ($page) ->
 createFactory = ($page) ->
   item =
     type: "factory"
-    id: util.randomBytes(8)
+    id: random.itemId()
   $item = $("<div />", class: "item factory").data('item',item).attr('data-id', item.id)
   $item.data 'pageElement', $page
   $page.find(".story").append($item)
@@ -133,7 +133,7 @@ emitFooter = ($footer, pageObject) ->
   slug = pageObject.getSlug()
   $footer.append """
     <a id="license" href="http://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a> .
-    <a class="show-page-source" href="/#{slug}.json?random=#{util.randomBytes(4)}" title="source">JSON</a> .
+    <a class="show-page-source" href="/#{slug}.json?random=#{random.randomBytes(4)}" title="source">JSON</a> .
     <a href= "//#{host}/#{slug}.html">#{host}</a>
   """
 

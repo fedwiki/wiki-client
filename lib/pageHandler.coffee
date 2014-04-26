@@ -4,11 +4,11 @@
 
 _ = require 'underscore'
 
-util = require './util'
 state = require './state'
 revision = require './revision'
 addToJournal = require './addToJournal'
 newPage = require('./page').newPage
+random = require './random'
 
 module.exports = pageHandler = {}
 
@@ -50,7 +50,7 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
   $.ajax
     type: 'GET'
     dataType: 'json'
-    url: url + "?random=#{util.randomBytes(4)}"
+    url: url + "?random=#{random.randomBytes(4)}"
     success: (page) ->
       page = revision.create rev, page if rev
       #NEWPAGE server from pageHandler.get

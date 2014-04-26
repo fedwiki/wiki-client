@@ -27,9 +27,9 @@ drop [fillcolor=paleGreen];
 editor [fillcolor=paleGreen];
 plugin -> editor [dir=back];
 itemz -> editor [dir=back];
-util -> editor [dir=back];
 pageHandler -> editor [dir=back];
 link -> editor [dir=back];
+random -> editor [dir=back];
 editor [shape=box];
 
 factory [fillcolor=gold];
@@ -54,8 +54,8 @@ image [shape=box];
 
 itemz [fillcolor=paleGreen];
 pageHandler -> itemz [dir=back];
-util -> itemz [dir=back];
 plugin -> itemz [dir=back];
+random -> itemz [dir=back];
 itemz [shape=box];
 
 legacy [fillcolor=gold];
@@ -73,6 +73,7 @@ legacy [shape=box];
 
 lineup [fillcolor=paleGreen];
 util -> lineup [dir=back];
+random -> lineup [dir=back];
 
 link [fillcolor=paleGreen];
 lineup -> link [dir=back];
@@ -91,13 +92,14 @@ neighbors [shape=box];
 
 page [fillcolor=paleGreen];
 util -> page [dir=back];
+random -> page [dir=back];
 
 pageHandler [fillcolor=gold];
-util -> pageHandler [dir=back];
 state -> pageHandler [dir=back];
 revision -> pageHandler [dir=back];
 addToJournal -> pageHandler [dir=back];
 page -> pageHandler [dir=back];
+random -> pageHandler [dir=back];
 pageHandler [shape=box];
 
 paragraph [fillcolor=paleGreen];
@@ -119,13 +121,14 @@ paragraph -> plugins [dir=back];
 image -> plugins [dir=back];
 future -> plugins [dir=back];
 
+random [fillcolor=paleGreen];
+
 reference [fillcolor=gold];
 editor -> reference [dir=back];
 resolve -> reference [dir=back];
 reference [shape=box];
 
 refresh [fillcolor=gold];
-util -> refresh [dir=back];
 pageHandler -> refresh [dir=back];
 plugin -> refresh [dir=back];
 state -> refresh [dir=back];
@@ -134,6 +137,7 @@ addToJournal -> refresh [dir=back];
 actionSymbols -> refresh [dir=back];
 lineup -> refresh [dir=back];
 resolve -> refresh [dir=back];
+random -> refresh [dir=back];
 page -> refresh [dir=back];
 refresh [shape=box];
 

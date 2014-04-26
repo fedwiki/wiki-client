@@ -5,14 +5,6 @@ timezoneOffset = ->
   ((new Date(1333843344000)).getTimezoneOffset() * 60)
 
 describe 'util', ->
-  it 'should make random bytes', ->
-    a = util.randomByte()
-    expect(a).to.be.a 'string'
-    expect(a.length).to.be 2
-  it 'should make random byte strings', ->
-    s = util.randomBytes(4)
-    expect(s).to.be.a 'string'
-    expect(s.length).to.be 8
 
   it 'should format unix time', ->
     s = util.formatTime(1333843344 + timezoneOffset())

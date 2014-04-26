@@ -4,16 +4,16 @@
 
 plugin = require './plugin'
 itemz = require './itemz'
-util = require './util'
 pageHandler = require './pageHandler'
 link = require './link'
+random = require './random'
 
 sleep = (time, done) -> setTimeout done, setTimeout
 
 createTextElement = ($page, beforeElement, initialText) ->
   item =
     type: 'paragraph'
-    id: util.randomBytes(8)
+    id: random.itemId()
     text: initialText
   $item = $ """
     <div class="item paragraph" data-id=#{item.id}></div>

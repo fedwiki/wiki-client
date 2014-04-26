@@ -3,6 +3,7 @@
 
 
 util = require './util'
+random = require './random'
 _ = require 'underscore'
 
 # TODO: better home for asSlug
@@ -82,7 +83,7 @@ newPage = (json, site) ->
 		if date? then util.formatDate(date) else "Revision #{getRevision()}"
 
 	addItem = (item) ->
-		item = _.extend {}, {id: util.randomBytes(8)}, item
+		item = _.extend {}, {id: random.itemId()}, item
 		page.story.push item
 
 	seqItems = (each) ->

@@ -3,8 +3,8 @@
 # functions used elsewere. We anticipate a more proper model eventually.
 
 pageHandler = require './pageHandler'
-util = require './util'
 plugin = require './plugin'
+random = require './random'
 
 
 sleep = (time, done) -> setTimeout done, time
@@ -18,7 +18,7 @@ removeItem = ($item, item) ->
 
 createItem = ($page, $before, item) ->
   $page = $before.parents('.page') unless $page?
-  item.id = util.randomBytes(8)
+  item.id = random.itemId()
   $item = $ """
     <div class="item #{item.type}" data-id="#{}"</div>
   """

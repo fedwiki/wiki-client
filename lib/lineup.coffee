@@ -5,12 +5,13 @@
 # display updates.
 
 util = require './util'
+random = require './random'
 
 pageByKey = {}
 keyByIndex = []
 
 addPage = (pageObject) ->
-	key = util.randomBytes 4
+	key = random.randomBytes 4
 	pageByKey[key] = pageObject
 	keyByIndex.push key
 	return key
