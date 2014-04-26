@@ -121,7 +121,7 @@ bind = ($item, item) ->
             console.log 'factory remote', remote
             item.type = 'reference'
             item.title = remote.title || item.slug
-            item.text = synopsis.createSynopsis remote
+            item.text = synopsis remote
             syncEditAction()
             neighborhood.registerNeighbor item.site if item.site?
         else
