@@ -27,6 +27,7 @@ rebuildPage = refresh.rebuildPage
 resolve = require './resolve'
 wiki.resolveLinks = resolve.resolveLinks
 wiki.resolveFrom = resolve.resolveFrom
+wiki.resolutionContext = resolve.resolutionContext
 
 plugin = require './plugin'
 wiki.getScript = plugin.getScript
@@ -50,8 +51,6 @@ wiki.log = (things...) ->
 
 wiki.useLocalStorage = ->
   $(".login").length > 0
-
-wiki.resolutionContext = []
 
 wiki.getData = (vis) ->
   if vis
