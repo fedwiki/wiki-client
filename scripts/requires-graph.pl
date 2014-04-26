@@ -10,11 +10,18 @@ for (<../lib/*.coffee>) {
   $dot .= "\n$from [fillcolor=$color];\n";
   open F, $_;
 
+  $jquery = 0;
   for (<F>) {
     if (/\brequire\b.+\.\/(\w+)\b/) {
       $dot .= "$1 -> $from [dir=back];\n";
 
     }
+    if (/^\s*\$/) {
+      $jquery = 1;
+    }
+  }
+  if ($jquery) {
+    $dot .= "$from [shape=box];\n"
   }
 }
 
@@ -33,4 +40,4 @@ for (<../lib/*.coffee>) {
 # }
 
 open D, '>requires-graph.dot';
-print D "digraph { node [style=filled shape=box];\n$dot}\n";
+print D "digraph { node [style=filled];\n$dot}\n";
