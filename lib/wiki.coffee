@@ -9,7 +9,10 @@ wiki = {}
 wiki.createSynopsis = require('./synopsis').createSynopsis
 wiki.persona = require './persona'
 wiki.util = require './util'
-wiki.pageHandler = require './pageHandler'
+
+pageHandler = require './pageHandler'
+wiki.pageHandler = pageHandler
+wiki.useLocalStorage = pageHandler.useLocalStorage
 
 link = require('./link')
 wiki.createPage = link.createPage
@@ -38,6 +41,7 @@ wiki.registerPlugin = plugin.registerPlugin
 itemz = require './itemz'
 wiki.removeItem = itemz.removeItem
 wiki.createItem = itemz.createItem
+wiki.getItem = itemz.getItem
 
 editor = require './editor'
 wiki.textEditor = editor.textEditor
@@ -48,9 +52,6 @@ wiki.dialog = dialog.open
 
 wiki.log = (things...) ->
   console.log things... if console?.log?
-
-wiki.useLocalStorage = ->
-  $(".login").length > 0
 
 wiki.getData = (vis) ->
   if vis
@@ -69,11 +70,6 @@ wiki.getDataNodes = (vis) ->
   else
     who = $('.chart,.data,.calculator').toArray().reverse()
     $(who)
-
-# getItem duplicated in refresh.coffee
-wiki.getItem = ($item) ->
-  $($item).data("item") or $($item).data('staticItem') if $($item).length > 0
-
 
 module.exports = wiki
 
