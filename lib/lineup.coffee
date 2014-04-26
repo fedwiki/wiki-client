@@ -4,7 +4,6 @@
 # play a more central role managing calculations and
 # display updates.
 
-util = require './util'
 random = require './random'
 
 pageByKey = {}

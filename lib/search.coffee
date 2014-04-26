@@ -3,7 +3,6 @@
 # page to present them.
 
 link = require './link'
-util = require './util'
 active = require './active'
 newPage = require('./page').newPage
 

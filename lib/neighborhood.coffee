@@ -4,8 +4,6 @@
 
 _ = require 'underscore'
 
-util = require './util'
-
 module.exports = neighborhood = {}
 
 neighborhood.sites = {}

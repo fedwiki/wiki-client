@@ -3,7 +3,6 @@
 # starts here and many event dispatchers are set up before
 # the user takes control.
 
-util = require './util'
 pageHandler = require './pageHandler'
 state = require './state'
 active = require './active'
