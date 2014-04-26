@@ -20,6 +20,7 @@ plugin = require './plugin'
 state = require './state'
 neighborhood = require './neighborhood'
 addToJournal = require './addToJournal'
+actionSymbols = require './actionSymbols'
 lineup = require './lineup'
 resolve = require './resolve'
 
@@ -122,8 +123,8 @@ emitTimestamp = ($header, $page, pageObject) ->
 emitControls = ($journal) ->
   $journal.append """
     <div class="control-buttons">
-      <a href="#" class="button fork-page" title="fork this page">#{util.symbols['fork']}</a>
-      <a href="#" class="button add-factory" title="add paragraph">#{util.symbols['add']}</a>
+      <a href="#" class="button fork-page" title="fork this page">#{actionSymbols.fork}</a>
+      <a href="#" class="button add-factory" title="add paragraph">#{actionSymbols.add}</a>
     </div>
   """
 

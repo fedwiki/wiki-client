@@ -1,10 +1,13 @@
 digraph { node [style=filled];
 
+actionSymbols [fillcolor=paleGreen];
+
 active [fillcolor=gold];
 active [shape=box];
 
 addToJournal [fillcolor=gold];
 util -> addToJournal [dir=back];
+actionSymbols -> addToJournal [dir=back];
 addToJournal [shape=box];
 
 bind [fillcolor=paleGreen];
@@ -128,6 +131,7 @@ plugin -> refresh [dir=back];
 state -> refresh [dir=back];
 neighborhood -> refresh [dir=back];
 addToJournal -> refresh [dir=back];
+actionSymbols -> refresh [dir=back];
 lineup -> refresh [dir=back];
 resolve -> refresh [dir=back];
 page -> refresh [dir=back];

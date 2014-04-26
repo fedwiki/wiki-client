@@ -1,7 +1,7 @@
 # read all source files in lib, generate graph of require dependencies
 # usage: perl require-graph.pl
 
-@new = qw" page lineup drop dialog link tempwiki neighbors searchbox bind plugins future image paragraph resolve itemz editor ";
+@new = qw" page lineup drop dialog link tempwiki neighbors searchbox bind plugins future image paragraph resolve itemz editor actionSymbols ";
 
 for (<../lib/*.coffee>) {
 	next if /wiki/;

@@ -3,13 +3,14 @@
 # response that the network operation is complete.
 
 util = require './util'
+actionSymbols = require './actionSymbols'
 
 module.exports = ($journal, action) ->
   $page = $journal.parents('.page:first')
   title = action.type || 'separator'
   title += " #{util.formatElapsedTime(action.date)}" if action.date?
   $action = $("""<a href="#" /> """).addClass("action").addClass(action.type || 'separator')
-    .text(action.symbol || util.symbols[action.type])
+    .text(action.symbol || actionSymbols.symbols[action.type])
     .attr('title',title)
     .attr('data-id', action.id || "0")
     .data('action', action)
