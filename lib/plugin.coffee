@@ -44,7 +44,6 @@ plugin.do = plugin.doPlugin = (div, item, done=->) ->
 
   div.data 'pageElement', div.parents(".page")
   div.data 'item', item
-  debugger if item.type == 'reference'
   plugin.get item.type, (script) ->
     try
       throw TypeError("Can't find plugin for '#{item.type}'") unless script?
