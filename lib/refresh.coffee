@@ -28,8 +28,8 @@ newPage = pageModule.newPage
 asSlug = pageModule.asSlug
 
 
-getItem = (element) ->
-  $(element).data("item") or $(element).data('staticItem') if $(element).length > 0
+getItem = ($item) ->
+  $($item).data("item") or $($item).data('staticItem') if $($item).length > 0
 
 handleDragging = (evt, ui) ->
   $item = ui.item

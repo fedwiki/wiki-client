@@ -6,12 +6,12 @@ dialog = require './dialog'
 editor = require './editor'
 resolve = require './resolve'
 
-emit = (div, item) ->
+emit = ($item, item) ->
   item.text ||= item.caption
-  div.append "<img class=thumbnail src=\"#{item.url}\"> <p>#{resolve.resolveLinks(item.text)}</p>"
+  $item.append "<img class=thumbnail src=\"#{item.url}\"> <p>#{resolve.resolveLinks(item.text)}</p>"
 
-bind = (div, item) ->
-  div.dblclick -> editor.textEditor div, item
-  div.find('img').dblclick -> dialog.open item.text, this
+bind = ($item, item) ->
+  $item.dblclick -> editor.textEditor $item, item
+  $item.find('img').dblclick -> dialog.open item.text, this
 
 module.exports = {emit, bind}

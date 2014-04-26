@@ -15,16 +15,16 @@ createTextElement = ($page, beforeElement, initialText) ->
     type: 'paragraph'
     id: util.randomBytes(8)
     text: initialText
-  itemElement = $ """
+  $item = $ """
     <div class="item paragraph" data-id=#{item.id}></div>
                   """
-  itemElement
+  $item
     .data('item', item)
     .data('pageElement', $page)
-  beforeElement.after itemElement
-  plugin.do itemElement, item
+  beforeElement.after $item
+  plugin.do $item, item
   itemBefore = itemz.getItem beforeElement
-  textEditor itemElement, item
+  textEditor $item, item
   sleep 500, -> pageHandler.put $page, {item: item, id: item.id, type: 'add', after: itemBefore?.id}
 
 

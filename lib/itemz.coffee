@@ -9,8 +9,8 @@ plugin = require './plugin'
 
 sleep = (time, done) -> setTimeout done, time
 
-getItem = (element) ->
-  $(element).data("item") or $(element).data('staticItem') if $(element).length > 0
+getItem = ($item) ->
+  $($item).data("item") or $($item).data('staticItem') if $($item).length > 0
 
 removeItem = ($item, item) ->
   pageHandler.put $item.parents('.page:first'), {type: 'remove', id: item.id}

@@ -72,8 +72,8 @@ wiki.getDataNodes = (vis) ->
     $(who)
 
 # getItem duplicated in refresh.coffee
-wiki.getItem = (element) ->
-  $(element).data("item") or $(element).data('staticItem') if $(element).length > 0
+wiki.getItem = ($item) ->
+  $($item).data("item") or $($item).data('staticItem') if $($item).length > 0
 
 
 module.exports = wiki

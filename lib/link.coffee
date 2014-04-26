@@ -24,17 +24,17 @@ createPage = (name, loc) ->
 showPage = (name, loc) ->
   createPage(name, loc).appendTo('.main').each refresh.cycle
 
-doInternalLink = (name, page, site=null) ->
+doInternalLink = (name, $page, site=null) ->
   name = asSlug(name)
-  $(page).nextAll().remove() if page?
-  lineup.removeAllAfterKey $(page).data('key') if page?
+  $($page).nextAll().remove() if $page?
+  lineup.removeAllAfterKey $($page).data('key') if $page?
   showPage(name,site)
   active.set($('.page').last())
 
-showResult = (resultPage) ->
-  $resultPage = createPage(resultPage.getSlug()).addClass('ghost')
-  $resultPage.appendTo($('.main'))
-  refresh.buildPage( resultPage, $resultPage )
+showResult = (pageObject) ->
+  $page = createPage(pageObject.getSlug()).addClass('ghost')
+  $page.appendTo($('.main'))
+  refresh.buildPage( pageObject, $page )
   active.set($('.page').last())
 
 
