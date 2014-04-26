@@ -22,6 +22,7 @@ plugin -> editor [dir=back];
 itemz -> editor [dir=back];
 util -> editor [dir=back];
 pageHandler -> editor [dir=back];
+link -> editor [dir=back];
 
 factory [fillcolor=gold];
 neighborhood -> factory [dir=back];

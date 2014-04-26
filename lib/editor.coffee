@@ -6,6 +6,9 @@ plugin = require './plugin'
 itemz = require './itemz'
 util = require './util'
 pageHandler = require './pageHandler'
+link = require './link'
+
+sleep = (time, done) -> setTimeout done, setTimeout
 
 createTextElement = ($page, beforeElement, initialText) ->
   item =
