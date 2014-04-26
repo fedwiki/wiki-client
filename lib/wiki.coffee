@@ -6,7 +6,7 @@
 
 wiki = {}
 
-wiki.createSynopsis = require './synopsis'
+wiki.createSynopsis = require('./synopsis').createSynopsis
 wiki.persona = require './persona'
 wiki.util = require './util'
 wiki.pageHandler = require './pageHandler'

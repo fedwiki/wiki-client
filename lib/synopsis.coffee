@@ -2,7 +2,7 @@
 # representation of a page. This might be from a "synopsys:" field,
 # but more likely it comes from text found in the first or second item.
 
-module.exports = (page) ->
+createSynopsis = (page) ->
   synopsis = page.synopsis
   if page? && page.story?
     p1 = page.story[0]
@@ -16,3 +16,4 @@ module.exports = (page) ->
     synopsis = 'A page with no story.'
   return synopsis
 
+module.exports = {createSynopsis}
