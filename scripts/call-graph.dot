@@ -15,22 +15,28 @@ digraph call_graph {
 	subgraph cluster_lineup {
 		fillcolor=palegreen;
 		label = "lineup";
-		addPage [label="add\nPage"];
-		removeKey [label="remove\nKey"];
-		removeAllAfter [label="remove\nAll\nAfter"];
+		addPage [label="add\npage"];
+		removeKey [label="remove\nkey"];
+		removeAllAfter [label="remove\nall\nafter"];
 	}
 
+	subgraph cluster_link {
+		label = "link";
+		fillcolor=palegreen;
+		doInternalLink [label="internal\nlink"];
+		createPage [label="create\npage"];
+		doInternalLink -> createPage;
+
+	}
 
 	subgraph cluster_legacy {
 		label = "legacy";
-		doInternalLink [label="do\nInternal\nLink"];
-		click_create_button [label="click\ncreate\nbutton"];
+		click_create_button [label="create\nbutton"];
 		begin;
 	}
 	begin -> first;
-	begin -> refresh;
-	doInternalLink -> createPage;
-	doInternalLink -> refresh;
+	begin -> cycle;
+	doInternalLink -> cycle;
 	doInternalLink -> removeAllAfter;
 	click_create_button -> get;
 	click_create_button -> become;
@@ -38,10 +44,6 @@ digraph call_graph {
 	click_create_button -> rebuildPage;
 	
 
-	subgraph cluster_wiki {
-		label = "wiki";
-		createPage [label="create\nPage"];
-	}
 	createPage -> page;
 	page [shape=box]
 	
@@ -55,13 +57,13 @@ digraph call_graph {
 
 	subgraph cluster_refresh {
 		label = "refresh";
-		buildPage [label="build\nPage"]
-		rebuildPage [label="rebuild\nPage"]
-		refresh -> missing -> buildPage -> rebuildPage;
+		buildPage [label="build\npage"]
+		rebuildPage [label="rebuild\npage"]
+		cycle -> missing -> buildPage -> rebuildPage;
 	}
 	missing -> newPage;
-	refresh -> get;
-	refresh -> buildPage;
+	cycle -> get;
+	cycle -> buildPage;
 	buildPage -> addPage;
 	rebuildPage -> story; story[shape=box];
 	rebuildPage -> journal; journal[shape=box];
@@ -69,7 +71,7 @@ digraph call_graph {
 
 	subgraph cluster_search {
 		label = "search";
-		performSearch [label="perform\nSearch"];
+		performSearch [label="perform\nsearch"];
 	}
 	performSearch -> newPage;
 	performSearch -> createPage;
@@ -80,7 +82,7 @@ digraph call_graph {
 		label = "state";
 		show; first;
 	}
-	show -> refresh;
+	show -> cycle;
 	show -> createPage;
 	show -> removeKey;
 	first -> createPage;
