@@ -1,9 +1,18 @@
-# See fed.wiki.org/about-factory-plugin.html
+# A Factory plugin provides a drop zone for desktop content
+# destine to be one or another kind of item. Double click
+# will turn it into a normal paragraph.
 
-emit = (div, item) ->
-  div.append '<p>Double-Click to Edit<br>Drop Text or Image to Insert</p>'
+neighborhood = require './neighborhood'
+plugin = require './plugin'
+resolve = require './resolve'
+pageHandler = require './pageHandler'
+editor = require './editor'
+synopsis = require './synopsis'
+
+emit = ($item, item) ->
+  $item.append '<p>Double-Click to Edit<br>Drop Text or Image to Insert</p>'
   showMenu = ->
-    menu = div.find('p').append "<br>Or Choose a Plugin"
+    menu = $item.find('p').append "<br>Or Choose a Plugin"
     menu.append (left = $ """<div style="text-align:left; padding-left: 40%"></div>""")
     menu = left
     menuItem = (title, name) ->
@@ -15,12 +24,12 @@ emit = (div, item) ->
     else  # deprecated
       menuItem(info.menu, name) for name, info of window.catalog
     menu.find('a.menu').click (evt)->
-      div.removeClass('factory').addClass(item.type=evt.target.text.toLowerCase())
-      div.unbind()
-      wiki.textEditor div, item
+      $item.removeClass('factory').addClass(item.type=evt.target.text.toLowerCase())
+      $item.unbind()
+      editor.textEditor $item, item
 
   showPrompt = ->
-    div.append "<p>#{wiki.resolveLinks(item.prompt)}</b>"
+    $item.append "<p>#{resolve.resolveLinks(item.prompt)}</b>"
 
   if item.prompt
     showPrompt()
@@ -31,37 +40,37 @@ emit = (div, item) ->
       window.catalog = data
       showMenu()
 
-bind = (div, item) ->
+bind = ($item, item) ->
 
   syncEditAction = () ->
-    wiki.log 'factory item', item
-    div.empty().unbind()
-    div.removeClass("factory").addClass(item.type)
-    pageElement = div.parents('.page:first')
+    console.log 'factory item', item
+    $item.empty().unbind()
+    $item.removeClass("factory").addClass(item.type)
+    $page = $item.parents('.page:first')
     try
-      div.data 'pageElement', pageElement
-      div.data 'item', item
-      wiki.getPlugin item.type, (plugin) ->
-        plugin.emit div, item
-        plugin.bind div, item
+      $item.data 'pageElement', $page
+      $item.data 'item', item
+      plugin.getPlugin item.type, (plugin) ->
+        plugin.emit $item, item
+        plugin.bind $item, item
     catch err
-      div.append "<p class='error'>#{err}</p>"
-    wiki.pageHandler.put pageElement, {type: 'edit', id: item.id, item: item}
+      $item.append "<p class='error'>#{err}</p>"
+    pageHandler.put $page, {type: 'edit', id: item.id, item: item}
 
-  div.dblclick ->
-    div.removeClass('factory').addClass(item.type='paragraph')
-    div.unbind()
-    wiki.textEditor div, item
+  $item.dblclick ->
+    $item.removeClass('factory').addClass(item.type='paragraph')
+    $item.unbind()
+    editor.textEditor $item, item
 
-  div.bind 'dragenter', (evt) -> evt.preventDefault()
-  div.bind 'dragover', (evt) -> evt.preventDefault()
-  div.bind "drop", (dropEvent) ->
+  $item.bind 'dragenter', (evt) -> evt.preventDefault()
+  $item.bind 'dragover', (evt) -> evt.preventDefault()
+  $item.bind "drop", (dropEvent) ->
 
     punt = (data) ->
       item.prompt = "<b>Unexpected Item</b><br>We can't make sense of the drop.<br>#{JSON.stringify data}<br>Try something else or see [[About Factory Plugin]]."
       data.userAgent = navigator.userAgent
       item.punt = data
-      wiki.log 'factory punt', dropEvent
+      console.log 'factory punt', dropEvent
       syncEditAction()
 
     readFile = (file) ->
@@ -104,17 +113,17 @@ bind = (div, item) ->
       if dt.types? and ('text/uri-list' in dt.types or 'text/x-moz-url' in dt.types) and not ('Files' in dt.types)
         url = dt.getData 'URL'
         if found = url.match /^http:\/\/([a-zA-Z0-9:.-]+)(\/([a-zA-Z0-9:.-]+)\/([a-z0-9-]+(_rev\d+)?))+$/
-          wiki.log 'factory drop url', found
+          console.log 'factory drop url', found
           [ignore, origin, ignore, item.site, item.slug, ignore] = found
           if $.inArray(item.site,['view','local','origin']) >= 0
             item.site = origin
           $.getJSON "http://#{item.site}/#{item.slug}.json", (remote) ->
-            wiki.log 'factory remote', remote
+            console.log 'factory remote', remote
             item.type = 'reference'
             item.title = remote.title || item.slug
-            item.text = wiki.createSynopsis remote
+            item.text = synopsis remote
             syncEditAction()
-            wiki.registerNeighbor item.site if item.site?
+            neighborhood.registerNeighbor item.site if item.site?
         else
           punt
             number: 4

@@ -1,83 +1,162 @@
-digraph { node [style=filled shape=box];
+digraph { node [style=filled];
+
+actionSymbols [fillcolor=paleGreen];
 
 active [fillcolor=gold];
+active [shape=box];
 
 addToJournal [fillcolor=gold];
 util -> addToJournal [dir=back];
+actionSymbols -> addToJournal [dir=back];
+addToJournal [shape=box];
+
+bind [fillcolor=paleGreen];
+neighborhood -> bind [dir=back];
+neighbors -> bind [dir=back];
+searchbox -> bind [dir=back];
+state -> bind [dir=back];
+link -> bind [dir=back];
+bind [shape=box];
+
+dialog [fillcolor=paleGreen];
+resolve -> dialog [dir=back];
+dialog [shape=box];
+
+drop [fillcolor=paleGreen];
+
+editor [fillcolor=paleGreen];
+plugin -> editor [dir=back];
+itemz -> editor [dir=back];
+pageHandler -> editor [dir=back];
+link -> editor [dir=back];
+random -> editor [dir=back];
+editor [shape=box];
 
 factory [fillcolor=gold];
+neighborhood -> factory [dir=back];
+plugin -> factory [dir=back];
+resolve -> factory [dir=back];
+pageHandler -> factory [dir=back];
+editor -> factory [dir=back];
+synopsis -> factory [dir=back];
+factory [shape=box];
+
+future [fillcolor=paleGreen];
+resolve -> future [dir=back];
+neighborhood -> future [dir=back];
+future [shape=box];
+
+image [fillcolor=paleGreen];
+dialog -> image [dir=back];
+editor -> image [dir=back];
+resolve -> image [dir=back];
+image [shape=box];
+
+itemz [fillcolor=paleGreen];
+pageHandler -> itemz [dir=back];
+plugin -> itemz [dir=back];
+random -> itemz [dir=back];
+itemz [shape=box];
 
 legacy [fillcolor=gold];
-wiki -> legacy [dir=back];
-util -> legacy [dir=back];
 pageHandler -> legacy [dir=back];
-plugin -> legacy [dir=back];
 state -> legacy [dir=back];
 active -> legacy [dir=back];
 refresh -> legacy [dir=back];
-page -> legacy [dir=back];
 lineup -> legacy [dir=back];
+drop -> legacy [dir=back];
+dialog -> legacy [dir=back];
+link -> legacy [dir=back];
+page -> legacy [dir=back];
+legacy [shape=box];
 
-lineup [fillcolor=gold];
-util -> lineup [dir=back];
+lineup [fillcolor=paleGreen];
+random -> lineup [dir=back];
+
+link [fillcolor=paleGreen];
+lineup -> link [dir=back];
+active -> link [dir=back];
+refresh -> link [dir=back];
+page -> link [dir=back];
+link [shape=box];
 
 neighborhood [fillcolor=gold];
-wiki -> neighborhood [dir=back];
-active -> neighborhood [dir=back];
-util -> neighborhood [dir=back];
-search -> neighborhood [dir=back];
+neighborhood [shape=box];
 
-page [fillcolor=gold];
+neighbors [fillcolor=paleGreen];
+link -> neighbors [dir=back];
+neighbors [shape=box];
+
+page [fillcolor=paleGreen];
 util -> page [dir=back];
+random -> page [dir=back];
 
 pageHandler [fillcolor=gold];
-wiki -> pageHandler [dir=back];
-util -> pageHandler [dir=back];
 state -> pageHandler [dir=back];
 revision -> pageHandler [dir=back];
 addToJournal -> pageHandler [dir=back];
 page -> pageHandler [dir=back];
+random -> pageHandler [dir=back];
+pageHandler [shape=box];
+
+paragraph [fillcolor=paleGreen];
+editor -> paragraph [dir=back];
+resolve -> paragraph [dir=back];
+paragraph [shape=box];
 
 persona [fillcolor=gold];
+persona [shape=box];
 
 plugin [fillcolor=gold];
-util -> plugin [dir=back];
-wiki -> plugin [dir=back];
-reference -> plugin [dir=back];
-factory -> plugin [dir=back];
+plugin [shape=box];
+
+plugins [fillcolor=paleGreen];
+reference -> plugins [dir=back];
+factory -> plugins [dir=back];
+paragraph -> plugins [dir=back];
+image -> plugins [dir=back];
+future -> plugins [dir=back];
+
+random [fillcolor=paleGreen];
 
 reference [fillcolor=gold];
+editor -> reference [dir=back];
+resolve -> reference [dir=back];
+reference [shape=box];
 
 refresh [fillcolor=gold];
-util -> refresh [dir=back];
 pageHandler -> refresh [dir=back];
-page -> refresh [dir=back];
 plugin -> refresh [dir=back];
 state -> refresh [dir=back];
 neighborhood -> refresh [dir=back];
 addToJournal -> refresh [dir=back];
-wiki -> refresh [dir=back];
+actionSymbols -> refresh [dir=back];
 lineup -> refresh [dir=back];
+resolve -> refresh [dir=back];
+random -> refresh [dir=back];
+page -> refresh [dir=back];
+refresh [shape=box];
+
+resolve [fillcolor=paleGreen];
+page -> resolve [dir=back];
 
 revision [fillcolor=gold];
 
 search [fillcolor=gold];
-wiki -> search [dir=back];
-util -> search [dir=back];
+link -> search [dir=back];
 active -> search [dir=back];
 page -> search [dir=back];
 
+searchbox [fillcolor=paleGreen];
+search -> searchbox [dir=back];
+searchbox [shape=box];
+
 state [fillcolor=gold];
-wiki -> state [dir=back];
 active -> state [dir=back];
 lineup -> state [dir=back];
+state [shape=box];
 
 synopsis [fillcolor=gold];
 
 util [fillcolor=gold];
-wiki -> util [dir=back];
-
-wiki [fillcolor=gold];
-synopsis -> wiki [dir=back];
-persona -> wiki [dir=back];
 }

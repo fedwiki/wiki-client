@@ -1,10 +1,17 @@
-wiki = require './wiki'
+# The state module saves the .page lineup in the browser's location
+# bar and history. It also reconstructs that state when the browser
+# notifies us that the user has changed this sequence.
+
 active = require './active'
 lineup = require './lineup'
+link = null
 
 module.exports = state = {}
 
 # FUNCTIONS and HANDLERS to manage location bar and back button
+
+state.inject = (link_) ->
+  link = link_
 
 state.pagesInDom = ->
   $.makeArray $(".page").map (_, el) -> el.id
@@ -47,8 +54,7 @@ state.show = (e) ->
   for name, idx in newPages
     continue if matching and= name is oldPages[idx]
     console.log 'push', idx, name
-    #NEWPAGE (not) state.show, wiki.createPage, wiki.refresh
-    wiki.createPage(name, newLocs[idx]).appendTo($('.main')).each wiki.refresh
+    link.showPage(name, newLocs[idx])
 
   console.log 'a .page keys ', ($(each).data('key') for each in $('.page'))
   console.log 'a lineup keys', lineup.debugKeys()
@@ -62,6 +68,5 @@ state.first = ->
   firstUrlLocs = state.urlLocs()
   oldPages = state.pagesInDom()
   for urlPage, idx in firstUrlPages when urlPage not in oldPages
-    #NEWPAGE (not) state.first, wiki.createPage
-    wiki.createPage(urlPage, firstUrlLocs[idx]).appendTo('.main') unless urlPage is ''
+    link.createPage(urlPage, firstUrlLocs[idx]) unless urlPage is ''
 

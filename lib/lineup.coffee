@@ -1,10 +1,16 @@
-util = require './util'
+# The lineup represents a sequence of pages with possible
+# duplication. We maintain the lineup in parallel with
+# the DOM list of .page elements. Eventually lineup will
+# play a more central role managing calculations and
+# display updates.
+
+random = require './random'
 
 pageByKey = {}
 keyByIndex = []
 
 addPage = (pageObject) ->
-	key = util.randomBytes 4
+	key = random.randomBytes 4
 	pageByKey[key] = pageObject
 	keyByIndex.push key
 	return key

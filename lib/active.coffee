@@ -1,7 +1,10 @@
+# Wiki considers one page to be active. Use active.set to change which
+# page this is. A page need not be active to be edited.
+
 module.exports = active = {}
-# FUNCTIONS and HANDLERS to manage the active page, and scroll viewport to show it
 
 active.scrollContainer = undefined
+
 findScrollContainer = ->
   scrolled = $("body, html").filter -> $(this).scrollLeft() > 0
   if scrolled.length > 0
@@ -9,14 +12,14 @@ findScrollContainer = ->
   else
     $("body, html").scrollLeft(12).filter(-> $(this).scrollLeft() > 0).scrollTop(0)
 
-scrollTo = (el) ->
-  return unless el.position()?
+scrollTo = ($page) ->
+  return unless $page.position()?
   active.scrollContainer ?= findScrollContainer()
   bodyWidth = $("body").width()
   minX = active.scrollContainer.scrollLeft()
   maxX = minX + bodyWidth
-  target = el.position().left
-  width = el.outerWidth(true)
+  target = $page.position().left
+  width = $page.outerWidth(true)
   contentWidth = $(".page").outerWidth(true) * $(".page").size()
 
   if target < minX
@@ -26,8 +29,8 @@ scrollTo = (el) ->
   else if maxX > $(".pages").outerWidth()
     active.scrollContainer.animate scrollLeft: Math.min(target, contentWidth - bodyWidth)
 
-active.set = (el) ->
-  el = $(el)
+active.set = ($page) ->
+  $page = $($page)
   $(".active").removeClass("active")
-  scrollTo el.addClass("active")
+  scrollTo $page.addClass("active")
 

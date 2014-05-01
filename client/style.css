@@ -112,6 +112,7 @@ footer {
 .data,
 .chart,
 .image {
+  overflow: auto;   /* clearfix hack */
   float: right;
   margin-left: 0.4em;
   margin-bottom: 0.4em;
@@ -243,7 +244,7 @@ p.readout {
   margin-bottom: 1em; }
 
 .page {
-  float: left;
+  float: left;    /* inline-block preferred? */
   margin: 8px;
   padding: 0 31px;
   width: 430px;

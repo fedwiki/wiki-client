@@ -1,9 +1,17 @@
+# The Reference plugin holds a site and page name to be
+# found on that site. Search, for example, produces a page of
+# references. Double click will edit the body of a reference
+# but not the name and site.
+
+editor = require './editor'
+resolve = require './resolve'
+
 # see http://fed.wiki.org/about-reference-plugin.html
 
 emit = ($item, item) ->
   slug = item.slug or 'welcome-visitors'
   site = item.site
-  wiki.resolveFrom site, ->
+  resolve.resolveFrom site, ->
     $item.append """
       <p style='margin-bottom:3px;'>
         <img class='remote'
@@ -12,13 +20,13 @@ emit = ($item, item) ->
           data-site="#{site}"
           data-slug="#{slug}"
         >
-        #{wiki.resolveLinks "[[#{item.title or slug}]]"}
+        #{resolve.resolveLinks "[[#{item.title or slug}]]"}
       </p>
       <div>
-        #{wiki.resolveLinks(item.text)}
+        #{resolve.resolveLinks(item.text)}
       </div>
     """
 bind = ($item, item) ->
-  $item.dblclick -> wiki.textEditor $item, item
+  $item.dblclick -> editor.textEditor $item, item
 
 module.exports = {emit, bind}

@@ -1,19 +1,9 @@
-wiki = require './wiki'
-module.exports = wiki.util = util = {}
+# This module collects various functions that might belong
+# better elsewhere. At one point we thought of uniformity
+# of representations but that hasn't been a strong influency.
 
-util.symbols =
-  create: '☼'
-  add: '+'
-  edit: '✎'
-  fork: '⚑'
-  move: '↕'
-  remove: '✕'
+module.exports = util = {}
 
-util.randomByte = ->
-  (((1+Math.random())*0x100)|0).toString(16).substring(1)
-
-util.randomBytes = (n) ->
-  (util.randomByte() for [1..n]).join('')
 
 # for chart plug-in
 util.formatTime = (time) ->
@@ -49,31 +39,4 @@ util.formatElapsedTime = (msSinceEpoch) ->
   return "#{Math.floor weeks} weeks ago" if (months = days/31) < 2
   return "#{Math.floor months} months ago" if (years = days/365) < 2
   return "#{Math.floor years} years ago"
-
-# If the selection start and selection end are both the same,
-# then you have the caret position. If there is selected text, 
-# the browser will not tell you where the caret is, but it will 
-# either be at the beginning or the end of the selection 
-#(depending on the direction of the selection).
-util.getSelectionPos = (jQueryElement) -> 
-  el = jQueryElement.get(0) # gets DOM Node from from jQuery wrapper
-  if document.selection # IE
-    el.focus()
-    sel = document.selection.createRange()
-    sel.moveStart 'character', -el.value.length
-    iePos = sel.text.length
-    {start: iePos, end: iePos}
-  else
-    {start: el.selectionStart, end: el.selectionEnd}
-
-util.setCaretPosition = (jQueryElement, caretPos) ->
-  el = jQueryElement.get(0)
-  if el?
-    if el.createTextRange # IE
-      range = el.createTextRange()
-      range.move "character", caretPos
-      range.select()
-    else # rest of the world
-      el.setSelectionRange caretPos, caretPos
-    el.focus()
 

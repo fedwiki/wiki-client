@@ -1,4 +1,4 @@
-util = require('../lib/util')
+page = require('../lib/page')
 revision = require '../lib/revision'
 
 describe 'revision', ->
@@ -132,7 +132,7 @@ describe 'revision', ->
   }
 
   it 'an empty page should look like itself', ->
-    emptyPage = util.emptyPage()
+    emptyPage = page.newPage({}).getRawPage()
     version = revision.create 0, emptyPage
     expect(version).to.eql(emptyPage)
 
@@ -201,7 +201,7 @@ describe 'revision', ->
         expect(version.story[0].text).to.be('A new paragraph is now')
 
       it 'should place item at the end if edited item is not found', ->
-        pageWithOnlyEdit = util.emptyPage()
+        pageWithOnlyEdit = page.newPage({}).getRawPage()
         editedItem = {
           "type": "paragraph",
           "id": "2b3e1bef708cb8d3",

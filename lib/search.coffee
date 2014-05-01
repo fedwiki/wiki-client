@@ -1,5 +1,8 @@
-wiki = require './wiki'
-util = require './util'
+# The search module invokes neighborhood's query function,
+# formats the results as story items, and then opens a
+# page to present them.
+
+link = require './link'
 active = require './active'
 newPage = require('./page').newPage
 
@@ -8,7 +11,6 @@ createSearch = ({neighborhood})->
     searchResults = neighborhood.search(searchQuery)
     tally = searchResults.tally
 
-    #NEWPAGE search results then wiki.createPage, wiki.buildPage
     resultPage = newPage()
     resultPage.setTitle "Search for '#{searchQuery}'"
     resultPage.addParagraph """
@@ -24,10 +26,7 @@ createSearch = ({neighborhood})->
         "title": result.page.title
         "text": result.page.synopsis || ''
 
-    $resultPage = wiki.createPage(resultPage.getSlug()).addClass('ghost')
-    $resultPage.appendTo($('.main'))
-    wiki.buildPage( resultPage, $resultPage )
-    active.set($('.page').last())
+    link.showResult resultPage
 
 
   {
