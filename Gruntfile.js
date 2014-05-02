@@ -23,8 +23,10 @@ module.exports = function (grunt) {
         src: ['./client.coffee'],
         dest: 'client/client.js',
         options: {
-          extensions: ".coffee",
-          transform: ['coffeeify']
+          transform: ['coffeeify'],
+          browserifyOptions: {
+            extensions: ".coffee"
+          }
         }
       },
       // build the development version of the client
@@ -32,8 +34,10 @@ module.exports = function (grunt) {
         src: ['./testclient.coffee'],
         dest: 'client/test/testclient.js',
         options: {
-          extensions: ".coffee",
-          transform: ['coffeeify']
+          transform: ['coffeeify'],
+          browserifyOptions: {
+            extensions: ".coffee"
+          }
         }
       }
     },
