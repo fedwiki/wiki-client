@@ -35,10 +35,33 @@ plugin.get = plugin.getPlugin = (name, callback) ->
       callback(window.plugins[name])
 
 plugin.do = plugin.doPlugin = (div, item, done=->) ->
-  error = (ex) ->
-    errorElement = $("<div />").addClass('error')
-    errorElement.text(ex.toString())
-    div.append(errorElement)
+  error = (ex, script) ->
+    div.append """
+      <div class="error">
+        #{ex.toString()}
+        <button>help</button>
+      </div>
+    """
+    div.find('button').on 'click', ->
+      wiki.dialog ex.toString(), """
+        <p> This "#{item.type}" plugin won't show.<p>
+        <li> Is it available on this server?
+        <li> Is its markup correct?
+        <li> Can it find necessary data?
+        <li> Has network access been interrupted?
+        <li> Has its code been tested?
+        <p> Developers may open debugging tools and retry the plugin.</p>
+        <button class="retry">retry</button>
+      """
+      $('.retry').on 'click', ->
+        if script.emit.length > 2
+          script.emit div, item, ->
+            script.bind div, item
+            done()
+        else
+          script.emit div, item
+          script.bind div, item
+          done()
 
   div.data 'pageElement', div.parents(".page")
   div.data 'item', item
@@ -55,7 +78,7 @@ plugin.do = plugin.doPlugin = (div, item, done=->) ->
         done()
     catch err
       console.log 'plugin error', err
-      error(err)
+      error(err, script)
       done()
 
 plugin.registerPlugin = (pluginName,pluginFn)->
