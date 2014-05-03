@@ -44,7 +44,7 @@ plugin.do = plugin.doPlugin = (div, item, done=->) ->
     """
     div.find('button').on 'click', ->
       wiki.dialog ex.toString(), """
-        <p> This "#{item.type}" plugin won't show.<p>
+        <p> This "#{item.type}" plugin won't show.</p>
         <li> Is it available on this server?
         <li> Is its markup correct?
         <li> Can it find necessary data?
@@ -52,6 +52,14 @@ plugin.do = plugin.doPlugin = (div, item, done=->) ->
         <li> Has its code been tested?
         <p> Developers may open debugging tools and retry the plugin.</p>
         <button class="retry">retry</button>
+        <p> Learn more
+          <a class="external" target="_blank" rel="nofollow"
+          href="http://plugins.fed.wiki.org/about-plugins.html"
+          title="http://plugins.fed.wiki.org/about-plugins.html">
+            About Plugins
+            <img src="/images/external-link-ltr-icon.png">
+          </a>
+        </p>
       """
       $('.retry').on 'click', ->
         if script.emit.length > 2
