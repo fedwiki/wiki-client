@@ -62,11 +62,19 @@ debugSelfCheck = (keys) ->
 # Select a few crumbs from the lineup that will take us
 # close to welcome-visitors on a (possibly) remote site.
 
+leftKey = (key) ->
+  pos = keyByIndex.indexOf key
+  return null if pos < 1
+  keyByIndex[pos-1]
+
 crumbs = (key, location) ->
   page = pageByKey[key]
   host = page.getRemoteSite(location)
   result = ['view', slug = page.getSlug()]
   result.unshift('view', 'welcome-visitors') unless slug == 'welcome-visitors'
+  if host != location and (left = leftKey key)?
+    unless (adjacent = pageByKey[left]).isRemote()
+      result.push(location, adjacent.getSlug())
   result.unshift(host)
   result
 
