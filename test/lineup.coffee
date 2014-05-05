@@ -36,3 +36,35 @@ describe 'lineup', ->
     key3 = lineup.addPage pageObject
     result = lineup.removeAllAfterKey key1
     expect([lineup.debugKeys(), result]).to.eql [[key1], [key2, key3]]
+
+  describe 'crumbs', ->
+
+    fromUri = (uri) ->
+      lineup.debugReset()
+      fields = uri.split /\//
+      result = []
+      while fields.length
+        host = fields.shift()
+        result.push lineup.addPage newPage {title: fields.shift()}, host
+      result
+
+    it 'should reload welcome', ->
+      keys = fromUri 'view/welcome-visitors'
+      crumbs = lineup.crumbs keys[0], 'foo.com'
+      expect(crumbs).to.eql ['foo.com', 'view', 'welcome-visitors']
+
+    it 'should load remote welcome', ->
+      keys = fromUri 'bar.com/welcome-visitors'
+      crumbs = lineup.crumbs keys[0], 'foo.com'
+      expect(crumbs).to.eql ['bar.com', 'view', 'welcome-visitors']
+
+    it 'should reload welcome before some-page', ->
+      keys = fromUri 'view/some-page'
+      crumbs = lineup.crumbs keys[0], 'foo.com'
+      expect(crumbs).to.eql ['foo.com', 'view', 'welcome-visitors', 'view', 'some-page']
+
+    it 'should load remote welcome and some-page', ->
+      keys = fromUri 'bar.com/some-page'
+      crumbs = lineup.crumbs keys[0], 'foo.com'
+      expect(crumbs).to.eql ['bar.com', 'view', 'welcome-visitors', 'view', 'some-page']
+

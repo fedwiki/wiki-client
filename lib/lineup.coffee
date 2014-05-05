@@ -9,35 +9,54 @@ random = require './random'
 pageByKey = {}
 keyByIndex = []
 
+
+# Basic manipulations that correspond to typical user activity
+
 addPage = (pageObject) ->
-	key = random.randomBytes 4
-	pageByKey[key] = pageObject
-	keyByIndex.push key
-	return key
+  key = random.randomBytes 4
+  pageByKey[key] = pageObject
+  keyByIndex.push key
+  return key
 
 removeKey = (key) ->
-	return null unless key in keyByIndex
-	keyByIndex = keyByIndex.filter (each) -> key != each
-	delete pageByKey[key]
-	key
+  return null unless key in keyByIndex
+  keyByIndex = keyByIndex.filter (each) -> key != each
+  delete pageByKey[key]
+  key
 
 removeAllAfterKey = (key) ->
-	result = []
-	return result unless key in keyByIndex
-	while keyByIndex[keyByIndex.length-1] != key
-		unwanted = keyByIndex.pop()
-		result.unshift unwanted
-		delete pageByKey[unwanted]
-	result
+  result = []
+  return result unless key in keyByIndex
+  while keyByIndex[keyByIndex.length-1] != key
+    unwanted = keyByIndex.pop()
+    result.unshift unwanted
+    delete pageByKey[unwanted]
+  result
 
 atKey = (key) ->
-	pageByKey[key]
+  pageByKey[key]
+
+
+# Debug access to internal state used by unit tests.
 
 debugKeys = ->
-	keyByIndex
+  keyByIndex
 
 debugReset = ->
-	pageByKey = {}
-	keyByIndex = []
+  pageByKey = {}
+  keyByIndex = []
 
-module.exports = {addPage, removeKey, removeAllAfterKey, atKey, debugKeys, debugReset}
+
+# Select a few crumbs from the lineup that will take us
+# close to welcome-visitors on a (possibly) remote site.
+
+crumbs = (key, location) ->
+  page = pageByKey[key]
+  host = page.getRemoteSite(location)
+  result = ['view', slug = page.getSlug()]
+  result.unshift('view', 'welcome-visitors') unless slug == 'welcome-visitors'
+  result.unshift(host)
+  result
+
+
+module.exports = {addPage, removeKey, removeAllAfterKey, atKey, debugKeys, debugReset, crumbs}

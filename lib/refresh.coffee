@@ -96,17 +96,23 @@ createFactory = ($page) ->
   before = getItem($before)
   pageHandler.put $page, {item: item, id: item.id, type: "add", after: before?.id}
 
+handleHeaderClick = (e) ->
+    e.preventDefault()
+    $page = $(e.target).parents('.page:first')
+    crumbs = lineup.crumbs $page.data('key'), location.host
+    window.location = "//#{crumbs.join '/'}"
+
 emitHeader = ($header, $page, pageObject) ->
-  viewHere = if pageObject.getSlug() is 'welcome-visitors' then "" else "/view/#{pageObject.getSlug()}"
-  absolute = if pageObject.isRemote() then "//#{pageObject.getRemoteSite()}" else ""
-  tooltip = pageObject.getRemoteSiteDetails(location.host)
+  remote = pageObject.getRemoteSite location.host
+  tooltip = pageObject.getRemoteSiteDetails location.host
   $header.append """
     <h1 title="#{tooltip}">
-      <a href="#{absolute}/view/welcome-visitors#{viewHere}">
-        <img src="#{absolute}/favicon.png" height="32px" class="favicon">
+      <a href="//#{remote}">
+        <img src="//#{remote}/favicon.png" height="32px" class="favicon">
       </a> #{pageObject.getTitle()}
     </h1>
   """
+  $header.find('a').on 'click', handleHeaderClick
 
 emitTimestamp = ($header, $page, pageObject) ->
   if $page.attr('id').match /_rev/
