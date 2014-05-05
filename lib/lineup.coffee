@@ -47,6 +47,18 @@ debugReset = ->
   keyByIndex = []
 
 
+# Debug self-check which corrects misalignments until we get it right
+
+debugSelfCheck = (keys) ->
+  return if (have = "#{keyByIndex}") is (want = "#{keys}")
+  console.log 'The lineup is out of sync with the dom.'
+  console.log ".pages:", keys
+  console.log "lineup:", keyByIndex
+  return unless "#{Object.keys(keyByIndex).sort()}" is "#{Object.keys(keys).sort()}"
+  console.log 'It looks like an ordering problem we can fix.'
+  keysByIndex = keys
+
+
 # Select a few crumbs from the lineup that will take us
 # close to welcome-visitors on a (possibly) remote site.
 
@@ -59,4 +71,4 @@ crumbs = (key, location) ->
   result
 
 
-module.exports = {addPage, removeKey, removeAllAfterKey, atKey, debugKeys, debugReset, crumbs}
+module.exports = {addPage, removeKey, removeAllAfterKey, atKey, debugKeys, debugReset, crumbs, debugSelfCheck}

@@ -98,6 +98,7 @@ createFactory = ($page) ->
 
 handleHeaderClick = (e) ->
     e.preventDefault()
+    lineup.debugSelfCheck ($(each).data('key') for each in $('.page'))
     $page = $(e.target).parents('.page:first')
     crumbs = lineup.crumbs $page.data('key'), location.host
     window.location = "//#{crumbs.join '/'}"
