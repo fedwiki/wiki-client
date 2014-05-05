@@ -15,33 +15,40 @@ module.exports = function (grunt) {
     pkg: grunt.file.readJSON('package.json'),
 
     // tidy-up before we start the build
-    clean: ['build/*', 'client/client.js', 'client/client.map', 'client/client.min.js', 'client/client.min.map', 'client/test/testclient.js'],
+    clean: ['build/*', 'client/client.js', 'client/client.map', 'client/client.*.js', 'client/client.*.map', 'client/test/testclient.js'],
 
     browserify: {
       // build the client that we will include in the package
-      productionClient: {
+      packageClient: {
         src: ['./client.coffee'],
-        dest: 'client/client.js',
+        dest: 'client/client.max.js',
         options: {
-          extensions: ".coffee",
-          transform: ['coffeeify']
+          transform: ['coffeeify'],
+          browserifyOptions: {
+            extensions: ".coffee"
+          }
         }
       },
-      // build the development version of the client
+      // build for local development version of the client will go here (once mapfile issues are resolved)
+
+      // build the browser testclient
       testClient: {
         src: ['./testclient.coffee'],
         dest: 'client/test/testclient.js',
         options: {
-          extensions: ".coffee",
-          transform: ['coffeeify']
+          transform: ['coffeeify'],
+          browserifyOptions: {
+            extensions: ".coffee"
+          }
         }
       }
     },
 
     uglify: {
-      production: {
-        // uglify the production version, 
+      packageClient: {
+        // uglify the client version for including in the NPM package, 
         //   create a map so at least if needed we can get back to the generated javascript
+        //   uglified version is 'client.js', so we don't need changes elsewhere.
         options: {
           sourceMap: true,
           sourceMapName: 'client/client.map',
@@ -49,7 +56,7 @@ module.exports = function (grunt) {
                   '<%= grunt.template.today("yyyy-mm-dd") %> */'
         },
         files: {
-          'client/client.min.js': ['client/client.js']
+          'client/client.js': ['client/client.max.js']
         }
       }
     },
@@ -73,7 +80,7 @@ module.exports = function (grunt) {
   });
 
   // build without sourcemaps
-  grunt.registerTask('build', ['clean', 'mochaTest', 'browserify:productionClient', 'browserify:testClient', 'uglify:production']);
+  grunt.registerTask('build', ['clean', 'mochaTest', 'browserify:packageClient', 'browserify:testClient', 'uglify:packageClient']);
   
   // the default is to do the production build.
   grunt.registerTask('default', ['build']);
