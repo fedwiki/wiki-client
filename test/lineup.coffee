@@ -73,3 +73,13 @@ describe 'lineup', ->
       crumbs = lineup.crumbs keys[1], 'foo.com'
       expect(crumbs).to.eql ['bar.com', 'view', 'welcome-visitors', 'view', 'some-page', 'foo.com', 'once-local']
 
+    it 'should remote the stacked adjacent local page when changing origin', ->
+      keys = fromUri 'view/stack1/view/stack2/view/once-local/bar.com/some-page'
+      crumbs = lineup.crumbs keys[3], 'foo.com'
+      expect(crumbs).to.eql ['bar.com', 'view', 'welcome-visitors', 'view', 'some-page', 'foo.com', 'once-local']
+
+    it 'should remote the welcome rooted stacked adjacent local page when changing origin', ->
+      keys = fromUri 'view/welcome-visitors/view/stack2/view/once-local/bar.com/some-page'
+      crumbs = lineup.crumbs keys[3], 'foo.com'
+      expect(crumbs).to.eql ['bar.com', 'view', 'welcome-visitors', 'view', 'some-page', 'foo.com', 'once-local']
+
