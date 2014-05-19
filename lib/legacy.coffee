@@ -122,10 +122,11 @@ $ ->
         if (remoteSite = $page.data('site'))?
           pageHandler.put $page, {type:'fork', site: remoteSite} # pull
 
-    .delegate '.action', 'hover', ->
-      id = $(this).attr('data-id')
+    .delegate '.action', 'hover', (e) ->
+      id = $(this).data('id')
       $("[data-id=#{id}]").toggleClass('target')
-      $('.main').trigger('rev')
+      key = $(this).parents('.page:first').data('key')
+      $('.page').trigger('align-item', {key, id})
 
     .delegate '.item', 'hover', ->
       id = $(this).attr('data-id')
@@ -141,13 +142,13 @@ $ ->
         pageHandler.put $page, {type: 'create', id: page.id, item: {title:page.title, story:page.story}}
         refresh.rebuildPage pageObject, $page.empty()
 
-    .delegate '.ghost', 'rev', (e) ->
-      console.log 'rev', e
-      $page = $(e.target).parents('.page:first')
-      $item = $page.find('.target')
+    .delegate '.page', 'align-item', (e, align) ->
+      $page = $(this)
+      return if $page.data('key') == align.key
+      $item = $page.find(".item[data-id=#{align.id}]")
+      return unless $item.length
       position = $item.offset().top + $page.scrollTop() - $page.height()/2
-      console.log 'scroll', $page, $item, position
-      $page.stop().animate {scrollTop: postion}, 'slow'
+      $page.stop().animate {scrollTop: position}, 'slow'
 
     .delegate '.score', 'hover', (e) ->
       $('.main').trigger 'thumb', $(e.target).data('thumb')
