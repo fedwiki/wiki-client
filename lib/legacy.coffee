@@ -126,7 +126,7 @@ $ ->
       id = $(this).attr('data-id')
       $("[data-id=#{id}]").toggleClass('target')
       key = $(this).parents('.page:first').data('key')
-      $('.page').has(".item[data-id=#{id}]").trigger('align-item', {key, id})
+      $('.page').trigger('align-item', {key, id})
 
     .delegate '.item', 'hover', ->
       id = $(this).attr('data-id')
