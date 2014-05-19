@@ -123,7 +123,7 @@ $ ->
           pageHandler.put $page, {type:'fork', site: remoteSite} # pull
 
     .delegate '.action', 'hover', (e) ->
-      id = $(this).attr('data-id')
+      id = $(this).data('id')
       $("[data-id=#{id}]").toggleClass('target')
       key = $(this).parents('.page:first').data('key')
       $('.page').trigger('align-item', {key, id})
