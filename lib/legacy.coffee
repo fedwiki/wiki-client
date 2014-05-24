@@ -66,8 +66,8 @@ $ ->
     .delegate '.show-page-source', 'click', (e) ->
       e.preventDefault()
       $page = $(this).parent().parent()
-      json = $page.data('data')
-      dialog.open "JSON for #{json.title}",  $('<pre/>').text(JSON.stringify(json, null, 2))
+      page = lineup.atKey($page.data('key')).getRawPage()
+      dialog.open "JSON for #{page.title}",  $('<pre/>').text(JSON.stringify(page, null, 2))
 
     .delegate '.page', 'click', (e) ->
       active.set this unless $(e.target).is("a")
@@ -87,7 +87,7 @@ $ ->
     .delegate '.revision', 'dblclick', (e) ->
       e.preventDefault()
       $page = $(this).parents('.page')
-      page = $page.data('data')
+      page = lineup.atKey($page.data('key')).getRawPage()
       rev = page.journal.length-1
       action = page.journal[rev]
       json = JSON.stringify(action, null, 2)
