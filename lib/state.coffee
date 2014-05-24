@@ -27,7 +27,7 @@ state.urlLocs = ->
   (j for j in $(location).attr('pathname').split('/')[1..] by 2)
 
 state.setUrl = ->
-  document.title = $('.page:last').data('data')?.title
+  document.title = lineup.bestTitle()
   if history and history.pushState
     locs = state.locsInDom()
     pages = state.pagesInDom()
@@ -60,7 +60,7 @@ state.show = (e) ->
   console.log 'a lineup keys', lineup.debugKeys()
 
   active.set($('.page').last())
-  document.title = $('.page:last').data('data')?.title
+  document.title = lineup.bestTitle()
 
 state.first = ->
   state.setUrl()

@@ -36,6 +36,12 @@ removeAllAfterKey = (key) ->
 atKey = (key) ->
   pageByKey[key]
 
+titleAtKey = (key) ->
+  atKey(key).getTitle()
+
+bestTitle = ->
+  titleAtKey keyByIndex[keyByIndex.length-1]
+
 
 # Debug access to internal state used by unit tests.
 
