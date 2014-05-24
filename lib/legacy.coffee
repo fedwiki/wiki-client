@@ -116,7 +116,7 @@ $ ->
       $page = $(e.target).parents('.page')
       if $page.hasClass('local')
         unless pageHandler.useLocalStorage()
-          item = $page.data('data')
+          item = lineup.atKey($page.data('key')).getRawPage()
           $page.removeClass('local')
           pageHandler.put $page, {type: 'fork', item} # push
       else

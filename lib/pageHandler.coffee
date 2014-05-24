@@ -9,6 +9,7 @@ revision = require './revision'
 addToJournal = require './addToJournal'
 newPage = require('./page').newPage
 random = require './random'
+lineup = require './lineup'
 
 module.exports = pageHandler = {}
 
@@ -105,7 +106,7 @@ pushToLocal = ($page, pagePutInfo, action) ->
     page = {title: action.item.title, story:[], journal:[]}
   else
     page = pageFromLocalStorage pagePutInfo.slug
-    page ||= $page.data("data")
+    page ||= lineup.atKey($page.data('key')).getRawPage()
     page.journal = [] unless page.journal?
     if (site=action['fork'])?
       page.journal = page.journal.concat({'type':'fork','site':site})
