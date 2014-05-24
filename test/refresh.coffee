@@ -1,4 +1,5 @@
 refresh = require('../lib/refresh')
+lineup = require('../lib/lineup')
 mockServer = require('./mockServer')
 
 describe 'refresh', ->
@@ -17,7 +18,9 @@ describe 'refresh', ->
     mockServer.simulatePageNotFound()
     $page.each refresh.cycle
     expect( $page.hasClass('ghost') ).to.be(true)
-    expect( $page.data('data').story[0].type ).to.be('future')
+    expect( key = $page.data('key') ).to.be.a('string')
+    expect( pageObject = lineup.atKey(key) ).to.be.an('object')
+    expect( pageObject.getRawPage().story[0].type ).to.be('future')
 
   xit 'should refresh a page', (done) ->
     simulatePageFound({title: 'asdf'})
