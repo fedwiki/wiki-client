@@ -1,0 +1,32 @@
+digraph {
+rankdir=LR;
+node [style=filled; fillcolor=lightBlue];
+equals -> pageHandler;
+createFactory -> random;
+createFactory -> plugin;
+createFactory -> pageHandler;
+handleHeaderClick -> lineup;
+handleHeaderClick -> lineup;
+emitControls -> actionSymbols;
+emitControls -> actionSymbols;
+emitFooter -> random;
+emitFooter -> random;
+emitTwins -> asSlug;
+emitTwins -> neighborhood;
+renderPageIntoPageElement -> lineup;
+renderPageIntoPageElement -> lineup;
+renderPageIntoPageElement -> resolve;
+renderPageIntoPageElement -> plugin;
+renderPageIntoPageElement -> addToJournal;
+renderPageIntoPageElement -> addToJournal;
+createMissingFlag -> plugin;
+rebuildPage -> plugin;
+rebuildPage -> state;
+buildPage -> lineup;
+createGhostPage -> pageHandler;
+createGhostPage -> newPage;
+createGhostPage -> neighborhood;
+createGhostPage -> neighborhood;
+whenGotten -> neighborhood;
+whenGotten -> pageHandler;
+}
