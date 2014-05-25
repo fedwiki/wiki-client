@@ -66,8 +66,8 @@ $ ->
     .delegate '.show-page-source', 'click', (e) ->
       e.preventDefault()
       $page = $(this).parent().parent()
-      json = $page.data('data')
-      dialog.open "JSON for #{json.title}",  $('<pre/>').text(JSON.stringify(json, null, 2))
+      page = lineup.atKey($page.data('key')).getRawPage()
+      dialog.open "JSON for #{page.title}",  $('<pre/>').text(JSON.stringify(page, null, 2))
 
     .delegate '.page', 'click', (e) ->
       active.set this unless $(e.target).is("a")
@@ -87,7 +87,7 @@ $ ->
     .delegate '.revision', 'dblclick', (e) ->
       e.preventDefault()
       $page = $(this).parents('.page')
-      page = $page.data('data')
+      page = lineup.atKey($page.data('key')).getRawPage()
       rev = page.journal.length-1
       action = page.journal[rev]
       json = JSON.stringify(action, null, 2)
@@ -101,11 +101,12 @@ $ ->
         finishClick e, (name.split '_')[0]
       else
         $page = $(this).parents('.page')
-        slug = asSlug($page.data('data').title)
+        key = $page.data('key')
+        slug = lineup.atKey(key).getSlug()
         rev = $(this).parent().children().not('.separator').index($action)
         return if rev < 0
         $page.nextAll().remove() unless e.shiftKey
-        lineup.removeAllAfterKey($page.data('key')) unless e.shiftKey
+        lineup.removeAllAfterKey(key) unless e.shiftKey
         link.createPage("#{slug}_rev#{rev}", $page.data('site'))
           .appendTo($('.main'))
           .each refresh.cycle
@@ -115,7 +116,7 @@ $ ->
       $page = $(e.target).parents('.page')
       if $page.hasClass('local')
         unless pageHandler.useLocalStorage()
-          item = $page.data('data')
+          item = lineup.atKey($page.data('key')).getRawPage()
           $page.removeClass('local')
           pageHandler.put $page, {type: 'fork', item} # push
       else

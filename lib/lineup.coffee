@@ -36,6 +36,13 @@ removeAllAfterKey = (key) ->
 atKey = (key) ->
   pageByKey[key]
 
+titleAtKey = (key) ->
+  atKey(key).getTitle()
+
+bestTitle = ->
+  return "Wiki" unless keyByIndex.length
+  titleAtKey keyByIndex[keyByIndex.length-1]
+
 
 # Debug access to internal state used by unit tests.
 
@@ -79,4 +86,4 @@ crumbs = (key, location) ->
   result
 
 
-module.exports = {addPage, removeKey, removeAllAfterKey, atKey, debugKeys, debugReset, crumbs, debugSelfCheck}
+module.exports = {addPage, removeKey, removeAllAfterKey, atKey, titleAtKey, bestTitle, debugKeys, debugReset, crumbs, debugSelfCheck}

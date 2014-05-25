@@ -97,6 +97,7 @@ revision -> pageHandler [dir=back];
 addToJournal -> pageHandler [dir=back];
 page -> pageHandler [dir=back];
 random -> pageHandler [dir=back];
+lineup -> pageHandler [dir=back];
 pageHandler [shape=box];
 
 paragraph [fillcolor=paleGreen];
