@@ -11,18 +11,20 @@ synopsis = require './synopsis'
 
 emit = ($item, item) ->
   $item.append '<p>Double-Click to Edit<br>Drop Text or Image to Insert</p>'
+
   showMenu = ->
-    menu = $item.find('p').append "<br>Or Choose a Plugin"
-    menu.append (left = $ """<div style="text-align:left; padding-left: 40%"></div>""")
-    menu = left
-    menuItem = (title, name) ->
-      menu.append """
-        <li><a class="menu" href="#" title="#{title}">#{name}</a></li>
+    menu = $item.find('p').append """
+      <br>Or Choose a Plugin
+      <center>
+      <table style="text-align:left;">
+      <tr><td><ul id=format><td><ul id=data><td><ul id=other>
+    """
+    for info in window.catalog
+      column = info.category || 'other'
+      column = 'other' unless column in ['format', 'data']
+      menu.find('#'+column).append """
+        <li><a class="menu" href="#" title="#{info.title}">#{info.name}</a></li>
       """
-    if Array.isArray window.catalog
-      menuItem(info.title, info.name) for info in window.catalog
-    else  # deprecated
-      menuItem(info.menu, name) for name, info of window.catalog
     menu.find('a.menu').click (evt)->
       $item.removeClass('factory').addClass(item.type=evt.target.text.toLowerCase())
       $item.unbind()
