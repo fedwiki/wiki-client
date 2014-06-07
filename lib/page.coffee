@@ -116,6 +116,17 @@ newPage = (json, site) ->
   become = (template) ->
     page.story = template?.getRawPage().story || []
 
-  {getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, setTitle, getRevision, getTimestamp, addItem, addParagraph, seqItems, seqActions, become}
+  siteLineup = ->
+    slug = getSlug()
+    path = if slug == 'welcome-visitors'
+      "view/welcome-visitors"
+    else
+      "view/welcome-visitors/view/#{slug}"
+    if isRemote()
+      "//#{site}/#{path}"
+    else
+      "/#{path}"
+
+  {getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, setTitle, getRevision, getTimestamp, addItem, addParagraph, seqItems, seqActions, become, siteLineup}
 
 module.exports = {newPage, asSlug}

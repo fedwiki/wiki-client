@@ -73,6 +73,20 @@ describe 'page', ->
       pageObject = newPage {}, 'sfw.c2.com'
       expect(pageObject.getRemoteSite('fed.wiki.org')).to.be 'sfw.c2.com'
 
+  describe 'site lineup', ->
+
+    it 'should start with welcome-visitors', ->
+      pageObject = newPage {title: "Welcome Visitors"}
+      expect(pageObject.siteLineup()).to.be '/view/welcome-visitors'
+
+    it 'should end on this page', ->
+      pageObject = newPage {title: "Some Page"}
+      expect(pageObject.siteLineup()).to.be '/view/welcome-visitors/view/some-page'
+
+    it 'should use absolute address for remote pages', ->
+      pageObject = newPage {title: "Some Page"}, 'fed.wiki.org'
+      expect(pageObject.siteLineup()).to.be '//fed.wiki.org/view/welcome-visitors/view/some-page'
+
   describe 'site details', ->
 
     it 'should report residence only if local', ->
