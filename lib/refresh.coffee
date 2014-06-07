@@ -108,7 +108,7 @@ emitHeader = ($header, $page, pageObject) ->
   tooltip = pageObject.getRemoteSiteDetails location.host
   $header.append """
     <h1 title="#{tooltip}">
-      <a href="//#{remote}">
+      <a href="#{pageObject.siteLineup()}">
         <img src="//#{remote}/favicon.png" height="32px" class="favicon">
       </a> #{pageObject.getTitle()}
     </h1>
