@@ -114,14 +114,16 @@ $ ->
 
     .delegate '.fork-page', 'click', (e) ->
       $page = $(e.target).parents('.page')
+      pageObject = lineup.atKey $page.data('key')
+      action = {type: 'fork', item: pageObject.getRawPage()}
       if $page.hasClass('local')
         unless pageHandler.useLocalStorage()
-          item = lineup.atKey($page.data('key')).getRawPage()
           $page.removeClass('local')
-          pageHandler.put $page, {type: 'fork', item} # push
+          pageHandler.put $page, action
       else
-        if (remoteSite = $page.data('site'))?
-          pageHandler.put $page, {type:'fork', site: remoteSite} # pull
+        if pageObject.isRemote()
+          action.site = pageObject.getRemoteSite()
+          pageHandler.put $page, action
 
     .delegate '.action', 'hover', (e) ->
       id = $(this).data('id')
