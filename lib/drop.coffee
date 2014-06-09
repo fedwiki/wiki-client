@@ -3,8 +3,9 @@
 
 ifUrl = (event, handler) ->
   if (dt = event.originalEvent.dataTransfer)?
-    if dt.types? and ('text/uri-list' in dt.types or 'text/x-moz-url' in dt.types) and not ('Files' in dt.types)
-      handler dt.getData 'URL'
+    if dt.types? and ('text/uri-list' in dt.types or 'text/x-moz-url' in dt.types)
+      url = dt.getData 'URL'
+      handler url if url?.length
 
 ifPage = (url, handler) ->
   if found = url.match /^http:\/\/([a-zA-Z0-9:.-]+)(\/([a-zA-Z0-9:.-]+)\/([a-z0-9-]+(_rev\d+)?))+$/
