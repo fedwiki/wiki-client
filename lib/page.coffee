@@ -2,9 +2,15 @@
 # the json derrived object and the site from which it came.
 
 
-util = require './util'
+formatDate = require('./util').formatDate
 random = require './random'
+revision = require './revision'
 _ = require 'underscore'
+
+# http://pragprog.com/magazines/2011-08/decouple-your-apps-with-eventdriven-coffeescript
+{EventEmitter} = require 'events'
+pageEmitter = new EventEmitter
+
 
 # TODO: better home for asSlug
 asSlug = (name) ->
@@ -80,7 +86,7 @@ newPage = (json, site) ->
 
   getTimestamp = ->
     date = page.journal[getRevision()].date
-    if date? then util.formatDate(date) else "Revision #{getRevision()}"
+    if date? then formatDate(date) else "Revision #{getRevision()}"
 
   addItem = (item) ->
     item = _.extend {}, {id: random.itemId()}, item
@@ -129,4 +135,4 @@ newPage = (json, site) ->
 
   {getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, setTitle, getRevision, getTimestamp, addItem, addParagraph, seqItems, seqActions, become, siteLineup}
 
-module.exports = {newPage, asSlug}
+module.exports = {newPage, asSlug, pageEmitter}
