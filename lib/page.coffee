@@ -133,6 +133,22 @@ newPage = (json, site) ->
     else
       "/#{path}"
 
-  {getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, setTitle, getRevision, getTimestamp, addItem, addParagraph, seqItems, seqActions, become, siteLineup}
+  notDuplicate = (journal, action) ->
+    for each in journal
+      if each.id == action.id and each.date == action.date
+        return false
+    true
+
+  merge = (update) ->
+    merged = (action for action in page.journal)
+    for action in update.getRawPage().journal
+      merged.push action if notDuplicate(page.journal, action)
+    merged.push
+      type: 'fork'
+      site: update.getRemoteSite()
+      date: (new Date()).getTime()
+    newPage revision.create(999, {title: page.title, journal: merged}), site
+
+  {getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, setTitle, getRevision, getTimestamp, addItem, addParagraph, seqItems, seqActions, become, siteLineup, merge}
 
 module.exports = {newPage, asSlug, pageEmitter}
