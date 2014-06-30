@@ -2,9 +2,15 @@
 # the json derrived object and the site from which it came.
 
 
-util = require './util'
+formatDate = require('./util').formatDate
 random = require './random'
+revision = require './revision'
 _ = require 'underscore'
+
+# http://pragprog.com/magazines/2011-08/decouple-your-apps-with-eventdriven-coffeescript
+{EventEmitter} = require 'events'
+pageEmitter = new EventEmitter
+
 
 # TODO: better home for asSlug
 asSlug = (name) ->
@@ -80,7 +86,7 @@ newPage = (json, site) ->
 
   getTimestamp = ->
     date = page.journal[getRevision()].date
-    if date? then util.formatDate(date) else "Revision #{getRevision()}"
+    if date? then formatDate(date) else "Revision #{getRevision()}"
 
   addItem = (item) ->
     item = _.extend {}, {id: random.itemId()}, item
@@ -127,6 +133,22 @@ newPage = (json, site) ->
     else
       "/#{path}"
 
-  {getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, setTitle, getRevision, getTimestamp, addItem, addParagraph, seqItems, seqActions, become, siteLineup}
+  notDuplicate = (journal, action) ->
+    for each in journal
+      if each.id == action.id and each.date == action.date
+        return false
+    true
 
-module.exports = {newPage, asSlug}
+  merge = (update) ->
+    merged = (action for action in page.journal)
+    for action in update.getRawPage().journal
+      merged.push action if notDuplicate(page.journal, action)
+    merged.push
+      type: 'fork'
+      site: update.getRemoteSite()
+      date: (new Date()).getTime()
+    newPage revision.create(999, {title: page.title, journal: merged}), site
+
+  {getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, setTitle, getRevision, getTimestamp, addItem, addParagraph, seqItems, seqActions, become, siteLineup, merge}
+
+module.exports = {newPage, asSlug, pageEmitter}
