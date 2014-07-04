@@ -6,7 +6,8 @@ create = (revIndex, data) ->
   journal = data.journal
   revTitle = data.title
   revStory = []
-  revJournal = journal[0..(+revIndex)]
+  revIndex = +revIndex
+  revJournal = journal[0..revIndex]
   for journalEntry in revJournal
     revStoryIds = revStory.map (storyItem) -> storyItem.id
     switch journalEntry.type

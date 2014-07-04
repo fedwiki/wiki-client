@@ -27,6 +27,7 @@ random = require './random'
 pageModule = require('./page')
 newPage = pageModule.newPage
 asSlug = pageModule.asSlug
+pageEmitter = pageModule.pageEmitter
 
 
 getItem = ($item) ->
@@ -77,6 +78,25 @@ initDragging = ($page) ->
   $story = $page.find('.story')
   $story.sortable(options).on('sortupdate', handleDragging)
 
+getPageObject = ($journal) ->
+  $page = $($journal).parents('.page:first')
+  lineup.atKey $page.data('key')
+
+handleMerging = (event, ui) ->
+  drag = getPageObject ui.draggable
+  drop = getPageObject event.target
+  pageEmitter.emit 'show', drop.merge drag
+
+initMerging = ($page) ->
+  $journal = $page.find('.journal')
+  $journal.draggable
+    revert: true
+    appendTo: '.main'
+    scroll: false
+    helper: 'clone'
+  $journal.droppable
+    hoverClass: "ui-state-hover"
+    drop: handleMerging
 
 initAddButton = ($page) ->
   $page.find(".add-factory").live "click", (evt) ->
@@ -232,6 +252,7 @@ rebuildPage = (pageObject, $page) ->
   state.setUrl()
 
   initDragging $page
+  initMerging $page
   initAddButton $page
   $page
 
