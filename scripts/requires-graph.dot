@@ -39,6 +39,7 @@ resolve -> factory [dir=back];
 pageHandler -> factory [dir=back];
 editor -> factory [dir=back];
 synopsis -> factory [dir=back];
+drop -> factory [dir=back];
 factory [shape=box];
 
 future [fillcolor=paleGreen];
@@ -90,6 +91,7 @@ neighbors [shape=box];
 page [fillcolor=paleGreen];
 util -> page [dir=back];
 random -> page [dir=back];
+revision -> page [dir=back];
 
 pageHandler [fillcolor=gold];
 state -> pageHandler [dir=back];
