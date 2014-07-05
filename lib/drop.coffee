@@ -22,6 +22,19 @@ isPage = (url) ->
     return item
   null
 
+isVideo = (url) ->
+  if found = url.match /^https?:\/\/www.youtube.com\/watch\?v=([a-zA-Z0-9]+).*$/
+    return {text: "YOUTUBE #{found[1]}"}
+  if found = url.match /^https?:\/\/youtu.be\/([a-zA-Z0-9]+).*$/
+    return {text: "YOUTUBE #{found[1]}"}
+  if found = url.match /www.youtube.com%2Fwatch%3Fv%3D([a-zA-Z0-9]+).*$/
+    return {text: "YOUTUBE #{found[1]}"}
+  if found = url.match /^https?:\/\/vimeo.com\/([0-9]+).*$/
+    return {text: "VIMEO #{found[1]}"}
+  if found = url.match /url=http%3A%2F%2Fvimeo.com%2F([0-9]+).*$/
+    return {text: "VIMEO #{found[1]}"}
+  null
+
 dispatch = (handlers) ->
   (event) ->
     stop = (ignored) ->
@@ -31,6 +44,9 @@ dispatch = (handlers) ->
       if page = isPage url
         if (handle = handlers.page)?
           return stop handle page
+      if video = isVideo url
+        if (handle = handlers.video)?
+          return stop handle video
       punt = {url}
     if file = isFile event
       if (handle = handlers.file)?

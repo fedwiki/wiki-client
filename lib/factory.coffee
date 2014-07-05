@@ -74,6 +74,11 @@ bind = ($item, item) ->
       syncEditAction()
       neighborhood.registerNeighbor item.site if item.site?
 
+  addVideo = (video) ->
+    item.type = 'video'
+    item.text = "#{video.text}\n(double-click to edit caption)\n"
+    syncEditAction()
+
   readFile = (file) ->
     if file?
       [majorType, minorType] = file.type.split("/")
@@ -112,6 +117,7 @@ bind = ($item, item) ->
   $item.bind "drop", drop.dispatch
     page: addReference
     file: readFile
+    video: addVideo
     punt: punt
 
 # from http://www.bennadel.com/blog/1504-Ask-Ben-Parsing-CSV-Strings-With-Javascript-Exec-Regular-Expression-Command.htm
