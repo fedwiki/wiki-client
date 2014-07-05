@@ -1,5 +1,9 @@
 page = require('../lib/page')
 revision = require '../lib/revision'
+expect = require 'expect.js'
+
+deepCopy = (tree) ->
+  JSON.parse JSON.stringify tree
 
 describe 'revision', ->
 
@@ -158,7 +162,7 @@ describe 'revision', ->
         expect(version.title).to.eql('new-page')
 
       it 'should define the title of the version', ->
-        pageWithNewTitle = jQuery.extend(true, {}, data)
+        pageWithNewTitle = deepCopy data
         pageWithNewTitle.journal[0].item.title = "new-title"
         version = revision.create 0, pageWithNewTitle
         expect(version.title).to.eql('new-title')
@@ -176,7 +180,7 @@ describe 'revision', ->
           expect(version.story[1].text).to.be("Start writing. Read [[How to Wiki]] for more ideas.")
 
         it 'should place story item at the end if dropped position is not defined', ->
-          draggedItemWithoutAfter = jQuery.extend(true, {}, data)
+          draggedItemWithoutAfter = deepCopy data
           delete draggedItemWithoutAfter.journal[5].after
           version = revision.create 5, draggedItemWithoutAfter
           expect(version.story[2].text).to.be("Start writing. Read [[How to Wiki]] for more ideas.")
@@ -188,7 +192,7 @@ describe 'revision', ->
           expect(version.story[1].text).to.be(' first')
 
         it 'should place new paragraph at the end if split item is not defined', ->
-          splitParagraphWithoutAfter = jQuery.extend(true, {}, data)
+          splitParagraphWithoutAfter = deepCopy data
           delete splitParagraphWithoutAfter.journal[8].after
           version = revision.create 8, splitParagraphWithoutAfter
           expect(version.story[0].text).to.be('A new paragraph is now')
