@@ -3,6 +3,15 @@
 
 module.exports = plugin = {}
 
+escape = (s) ->
+  (''+s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .replace(/\//g,'&#x2F;')
+
 # define cachedScript that allows fetching a cached script.
 # see example in http://api.jquery.com/jQuery.getScript/ 
 
@@ -38,8 +47,8 @@ plugin.do = plugin.doPlugin = (div, item, done=->) ->
   error = (ex, script) ->
     div.append """
       <div class="error">
-        #{ex.toString()}
-        <button>help</button>
+        #{escape item.text || ""}
+        <button>help</button><br>
       </div>
     """
     div.find('button').on 'click', ->

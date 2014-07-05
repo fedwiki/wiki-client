@@ -159,7 +159,7 @@ $ ->
     .bind 'dragenter', (evt) -> evt.preventDefault()
     .bind 'dragover', (evt) -> evt.preventDefault()
     .bind "drop", drop.dispatch
-        page: (item) -> link.doInternalLink item.slug, null, item.site
+      page: (item) -> link.doInternalLink item.slug, null, item.site
 
   $(".provider input").click ->
     $("footer input:first").val $(this).attr('data-provider')
