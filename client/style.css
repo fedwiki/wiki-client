@@ -1,5 +1,7 @@
 .error {
-  color: #bb0000; }
+  background: #eeeeee;
+  padding: 0.8em;
+}
 
 a {
   text-decoration: none; }
