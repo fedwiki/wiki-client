@@ -149,6 +149,10 @@ newPage = (json, site) ->
       date: (new Date()).getTime()
     newPage revision.create(999, {title: page.title, journal: merged}), site
 
-  {getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, setTitle, getRevision, getTimestamp, addItem, addParagraph, seqItems, seqActions, become, siteLineup, merge}
+  apply = (action) ->
+    revision.apply page, action
+    site = null if action.site
+
+  {getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, setTitle, getRevision, getTimestamp, addItem, addParagraph, seqItems, seqActions, become, siteLineup, merge, apply}
 
 module.exports = {newPage, asSlug, pageEmitter}

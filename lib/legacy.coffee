@@ -115,7 +115,7 @@ $ ->
     .delegate '.fork-page', 'click', (e) ->
       $page = $(e.target).parents('.page')
       pageObject = lineup.atKey $page.data('key')
-      action = {type: 'fork', item: pageObject.getRawPage()}
+      action = {type: 'fork'}
       if $page.hasClass('local')
         unless pageHandler.useLocalStorage()
           $page.removeClass('local')
@@ -142,8 +142,8 @@ $ ->
         pageObject = lineup.atKey $page.data('key')
         pageObject.become(template)
         page = pageObject.getRawPage()
-        pageHandler.put $page, {type: 'create', id: page.id, item: {title:page.title, story:page.story}}
         refresh.rebuildPage pageObject, $page.empty()
+        pageHandler.put $page, {type: 'create', id: page.id, item: {title:page.title, story:page.story}}
 
     .delegate '.page', 'align-item', (e, align) ->
       $page = $(this)

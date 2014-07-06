@@ -13,6 +13,9 @@ lineup = require './lineup'
 
 module.exports = pageHandler = {}
 
+deepCopy = (object) ->
+  JSON.parse JSON.stringify object
+
 pageHandler.useLocalStorage = ->
   $(".login").length > 0
 
@@ -117,11 +120,21 @@ pushToLocal = ($page, pagePutInfo, action) ->
   addToJournal $page.find('.journal'), action
 
 pushToServer = ($page, pagePutInfo, action) ->
+
+  # bundle rawPage which server will strip out
+  bundle = deepCopy(action)
+  pageObject = lineup.atKey $page.data('key')
+  if action.type == 'fork'
+    bundle.item = deepCopy pageObject.getRawPage()
+
+  # update pageObject (guard for tests)
+  pageObject.apply action if pageObject?.apply
+
   $.ajax
     type: 'PUT'
     url: "/page/#{pagePutInfo.slug}/action"
     data:
-      'action': JSON.stringify(action)
+      'action': JSON.stringify(bundle)
     success: () ->
       addToJournal $page.find('.journal'), action
       if action.type == 'fork' # push
