@@ -1,7 +1,43 @@
-page = require('../lib/page')
+{newPage} = require('../lib/page')
 revision = require '../lib/revision'
+expect = require 'expect.js'
+
+deepCopy = (tree) ->
+  JSON.parse JSON.stringify tree
 
 describe 'revision', ->
+
+  describe 'apply', ->
+    it 'should create a story', ->
+      revision.apply (page = {}), {type: 'create', item: {story: [{type: 'foo'}]}}
+      expect(page.story).to.eql [{type: 'foo'}]
+
+    it 'should add an item', ->
+      revision.apply (page = {}), {type: 'add', item: {type: 'foo'}}
+      expect(page.story).to.eql [{type: 'foo'}]
+
+    it 'should edit an item', ->
+      revision.apply (page = {story:[{type:'foo',id:'3456'}]}), {type:'edit', id:'3456',item: {type:'bar',id:'3456'}}
+      expect(page.story).to.eql [{type: 'bar', id:'3456'}]
+
+    it 'should move an item', ->
+      page =
+        story: [
+          {type:'foo', id:'1234'}
+          {type:'bar', id:'3456'}
+        ]
+      revision.apply page, {type: 'move', id:'1234', order:['3456','1234']}
+      expect(page.story).to.eql [{type:'bar', id:'3456'},{type:'foo', id:'1234'}]
+
+    it 'should remove an item', ->
+      page =
+        story: [
+          {type:'foo', id:'1234'}
+          {type:'bar', id:'3456'}
+        ]
+      revision.apply page, {type:'remove', id:'1234'}
+      expect(page.story).to.eql [{type:'bar', id:'3456'}]
+
 
   data = {
     "title": "new-page",
@@ -131,25 +167,27 @@ describe 'revision', ->
     ]
   }
 
-  it 'an empty page should look like itself', ->
-    emptyPage = page.newPage({}).getRawPage()
-    version = revision.create 0, emptyPage
-    expect(version).to.eql(emptyPage)
+  describe 'create', ->
 
-  it 'should shorten the journal to given revision', ->
-    version = revision.create 1, data
-    expect(version.journal.length).to.be(2)
+    it 'should do little to an empty page', ->
+      emptyPage = newPage({}).getRawPage()
+      version = revision.create -1, emptyPage
+      expect(newPage(version).getRawPage()).to.eql(emptyPage)
 
-  it 'should recreate story on given revision', ->
-    version = revision.create 2, data
-    expect(version.story.length).to.be(1)
-    expect(version.story[0].text).to.be('Some paragraph text')
+    it 'should shorten the journal to given revision', ->
+      version = revision.create 1, data
+      expect(version.journal.length).to.be(2)
 
-  it 'should accept revision as string', ->
-    version = revision.create '1', data
-    expect(version.journal.length).to.be(2)
+    it 'should recreate story on given revision', ->
+      version = revision.create 2, data
+      expect(version.story.length).to.be(1)
+      expect(version.story[0].text).to.be('Some paragraph text')
 
-  describe 'journal entry types', ->
+    it 'should accept revision as string', ->
+      version = revision.create '1', data
+      expect(version.journal.length).to.be(2)
+
+  describe 'replay up to ...', ->
 
     describe 'create', ->
 
@@ -158,7 +196,7 @@ describe 'revision', ->
         expect(version.title).to.eql('new-page')
 
       it 'should define the title of the version', ->
-        pageWithNewTitle = jQuery.extend(true, {}, data)
+        pageWithNewTitle = deepCopy data
         pageWithNewTitle.journal[0].item.title = "new-title"
         version = revision.create 0, pageWithNewTitle
         expect(version.title).to.eql('new-title')
@@ -176,7 +214,7 @@ describe 'revision', ->
           expect(version.story[1].text).to.be("Start writing. Read [[How to Wiki]] for more ideas.")
 
         it 'should place story item at the end if dropped position is not defined', ->
-          draggedItemWithoutAfter = jQuery.extend(true, {}, data)
+          draggedItemWithoutAfter = deepCopy data
           delete draggedItemWithoutAfter.journal[5].after
           version = revision.create 5, draggedItemWithoutAfter
           expect(version.story[2].text).to.be("Start writing. Read [[How to Wiki]] for more ideas.")
@@ -188,7 +226,7 @@ describe 'revision', ->
           expect(version.story[1].text).to.be(' first')
 
         it 'should place new paragraph at the end if split item is not defined', ->
-          splitParagraphWithoutAfter = jQuery.extend(true, {}, data)
+          splitParagraphWithoutAfter = deepCopy data
           delete splitParagraphWithoutAfter.journal[8].after
           version = revision.create 8, splitParagraphWithoutAfter
           expect(version.story[0].text).to.be('A new paragraph is now')
@@ -201,7 +239,7 @@ describe 'revision', ->
         expect(version.story[0].text).to.be('A new paragraph is now')
 
       it 'should place item at the end if edited item is not found', ->
-        pageWithOnlyEdit = page.newPage({}).getRawPage()
+        pageWithOnlyEdit = newPage({}).getRawPage()
         editedItem = {
           "type": "paragraph",
           "id": "2b3e1bef708cb8d3",

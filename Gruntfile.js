@@ -67,7 +67,15 @@ module.exports = function (grunt) {
           reporter: 'spec',
           require: 'coffee-script/register'
         },
-        src: ['test/util.coffee', 'test/random.coffee', 'test/page.coffee', 'test/lineup.coffee', 'test/drop.coffee', 'test/wiki.coffee']
+        src: [
+          'test/util.coffee',
+          'test/random.coffee',
+          'test/page.coffee',
+          'test/lineup.coffee',
+          'test/drop.coffee',
+          'test/revision.coffee',
+          'test/wiki.coffee'
+        ]
       }
     },
 
