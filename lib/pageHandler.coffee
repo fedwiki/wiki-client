@@ -118,6 +118,7 @@ pushToLocal = ($page, pagePutInfo, action) ->
   page.journal = page.journal.concat(action)
   localStorage[pagePutInfo.slug] = JSON.stringify(page)
   addToJournal $page.find('.journal'), action
+  $page.addClass("local")
 
 pushToServer = ($page, pagePutInfo, action) ->
 
@@ -127,20 +128,21 @@ pushToServer = ($page, pagePutInfo, action) ->
   if action.type == 'fork'
     bundle.item = deepCopy pageObject.getRawPage()
 
-  # update pageObject (guard for tests)
-  pageObject.apply action if pageObject?.apply
-
   $.ajax
     type: 'PUT'
     url: "/page/#{pagePutInfo.slug}/action"
     data:
       'action': JSON.stringify(bundle)
     success: () ->
+      # update pageObject (guard for tests)
+      pageObject.apply action if pageObject?.apply
       addToJournal $page.find('.journal'), action
       if action.type == 'fork' # push
         localStorage.removeItem $page.attr('id')
     error: (xhr, type, msg) ->
       console.log "pageHandler.put ajax error callback", type, msg
+      action.error = {type, msg}
+      pushToLocal $page, pagePutInfo, action
 
 pageHandler.put = ($page, action) ->
 
@@ -196,7 +198,6 @@ pageHandler.put = ($page, action) ->
   # store as appropriate
   if pageHandler.useLocalStorage() or pagePutInfo.site == 'local'
     pushToLocal($page, pagePutInfo, action)
-    $page.addClass("local")
   else
     pushToServer($page, pagePutInfo, action)
 
