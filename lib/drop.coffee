@@ -23,11 +23,11 @@ isPage = (url) ->
   null
 
 isVideo = (url) ->
-  if found = url.match /^https?:\/\/www.youtube.com\/watch\?v=([a-zA-Z0-9]+).*$/
+  if found = url.match /^https?:\/\/www.youtube.com\/watch\?v=([\w\-]+).*$/
     return {text: "YOUTUBE #{found[1]}"}
-  if found = url.match /^https?:\/\/youtu.be\/([a-zA-Z0-9]+).*$/
+  if found = url.match /^https?:\/\/youtu.be\/([\w\-]+).*$/
     return {text: "YOUTUBE #{found[1]}"}
-  if found = url.match /www.youtube.com%2Fwatch%3Fv%3D([a-zA-Z0-9]+).*$/
+  if found = url.match /www.youtube.com%2Fwatch%3Fv%3D([\w\-]+).*$/
     return {text: "YOUTUBE #{found[1]}"}
   if found = url.match /^https?:\/\/vimeo.com\/([0-9]+).*$/
     return {text: "VIMEO #{found[1]}"}
