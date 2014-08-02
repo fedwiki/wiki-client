@@ -20,13 +20,22 @@ describe 'revision', ->
       revision.apply (page = {story:[{type:'foo',id:'3456'}]}), {type:'edit', id:'3456',item: {type:'bar',id:'3456'}}
       expect(page.story).to.eql [{type: 'bar', id:'3456'}]
 
-    it 'should move an item', ->
+    it 'should move first item to the bottom', ->
       page =
         story: [
           {type:'foo', id:'1234'}
           {type:'bar', id:'3456'}
         ]
       revision.apply page, {type: 'move', id:'1234', order:['3456','1234']}
+      expect(page.story).to.eql [{type:'bar', id:'3456'},{type:'foo', id:'1234'}]
+
+    it 'should move last item to the top', ->
+      page =
+        story: [
+          {type:'foo', id:'1234'}
+          {type:'bar', id:'3456'}
+        ]
+      revision.apply page, {type: 'move', id:'3456', order:['3456','1234']}
       expect(page.story).to.eql [{type:'bar', id:'3456'},{type:'foo', id:'1234'}]
 
     it 'should remove an item', ->
@@ -38,7 +47,8 @@ describe 'revision', ->
       revision.apply page, {type:'remove', id:'1234'}
       expect(page.story).to.eql [{type:'bar', id:'3456'}]
 
-
+  # tip: create a page/new-page file with this contents and
+  # browse its versions to understand this test.
   data = {
     "title": "new-page",
     "story": [
@@ -213,11 +223,12 @@ describe 'revision', ->
           version = revision.create 5, data
           expect(version.story[1].text).to.be("Start writing. Read [[How to Wiki]] for more ideas.")
 
-        it 'should place story item at the end if dropped position is not defined', ->
+        it 'should place story item at the beginning if dropped position is not defined', ->
           draggedItemWithoutAfter = deepCopy data
           delete draggedItemWithoutAfter.journal[5].after
           version = revision.create 5, draggedItemWithoutAfter
-          expect(version.story[2].text).to.be("Start writing. Read [[How to Wiki]] for more ideas.")
+          expect(version.story[0].text).to.be("Start writing. Read [[How to Wiki]] for more ideas.")
+          expect(version.story[2].text).to.be("A new paragraph after the first")
 
       describe 'splitting paragraph', ->
         it 'should place paragraphs after each other', ->
@@ -225,12 +236,12 @@ describe 'revision', ->
           expect(version.story[0].text).to.be('A new paragraph is now')
           expect(version.story[1].text).to.be(' first')
 
-        it 'should place new paragraph at the end if split item is not defined', ->
+        it 'should place new paragraph at the beginning if split item is not defined', ->
           splitParagraphWithoutAfter = deepCopy data
           delete splitParagraphWithoutAfter.journal[8].after
           version = revision.create 8, splitParagraphWithoutAfter
-          expect(version.story[0].text).to.be('A new paragraph is now')
-          expect(version.story[3].text).to.be(' first')
+          expect(version.story[0].text).to.be(' first')
+          expect(version.story[3].text).to.be('Some paragraph text')
 
     describe 'edit', ->
 
@@ -238,7 +249,7 @@ describe 'revision', ->
         version = revision.create 7, data
         expect(version.story[0].text).to.be('A new paragraph is now')
 
-      it 'should place item at the end if edited item is not found', ->
+      it 'should place item at the beginning if edited item is not found', ->
         pageWithOnlyEdit = newPage({}).getRawPage()
         editedItem = {
           "type": "paragraph",

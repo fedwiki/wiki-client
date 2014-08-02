@@ -3,6 +3,15 @@
 # all of a journal.
 
 apply = (page, action) ->
+
+  add = (after, item) ->
+    idx = page.story.map((para) -> para.id).indexOf(after) + 1
+    page.story.splice(idx, 0, item)
+
+  remove = ->
+    if (index = order.indexOf action.id) != -1
+      page.story.splice(index,1)
+
   order = (item.id for item in page.story||[])
   page.story ||= []
 
@@ -12,10 +21,7 @@ apply = (page, action) ->
         page.title = action.item.title if action.item.title?
         page.story = action.item.story if action.item.story?
     when 'add'
-      if (index = order.indexOf action.after) != -1
-        page.story.splice(index+1,0,action.item)
-      else
-        page.story.push action.item
+      add action.after, action.item
     when 'edit'
       if (index = order.indexOf action.id) != -1
         page.story.splice(index,1,action.item)
@@ -29,8 +35,8 @@ apply = (page, action) ->
       for id in action.order
         page.story.push(items[id]) if items[id]?
     when 'remove'
-      if (index = order.indexOf action.id) != -1
-        page.story.splice(index,1)
+      remove()
+
   page.journal ||= []
   page.journal.push action
 
