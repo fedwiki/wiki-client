@@ -4,15 +4,17 @@
 
 apply = (page, action) ->
 
+  order = ->
+    (item.id for item in page.story||[])
+
   add = (after, item) ->
-    idx = page.story.map((para) -> para.id).indexOf(after) + 1
-    page.story.splice(idx, 0, item)
+    index = order().indexOf(after) + 1
+    page.story.splice(index, 0, item)
 
   remove = ->
-    if (index = order.indexOf action.id) != -1
+    if (index = order().indexOf action.id) != -1
       page.story.splice(index,1)
 
-  order = (item.id for item in page.story||[])
   page.story ||= []
 
   switch action.type
@@ -23,17 +25,17 @@ apply = (page, action) ->
     when 'add'
       add action.after, action.item
     when 'edit'
-      if (index = order.indexOf action.id) != -1
+      if (index = order().indexOf action.id) != -1
         page.story.splice(index,1,action.item)
       else
         page.story.push action.item
     when 'move'
-      items = {}
-      for item in page.story
-        items[item.id] = item
-      page.story = []
-      for id in action.order
-        page.story.push(items[id]) if items[id]?
+      # construct relative addresses from absolute order
+      index = action.order.indexOf action.id
+      after = action.order[index-1]
+      item = page.story[order().indexOf action.id]
+      remove()
+      add after, item
     when 'remove'
       remove()
 
