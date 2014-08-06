@@ -3,7 +3,18 @@
 # all of a journal.
 
 apply = (page, action) ->
-  order = (item.id for item in page.story||[])
+
+  order = ->
+    (item.id for item in page.story||[])
+
+  add = (after, item) ->
+    index = order().indexOf(after) + 1
+    page.story.splice(index, 0, item)
+
+  remove = ->
+    if (index = order().indexOf action.id) != -1
+      page.story.splice(index,1)
+
   page.story ||= []
 
   switch action.type
@@ -12,25 +23,22 @@ apply = (page, action) ->
         page.title = action.item.title if action.item.title?
         page.story = action.item.story if action.item.story?
     when 'add'
-      if (index = order.indexOf action.after) != -1
-        page.story.splice(index+1,0,action.item)
-      else
-        page.story.push action.item
+      add action.after, action.item
     when 'edit'
-      if (index = order.indexOf action.id) != -1
+      if (index = order().indexOf action.id) != -1
         page.story.splice(index,1,action.item)
       else
         page.story.push action.item
     when 'move'
-      items = {}
-      for item in page.story
-        items[item.id] = item
-      page.story = []
-      for id in action.order
-        page.story.push(items[id]) if items[id]?
+      # construct relative addresses from absolute order
+      index = action.order.indexOf action.id
+      after = action.order[index-1]
+      item = page.story[order().indexOf action.id]
+      remove()
+      add after, item
     when 'remove'
-      if (index = order.indexOf action.id) != -1
-        page.story.splice(index,1)
+      remove()
+
   page.journal ||= []
   page.journal.push action
 
