@@ -112,9 +112,8 @@ pushToLocal = ($page, pagePutInfo, action) ->
     page ||= lineup.atKey($page.data('key')).getRawPage()
     page.journal = [] unless page.journal?
     if (site=action['fork'])?
-      page.journal = page.journal.concat({'type':'fork','site':site})
+      page.journal = page.journal.concat({'type':'fork','site':site,'date':(new Date()).getTime()})
       delete action['fork']
-    page.story = $($page).find(".item").map(-> $(@).data("item")).get()
   page.journal = page.journal.concat(action)
   localStorage[pagePutInfo.slug] = JSON.stringify(page)
   addToJournal $page.find('.journal'), action
