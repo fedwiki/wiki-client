@@ -12,7 +12,7 @@ activity = (journal, from, to) ->
 sparks = (journal) ->
   line = ''
   to = (new Date).getTime()
-  for i in [1..60]
+  for [1..60]
     line += if activity(journal, to-day, to) then '|' else '.'
     line += '<td>' if (new Date(to)).getDay() == 0
     to -= day
