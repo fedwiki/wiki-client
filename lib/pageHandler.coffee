@@ -39,7 +39,7 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
   if site?
     if site == 'local'
       if localPage = pageFromLocalStorage(pageInformation.slug)
-        #NEWPAGE local from pageHandler.get 
+        #NEWPAGE local from pageHandler.get
         return whenGotten newPage(localPage, 'local' )
       else
         return whenNotGotten()
@@ -114,7 +114,7 @@ pushToLocal = ($page, pagePutInfo, action) ->
     if (site=action['fork'])?
       page.journal = page.journal.concat({'type':'fork','site':site,'date':(new Date()).getTime()})
       delete action['fork']
-  page.journal = page.journal.concat(action)
+  revision.apply page, action
   localStorage[pagePutInfo.slug] = JSON.stringify(page)
   addToJournal $page.find('.journal'), action
   $page.addClass("local")
@@ -199,4 +199,3 @@ pageHandler.put = ($page, action) ->
     pushToLocal($page, pagePutInfo, action)
   else
     pushToServer($page, pagePutInfo, action)
-
