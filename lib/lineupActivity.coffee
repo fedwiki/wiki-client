@@ -11,11 +11,12 @@ activity = (journal, from, to) ->
 
 sparks = (journal) ->
   line = ''
-  to = (new Date).getTime()
-  for [1..60]
-    line += if activity(journal, to-day, to) then '|' else '.'
-    line += '<td>' if (new Date(to)).getDay() == 0
-    to -= day
+  days = 60
+  from = (new Date).getTime() - days*day
+  for [1..days]
+    line += if activity(journal, from, from+day) then '|' else '.'
+    line += '<td>' if (new Date(from)).getDay() == 5
+    from += day
   line
 
 row = (page) ->
@@ -23,10 +24,10 @@ row = (page) ->
   title = page.getTitle()
   """
     <tr><td align=right>
+      #{sparks page.getRawPage().journal}
+    <td>
       <img class="remote" src="//#{remote}/favicon.png">
       #{title}
-    <td>
-      #{sparks page.getRawPage().journal}
   """
 
 table = (keys) ->
@@ -34,6 +35,7 @@ table = (keys) ->
     <table>
     #{(row lineup.atKey key for key in keys).join "\n"}
     </table>
+    <p style="color: #bbb">dots are days, advancing to the right, with marks showing activity</p>
   """
 
 show = ->
