@@ -21,4 +21,8 @@ $ ->
   neighbors.inject neighborhood
   neighbors.bind()
 
+  if window.seedNeighbors
+    seedNeighbors.split(',').forEach (site) ->
+      neighborhood.registerNeighbor(site.trim())
+
   state.inject link
