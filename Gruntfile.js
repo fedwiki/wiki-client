@@ -46,7 +46,7 @@ module.exports = function (grunt) {
 
     uglify: {
       packageClient: {
-        // uglify the client version for including in the NPM package, 
+        // uglify the client version for including in the NPM package,
         //   create a map so at least if needed we can get back to the generated javascript
         //   uglified version is 'client.js', so we don't need changes elsewhere.
         options: {
@@ -89,9 +89,8 @@ module.exports = function (grunt) {
 
   // build without sourcemaps
   grunt.registerTask('build', ['clean', 'mochaTest', 'browserify:packageClient', 'browserify:testClient', 'uglify:packageClient']);
-  
+
   // the default is to do the production build.
   grunt.registerTask('default', ['build']);
 
 };
-
