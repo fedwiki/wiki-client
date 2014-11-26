@@ -139,8 +139,7 @@ pushToServer = ($page, pagePutInfo, action) ->
       if action.type == 'fork' # push
         localStorage.removeItem $page.attr('id')
     error: (xhr, type, msg) ->
-      console.log "pageHandler.put ajax error callback", type, msg
-      action.error = {type, msg}
+      action.error = {type, msg, response: xhr.responseText}
       pushToLocal $page, pagePutInfo, action
 
 pageHandler.put = ($page, action) ->
