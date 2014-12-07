@@ -115,7 +115,7 @@ pushToLocal = ($page, pagePutInfo, action) ->
       page.journal = page.journal.concat({'type':'fork','site':site,'date':(new Date()).getTime()})
       delete action['fork']
   revision.apply page, action
-  localStorage[pagePutInfo.slug] = JSON.stringify(page)
+  localStorage.setItem(pagePutInfo.slug, JSON.stringify(page))
   addToJournal $page.find('.journal'), action
   $page.addClass("local")
 
