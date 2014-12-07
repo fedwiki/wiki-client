@@ -20,7 +20,7 @@ pageHandler.useLocalStorage = ->
   $(".login").length > 0
 
 pageFromLocalStorage = (slug)->
-  if json = localStorage[slug]
+  if json = localStorage.getItem(slug)
     JSON.parse(json)
   else
     undefined
