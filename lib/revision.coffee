@@ -21,7 +21,7 @@ apply = (page, action) ->
     when 'create'
       if action.item?
         page.title = action.item.title if action.item.title?
-        page.story = action.item.story if action.item.story?
+        page.story = action.item.story.slice() if action.item.story?
     when 'add'
       add action.after, action.item
     when 'edit'
