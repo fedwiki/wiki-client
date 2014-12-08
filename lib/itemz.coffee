@@ -35,4 +35,19 @@ createItem = ($page, $before, item) ->
     pageHandler.put $page, {item, id: item.id, type: 'add', after: before?.id}
   $item
 
-module.exports = {createItem, removeItem, getItem}
+replaceItem = ($item, type, item) ->
+  newItem = $.extend({}, item)
+  $item.empty().unbind()
+  $item.removeClass(type).addClass(newItem.type)
+  $page = $item.parents('.page:first')
+  try
+    $item.data 'pageElement', $page
+    $item.data 'item', newItem
+    plugin.getPlugin item.type, (plugin) ->
+      plugin.emit $item, newItem
+      plugin.bind $item, newItem
+  catch err
+    $item.append "<p class='error'>#{err}</p>"
+  pageHandler.put $page, {type: 'edit', id: newItem.id, item: newItem}
+
+module.exports = {createItem, removeItem, getItem, replaceItem}
