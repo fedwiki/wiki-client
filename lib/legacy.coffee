@@ -120,10 +120,13 @@ $ ->
         unless pageHandler.useLocalStorage()
           $page.removeClass('local')
           pageHandler.put $page, action
-      else
-        if pageObject.isRemote()
-          action.site = pageObject.getRemoteSite()
-          pageHandler.put $page, action
+      else if pageObject.isRemote()
+        action.site = pageObject.getRemoteSite()
+        pageHandler.put $page, action
+      else if $page.data('rev')
+        $page.removeClass('ghost')
+        $page.find('.revision').remove()
+        pageHandler.put $page, action
 
     .delegate '.action', 'hover', (e) ->
       id = $(this).data('id')
