@@ -164,14 +164,18 @@ emitFooter = ($footer, pageObject) ->
     <a href= "//#{host}/#{slug}.html">#{host}</a>
   """
 
+editDate = (journal) ->
+  for action in (journal || []) by -1
+    return action.date if action.date and action.type != 'fork'
+  undefined
+
 emitTwins = ($page) ->
   page = $page.data 'data'
   return unless page
   site = $page.data('site') or window.location.host
   site = window.location.host if site in ['view', 'origin']
   slug = asSlug page.title
-  if (actions = page.journal?.length)? and (viewing = page.journal[actions-1]?.date)?
-    viewing = Math.floor(viewing/1000)*1000
+  if viewing = editDate(page.journal)
     bins = {newer:[], same:[], older:[]}
     # {fed.wiki.org: [{slug: "happenings", title: "Happenings", date: 1358975303000, synopsis: "Changes here ..."}]}
     for remoteSite, info of neighborhood.sites
