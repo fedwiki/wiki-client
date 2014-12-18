@@ -325,6 +325,11 @@ textarea {
 .bytebeat .symbol {
   color: #990000; }
 
+  .video {
+    margin-top: 16px;
+    margin-bottom: 5px;
+  }
+
 .revision {
   position: relative;
   font-size: 24px;
