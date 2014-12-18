@@ -85,9 +85,9 @@ img.remote,
   -moz-transform: rotate(15deg);
   transform: rotate(15deg);
 }
-@-webkit-keyframes rotatecw { from { -webkit-transform: rotate(0deg); } to { -webkit-transform: rotate(360deg); } }
-@-moz-keyframes rotatecw { from { -webkit-transform: rotate(0deg); } to { -webkit-transform: rotate(360deg); } }
-@keyframes rotatecw { from { -webkit-transform: rotate(0deg); } to { -webkit-transform: rotate(360deg); } }
+@-webkit-keyframes rotatecw { 100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); } }
+@-moz-keyframes rotatecw { 100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); } }
+@keyframes rotatecw { 100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); } }
 
 
 header {
