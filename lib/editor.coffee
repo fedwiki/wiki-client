@@ -15,6 +15,7 @@ createTextElement = ($page, beforeElement, initialText) ->
     type: 'paragraph'
     id: random.itemId()
     text: initialText
+  console.log 'createTextElement', item.id, initialText
   $item = $ """
     <div class="item paragraph" data-id=#{item.id}></div>
                   """
@@ -28,8 +29,8 @@ createTextElement = ($page, beforeElement, initialText) ->
   sleep 500, -> pageHandler.put $page, {item: item, id: item.id, type: 'add', after: itemBefore?.id}
 
 
-textEditor = ($item, item, caretPos, doubleClicked) ->
-  console.log 'textEditor'
+textEditor = ($item, item, option={}) ->
+  console.log 'textEditor', item.id, option
 
   keydownHandler = (e) ->
 
@@ -51,10 +52,10 @@ textEditor = ($item, item, caretPos, doubleClicked) ->
         $previous = $item.prev()
         previous = itemz.getItem $previous
         return false unless previous.type is 'paragraph'
-        newCarotPos = previous.text.length
+        caret = previous.text.length
         previous.text += textarea.val()
         textarea.val('') # Need current text area to be empty. Item then gets deleted.
-        textEditor $previous, previous, newCarotPos
+        textEditor $previous, previous, {caret}
         return false
 
       if e.which is $.ui.keyCode.ENTER
@@ -89,9 +90,9 @@ textEditor = ($item, item, caretPos, doubleClicked) ->
     .focusout focusoutHandler
     .bind 'keydown', keydownHandler
   $item.html textarea
-  if caretPos?
-    setCaretPosition textarea, caretPos
-  else if doubleClicked # we want the caret to be at the end
+  if option.caret
+    setCaretPosition textarea, option.caret
+  else if option.append # we want the caret to be at the end
     setCaretPosition textarea, textarea.val().length
     #scrolls to bottom of text area
     textarea.scrollTop(textarea[0].scrollHeight - textarea.height())
