@@ -86,6 +86,7 @@ textEditor = ($item, item, option={}) ->
 
   return if $item.hasClass 'textEditing'
   $item.addClass 'textEditing'
+  $item.unbind()
   textarea = $("<textarea>#{original = item.text ? ''}</textarea>")
     .focusout focusoutHandler
     .bind 'keydown', keydownHandler
