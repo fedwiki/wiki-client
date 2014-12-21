@@ -61,7 +61,6 @@ textEditor = ($item, item, caretPos, doubleClicked) ->
         return false unless sel
         text = textarea.val()
         prefix = text.substring 0, sel.start
-        middle = text.substring(sel.start, sel.end) if sel.start isnt sel.end
         suffix = text.substring(sel.end)
         if prefix is ''
           textarea.val(' ')
@@ -70,7 +69,6 @@ textEditor = ($item, item, caretPos, doubleClicked) ->
         textarea.focusout()
         $page = $item.parent().parent()
         createTextElement($page, $item, suffix)
-        createTextElement($page, $item, middle) if middle?
         createTextElement($page, $item, '') if prefix is ''
         return false
 
