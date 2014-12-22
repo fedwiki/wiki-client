@@ -8,22 +8,6 @@ pageHandler = require './pageHandler'
 link = require './link'
 random = require './random'
 
-createTextElement = ($page, beforeElement, initialText) ->
-  item =
-    type: 'paragraph'
-    id: random.itemId()
-    text: initialText
-  console.log 'createTextElement', item.id, initialText
-  $item = $ """
-    <div class="item paragraph" data-id=#{item.id}></div>
-                  """
-  $item
-    .data('item', item)
-    .data('pageElement', $page)
-  beforeElement.after $item
-  plugin.do $item, item
-  itemBefore = itemz.getItem beforeElement
-  textEditor $item, item, {after: itemBefore?.id}
 
 # Editor takes a div and an item that goes in it.
 # Options manage state during splits and joins.
@@ -40,7 +24,7 @@ textEditor = ($item, item, option={}) ->
   keydownHandler = (e) ->
 
     if (e.altKey || e.ctlKey || e.metaKey) and e.which == 83 #alt-s
-      textarea.focusout()
+      $textarea.focusout()
       return false
 
     if (e.altKey || e.ctlKey || e.metaKey) and e.which == 73 #alt-i
@@ -51,39 +35,39 @@ textEditor = ($item, item, option={}) ->
 
     # provides automatic new paragraphs on enter and concatenation on backspace
     if item.type is 'paragraph'
-      sel = getSelectionPos(textarea) # position of caret or selected text coords
+      sel = getSelectionPos($textarea) # position of caret or selected text coords
 
       if e.which is $.ui.keyCode.BACKSPACE and sel.start is 0 and sel.start is sel.end
         $previous = $item.prev()
         previous = itemz.getItem $previous
         return false unless previous.type is 'paragraph'
         caret = previous.text.length
-        suffix = textarea.val()
-        textarea.val('') # Need current text area to be empty. Item then gets deleted.
+        suffix = $textarea.val()
+        $textarea.val('') # Need current text area to be empty. Item then gets deleted.
         textEditor $previous, previous, {caret, suffix}
         return false
 
       if e.which is $.ui.keyCode.ENTER
         return false unless sel
         $page = $item.parent().parent()
-        text = textarea.val()
+        text = $textarea.val()
         prefix = text.substring 0, sel.start
         suffix = text.substring(sel.end)
         if prefix is ''
-          textarea.val(suffix)
-          textarea.focusout()
-          createTextElement($page, $item.prev(), prefix, true)
+          $textarea.val(suffix)
+          $textarea.focusout()
+          spawnEditor($page, $item.prev(), prefix, true)
         else
-          textarea.val(prefix)
-          textarea.focusout()
-          createTextElement($page, $item, suffix)
+          $textarea.val(prefix)
+          $textarea.focusout()
+          spawnEditor($page, $item, suffix)
         return false
 
   focusoutHandler = ->
     $item.removeClass 'textEditing'
-    textarea.unbind()
+    $textarea.unbind()
     $page = $item.parents('.page:first')
-    if item.text = textarea.val()
+    if item.text = $textarea.val()
       plugin.do $item.empty(), item
       if option.after
         return if item.text == ''
@@ -101,18 +85,33 @@ textEditor = ($item, item, option={}) ->
   $item.addClass 'textEditing'
   $item.unbind()
   original = item.text ? ''
-  textarea = $("<textarea>#{original}#{option.suffix ? ''}</textarea>")
+  $textarea = $("<textarea>#{original}#{option.suffix ? ''}</textarea>")
     .focusout focusoutHandler
     .bind 'keydown', keydownHandler
-  $item.html textarea
+  $item.html $textarea
   if option.caret
-    setCaretPosition textarea, option.caret
+    setCaretPosition $textarea, option.caret
   else if option.append # we want the caret to be at the end
-    setCaretPosition textarea, textarea.val().length
+    setCaretPosition $textarea, $textarea.val().length
     #scrolls to bottom of text area
-    textarea.scrollTop(textarea[0].scrollHeight - textarea.height())
+    $textarea.scrollTop($textarea[0].scrollHeight - $textarea.height())
   else
-    textarea.focus()
+    $textarea.focus()
+
+spawnEditor = ($page, $before, text) ->
+  item =
+    type: 'paragraph'
+    id: random.itemId()
+    text: text
+  $item = $ """<div class="item paragraph" data-id=#{item.id}></div>"""
+  $item
+    .data('item', item)
+    .data('pageElement', $page)
+  $before.after $item
+  plugin.do $item, item
+  before = itemz.getItem $before
+  textEditor $item, item, {after: before?.id}
+
 
 # If the selection start and selection end are both the same,
 # then you have the caret position. If there is selected text,
@@ -120,8 +119,8 @@ textEditor = ($item, item, option={}) ->
 # either be at the beginning or the end of the selection
 # (depending on the direction of the selection).
 
-getSelectionPos = (jQueryElement) ->
-  el = jQueryElement.get(0) # gets DOM Node from from jQuery wrapper
+getSelectionPos = ($textarea) ->
+  el = $textarea.get(0) # gets DOM Node from from jQuery wrapper
   if document.selection # IE
     el.focus()
     sel = document.selection.createRange()
@@ -131,8 +130,8 @@ getSelectionPos = (jQueryElement) ->
   else
     {start: el.selectionStart, end: el.selectionEnd}
 
-setCaretPosition = (jQueryElement, caretPos) ->
-  el = jQueryElement.get(0)
+setCaretPosition = ($textarea, caretPos) ->
+  el = $textarea.get(0)
   if el?
     if el.createTextRange # IE
       range = el.createTextRange()
@@ -142,9 +141,9 @@ setCaretPosition = (jQueryElement, caretPos) ->
       el.setSelectionRange caretPos, caretPos
     el.focus()
 
-# .bind 'paste', (e) ->
+# # may want special processing on paste eventually
+# textarea.bind 'paste', (e) ->
 #   console.log 'textedit paste', e
 #   console.log e.originalEvent.clipboardData.getData('text')
-
 
 module.exports = {textEditor}
