@@ -8,8 +8,6 @@ pageHandler = require './pageHandler'
 link = require './link'
 random = require './random'
 
-sleep = (time, done) -> setTimeout done, setTimeout
-
 createTextElement = ($page, beforeElement, initialText) ->
   item =
     type: 'paragraph'
@@ -25,9 +23,16 @@ createTextElement = ($page, beforeElement, initialText) ->
   beforeElement.after $item
   plugin.do $item, item
   itemBefore = itemz.getItem beforeElement
-  textEditor $item, item
-  sleep 500, -> pageHandler.put $page, {item: item, id: item.id, type: 'add', after: itemBefore?.id}
+  textEditor $item, item, {after: itemBefore?.id}
 
+# Editor takes a div and an item that goes in it.
+# Options manage state during splits and joins.
+# Options are available to plugins but rarely used.
+#
+#   caret: position -- sets the cursor at the point of join
+#   append: true -- sets the cursor to end and scrolls there
+#   after: id -- new item to be added after id
+#   sufix: text -- editor opens with unsaved suffix appended
 
 textEditor = ($item, item, option={}) ->
   console.log 'textEditor', item.id, option
@@ -53,41 +58,50 @@ textEditor = ($item, item, option={}) ->
         previous = itemz.getItem $previous
         return false unless previous.type is 'paragraph'
         caret = previous.text.length
-        previous.text += textarea.val()
+        suffix = textarea.val()
         textarea.val('') # Need current text area to be empty. Item then gets deleted.
-        textEditor $previous, previous, {caret}
+        textEditor $previous, previous, {caret, suffix}
         return false
 
       if e.which is $.ui.keyCode.ENTER
         return false unless sel
+        $page = $item.parent().parent()
         text = textarea.val()
         prefix = text.substring 0, sel.start
         suffix = text.substring(sel.end)
         if prefix is ''
-          textarea.val(' ')
+          textarea.val(suffix)
+          textarea.focusout()
+          createTextElement($page, $item.prev(), prefix, true)
         else
           textarea.val(prefix)
-        textarea.focusout()
-        $page = $item.parent().parent()
-        createTextElement($page, $item, suffix)
-        createTextElement($page, $item, '') if prefix is ''
+          textarea.focusout()
+          createTextElement($page, $item, suffix)
         return false
 
   focusoutHandler = ->
     $item.removeClass 'textEditing'
+    textarea.unbind()
+    $page = $item.parents('.page:first')
     if item.text = textarea.val()
       plugin.do $item.empty(), item
-      return if item.text == original
-      pageHandler.put $item.parents('.page:first'), {type: 'edit', id: item.id, item: item}
+      if option.after
+        return if item.text == ''
+        pageHandler.put $page, {type: 'add', id: item.id, item: item, after: option.after}
+      else
+        return if item.text == original
+        pageHandler.put $page, {type: 'edit', id: item.id, item: item}
     else
-      pageHandler.put $item.parents('.page:first'), {type: 'remove', id: item.id}
+      unless option.after
+        pageHandler.put $page, {type: 'remove', id: item.id}
       $item.remove()
     null
 
   return if $item.hasClass 'textEditing'
   $item.addClass 'textEditing'
   $item.unbind()
-  textarea = $("<textarea>#{original = item.text ? ''}</textarea>")
+  original = item.text ? ''
+  textarea = $("<textarea>#{original}#{option.suffix ? ''}</textarea>")
     .focusout focusoutHandler
     .bind 'keydown', keydownHandler
   $item.html textarea
