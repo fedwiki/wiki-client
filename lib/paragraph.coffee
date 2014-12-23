@@ -20,6 +20,6 @@ bind = ($item, item) ->
       item.type = 'html'
       itemz.replaceItem $item, 'paragraph', item
     else
-      editor.textEditor $item, item, null, true
+      editor.textEditor $item, item, {'append': true}
 
 module.exports = {emit, bind}
