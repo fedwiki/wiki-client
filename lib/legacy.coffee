@@ -118,6 +118,7 @@ $ ->
       action = {type: 'fork'}
       if $page.hasClass('local')
         return if pageHandler.useLocalStorage()
+        $page.removeClass('local')
       else if pageObject.isRemote()
         action.site = pageObject.getRemoteSite()
       if $page.data('rev')?
