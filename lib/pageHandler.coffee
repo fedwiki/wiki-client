@@ -179,6 +179,7 @@ pageHandler.put = ($page, action) ->
   # update dom when forking
   if forkFrom
     # pull remote site closer to us
+    $page.find('h1').prop('title',location.host)
     $page.find('h1 img').attr('src', '/favicon.png')
     $page.find('h1 a').attr('href', '/')
     $page.data('site', null)
