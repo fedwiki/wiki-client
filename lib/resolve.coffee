@@ -8,7 +8,7 @@ module.exports = resolve = {}
 
 resolve.resolutionContext = []
 
-escape = (string) ->
+resolve.escape = escape = (string) ->
   string
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
