@@ -6,13 +6,9 @@ editor = require './editor'
 resolve = require './resolve'
 itemz = require './itemz'
 
-# http://jsperf.com/encode-html-entities
-safe = (str) ->
-  str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
 emit = ($item, item) ->
   for text in item.text.split /\n\n+/
-    $item.append "<p>#{resolve.resolveLinks(safe text)}</p>" if text.match /\S/
+    $item.append "<p>#{resolve.resolveLinks(text)}</p>" if text.match /\S/
 
 bind = ($item, item) ->
   $item.dblclick (e) ->

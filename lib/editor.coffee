@@ -18,6 +18,12 @@ random = require './random'
 #   after: id -- new item to be added after id
 #   sufix: text -- editor opens with unsaved suffix appended
 
+escape = (string) ->
+  string
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+
 textEditor = ($item, item, option={}) ->
   console.log 'textEditor', item.id, option
 
@@ -85,7 +91,7 @@ textEditor = ($item, item, option={}) ->
   $item.addClass 'textEditing'
   $item.unbind()
   original = item.text ? ''
-  $textarea = $("<textarea>#{original}#{option.suffix ? ''}</textarea>")
+  $textarea = $("<textarea>#{escape original}#{escape option.suffix ? ''}</textarea>")
     .focusout focusoutHandler
     .bind 'keydown', keydownHandler
   $item.html $textarea
