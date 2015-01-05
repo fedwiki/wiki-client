@@ -69,6 +69,7 @@ bind = ($item, item) ->
     $.getJSON "http://#{data.site}/#{data.slug}.json", (remote) ->
       item.type = 'reference'
       item.site = data.site
+      item.slug = data.slug
       item.title = remote.title || data.slug
       item.text = synopsis remote
       syncEditAction()
