@@ -5,11 +5,14 @@
 
 editor = require './editor'
 resolve = require './resolve'
+page = require './page'
 
 # see http://fed.wiki.org/about-reference-plugin.html
 
 emit = ($item, item) ->
-  slug = item.slug or 'welcome-visitors'
+  slug = item.slug
+  slug ||= page.asSlug item.title if item.title?
+  slug ||= 'welcome-visitors'
   site = item.site
   resolve.resolveFrom site, ->
     $item.append """
