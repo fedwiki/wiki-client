@@ -74,6 +74,7 @@ module.exports = function (grunt) {
           'test/lineup.coffee',
           'test/drop.coffee',
           'test/revision.coffee',
+          'test/resolve.coffee',
           'test/wiki.coffee'
         ]
       }
