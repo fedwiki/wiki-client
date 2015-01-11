@@ -17,6 +17,7 @@ random = require './random'
 #   append: true -- sets the cursor to end and scrolls there
 #   after: id -- new item to be added after id
 #   sufix: text -- editor opens with unsaved suffix appended
+#   field: 'text' -- editor operates on this field of the item
 
 escape = (string) ->
   string
@@ -47,7 +48,7 @@ textEditor = ($item, item, option={}) ->
         $previous = $item.prev()
         previous = itemz.getItem $previous
         return false unless previous.type is 'paragraph'
-        caret = previous.text.length
+        caret = previous[option.field||'text'].length
         suffix = $textarea.val()
         $textarea.val('') # Need current text area to be empty. Item then gets deleted.
         textEditor $previous, previous, {caret, suffix}
@@ -73,13 +74,13 @@ textEditor = ($item, item, option={}) ->
     $item.removeClass 'textEditing'
     $textarea.unbind()
     $page = $item.parents('.page:first')
-    if item.text = $textarea.val()
+    if item[option.field||'text'] = $textarea.val()
       plugin.do $item.empty(), item
       if option.after
-        return if item.text == ''
+        return if item[option.field||'text'] == ''
         pageHandler.put $page, {type: 'add', id: item.id, item: item, after: option.after}
       else
-        return if item.text == original
+        return if item[option.field||'text'] == original
         pageHandler.put $page, {type: 'edit', id: item.id, item: item}
     else
       unless option.after
@@ -90,7 +91,7 @@ textEditor = ($item, item, option={}) ->
   return if $item.hasClass 'textEditing'
   $item.addClass 'textEditing'
   $item.unbind()
-  original = item.text ? ''
+  original = item[option.field||'text'] ? ''
   $textarea = $("<textarea>#{escape original}#{escape option.suffix ? ''}</textarea>")
     .focusout focusoutHandler
     .bind 'keydown', keydownHandler
