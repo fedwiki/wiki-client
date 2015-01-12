@@ -127,14 +127,21 @@ $ ->
       pageHandler.put $page, action
 
     .delegate '.action', 'hover', (e) ->
-      id = $(this).data('id')
-      $("[data-id=#{id}]").toggleClass('target')
-      key = $(this).parents('.page:first').data('key')
-      $('.page').trigger('align-item', {key, id})
+      if e.shiftKey
+        id = $(this).data('id')
+        $("[data-id=#{id}]").toggleClass('target')
+        key = $(this).parents('.page:first').data('key')
+        $('.page').trigger('align-item', {key, id})
 
-    .delegate '.item', 'hover', ->
-      id = $(this).attr('data-id')
-      $(".action[data-id=#{id}]").toggleClass('target')
+    .delegate '.item', 'hover', (e) ->
+      if e.shiftKey
+        id = $(this).attr('data-id')
+        $(".action[data-id=#{id}]").toggleClass('target')
+
+    $(document).keyup (e) ->
+        console.log 'keyup', e.keyCode
+        if e.keyCode = 16
+          $('.action').removeClass 'target'
 
     .delegate 'button.create', 'click', (e) ->
       getTemplate $(e.target).data('slug'), (template) ->
