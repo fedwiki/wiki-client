@@ -33,6 +33,20 @@ pageEmitter = pageModule.pageEmitter
 getItem = ($item) ->
   $($item).data("item") or $($item).data('staticItem') if $($item).length > 0
 
+aliasItem = ($page, $item, oldItem) ->
+  item = $.extend {}, oldItem
+  pageObject = lineup.atKey($page.data('key'))
+  if pageObject.getItem(item.id)?
+    item.alias ||= item.id
+    item.id = random.itemId()
+    $item.attr 'data-id', item.id
+  else if item.alias?
+    unless pageObject.getItem(item.alias)?
+      item.id = item.alias
+      delete item.alias
+      $item.attr 'data-id', item.id
+  item
+
 handleDragging = (evt, ui) ->
   $item = ui.item
 
@@ -66,7 +80,8 @@ handleDragging = (evt, ui) ->
     $item.data 'pageElement', $thisPage
     $before = $item.prev('.item')
     before = getItem($before)
-    {type: 'add', item: item, after: before?.id}
+    item = aliasItem $thisPage, $item, item
+    {type: 'add', item, after: before?.id}
   action.id = item.id
   pageHandler.put $thisPage, action
 
