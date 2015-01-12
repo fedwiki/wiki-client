@@ -10,6 +10,14 @@ editor = require './editor'
 synopsis = require './synopsis'
 drop = require './drop'
 
+escape = (line) ->
+  line
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\n/g, '<br>')
+
+
 emit = ($item, item) ->
   $item.append '<p>Double-Click to Edit<br>Drop Text or Image to Insert</p>'
 
@@ -32,7 +40,7 @@ emit = ($item, item) ->
       editor.textEditor $item, item
 
   showPrompt = ->
-    $item.append "<p>#{resolve.resolveLinks(item.prompt)}</b>"
+    $item.append "<p>#{resolve.resolveLinks(item.prompt, escape)}</b>"
 
   if item.prompt
     showPrompt()
@@ -60,7 +68,7 @@ bind = ($item, item) ->
     pageHandler.put $page, {type: 'edit', id: item.id, item: item}
 
   punt = (data) ->
-    item.prompt = "<b>Unexpected Item</b><br>We can't make sense of the drop.<br>#{JSON.stringify data}<br>Try something else or see [[About Factory Plugin]]."
+    item.prompt = "Unexpected Item\nWe can't make sense of the drop.\nTry something else or see [[About Factory Plugin]]."
     data.userAgent = navigator.userAgent
     item.punt = data
     syncEditAction()
@@ -108,10 +116,13 @@ bind = ($item, item) ->
         punt
           file: file
 
-  $item.dblclick ->
-    $item.removeClass('factory').addClass(item.type='paragraph')
-    $item.unbind()
-    editor.textEditor $item, item
+  $item.dblclick (e) ->
+    if e.shiftKey
+      editor.textEditor $item, item, {field: 'prompt'}
+    else
+      $item.removeClass('factory').addClass(item.type = 'paragraph')
+      $item.unbind()
+      editor.textEditor $item, item
 
   $item.bind 'dragenter', (evt) -> evt.preventDefault()
   $item.bind 'dragover', (evt) -> evt.preventDefault()
