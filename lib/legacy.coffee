@@ -62,6 +62,25 @@ $ ->
     link.doInternalLink name, page, $(e.target).data('site')
     return false
 
+  pageDump = (element) ->
+    $page = $(element)
+    slug = element.id
+    console.log '---- dom ------------------------------'
+    console.log slug
+    console.log element
+    console.log $page.find('.item').map((i,e)->$(e).data('id')).toArray()
+    console.log $page.find('.item').map((i,e)->$(e).data('item').type).toArray()
+    console.log '---- lineup ---------------------------'
+    console.log $page.data('key')
+    console.log (item.id for item in lineup.atKey($page.data('key')).getRawPage().story)
+    console.log (item.type for item in lineup.atKey($page.data('key')).getRawPage().story)
+    if json = localStorage.getItem(slug)
+      console.log '---- localStorage ---------------------'
+      page = JSON.parse(json)
+      console.log (item.id for item in page.story)
+      console.log (item.type for item in page.story)
+    console.log '---------------------------------------'
+
   $('.main')
     .delegate '.show-page-source', 'click', (e) ->
       e.preventDefault()
@@ -71,6 +90,9 @@ $ ->
 
     .delegate '.page', 'click', (e) ->
       active.set this unless $(e.target).is("a")
+
+    .delegate '.page', 'dblclick', (e) ->
+      pageDump this if $(e.target).is('.page')
 
     .delegate '.internal', 'click', (e) ->
       name = $(e.target).data 'pageName'
