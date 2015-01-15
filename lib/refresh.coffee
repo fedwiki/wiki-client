@@ -327,4 +327,9 @@ cycle = ->
     whenNotGotten: createGhostPage
     pageInformation: pageInformation
 
+pageEmitter.on 'refresh', ($page) ->
+  pageObject = lineup.atKey($page.data('key'))
+  $page.empty()
+  rebuildPage pageObject, $page
+
 module.exports = {cycle, emitTwins, buildPage, rebuildPage, createFactory}
