@@ -113,12 +113,6 @@ initMerging = ($page) ->
     hoverClass: "ui-state-hover"
     drop: handleMerging
 
-initAddButton = ($page) ->
-  $page.find(".add-factory").live "click", (evt) ->
-    return if $page.hasClass 'ghost'
-    evt.preventDefault()
-    createFactory($page)
-
 createFactory = ($page) ->
   item =
     type: "factory"
@@ -272,7 +266,6 @@ rebuildPage = (pageObject, $page) ->
 
   initDragging $page
   initMerging $page
-  initAddButton $page
   $page
 
 buildPage = (pageObject, $page) ->
@@ -334,4 +327,4 @@ cycle = ->
     whenNotGotten: createGhostPage
     pageInformation: pageInformation
 
-module.exports = {cycle, emitTwins, buildPage, rebuildPage}
+module.exports = {cycle, emitTwins, buildPage, rebuildPage, createFactory}

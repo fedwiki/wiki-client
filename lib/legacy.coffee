@@ -148,6 +148,12 @@ $ ->
         $page.find('.revision').remove()
       pageHandler.put $page, action
 
+    .delegate '.add-factory', 'click', (e) ->
+      e.preventDefault()
+      $page = $(e.target).parents('.page')
+      return if $page.hasClass 'ghost'
+      refresh.createFactory($page)
+
     .delegate '.action', 'hover', (e) ->
       id = $(this).data('id')
       $("[data-id=#{id}]").toggleClass('target')
