@@ -72,14 +72,24 @@ $ ->
     console.log $page.find('.item').map((i,e)->$(e).data('item').type).toArray()
     console.log '---- lineup ---------------------------'
     console.log $page.data('key')
-    console.log (item.id for item in lineup.atKey($page.data('key')).getRawPage().story)
-    console.log (item.type for item in lineup.atKey($page.data('key')).getRawPage().story)
+    pageObject = lineup.atKey($page.data('key'))
+    slug = pageObject.getSlug()
+    console.log slug
+    console.log 'local' if pageObject.isLocal()
+    console.log 'plugin' if pageObject.isPlugin()
+    console.log pageObject.getRemoteSite() if pageObject.isRemote()
+    console.log (item.id for item in pageObject.getRawPage().story)
+    console.log (item.type for item in pageObject.getRawPage().story)
     if json = localStorage.getItem(slug)
       console.log '---- localStorage ---------------------'
       page = JSON.parse(json)
       console.log (item.id for item in page.story)
       console.log (item.type for item in page.story)
-    console.log '---------------------------------------'
+    $.getJSON "http:/#{slug}.json", (page) ->
+      console.log '---- server ---------------------------'
+      console.log (item.id for item in page.story)
+      console.log (item.type for item in page.story)
+      console.log '---------------------------------------'
 
   $('.main')
     .delegate '.show-page-source', 'click', (e) ->
