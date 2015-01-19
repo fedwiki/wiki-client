@@ -7,7 +7,7 @@ _ = require 'underscore'
 state = require './state'
 revision = require './revision'
 addToJournal = require './addToJournal'
-newPage = require('./page').newPage
+{newPage, pageEmitter} = require('./page')
 random = require './random'
 lineup = require './lineup'
 
@@ -105,19 +105,30 @@ pageHandler.get = ({whenGotten,whenNotGotten,pageInformation}  ) ->
 pageHandler.context = []
 
 pushToLocal = ($page, pagePutInfo, action) ->
-  if action.type == 'create'
-    page = {title: action.item.title, story:[], journal:[]}
-  else
-    page = pageFromLocalStorage pagePutInfo.slug
-    page ||= lineup.atKey($page.data('key')).getRawPage()
-    page.journal = [] unless page.journal?
-    if (site=action['fork'])?
-      page.journal = page.journal.concat({'type':'fork','site':site,'date':(new Date()).getTime()})
-      delete action['fork']
-  revision.apply page, action
-  localStorage.setItem(pagePutInfo.slug, JSON.stringify(page))
-  addToJournal $page.find('.journal'), action
-  $page.addClass("local")
+  # if action.type == 'create'
+  #   page = {title: action.item.title, story:[], journal:[]}
+  # else
+  #   page = pageFromLocalStorage pagePutInfo.slug
+  #   page ||= lineup.atKey($page.data('key')).getRawPage()
+  #   page.journal = [] unless page.journal?
+  #   if (site = action['fork'])?
+  #     page.journal = page.journal.concat({'type':'fork','site':site,'date':(new Date()).getTime()})
+  #     delete action['fork']
+  # # need to let pageObject do this apply
+  # pageObject = lineup.atKey($page.data('key'))
+  # revision.apply page, action
+  # localStorage.setItem(pagePutInfo.slug, JSON.stringify(page))
+  # addToJournal $page.find('.journal'), action
+  # $page.addClass("local")
+
+  pageObject = lineup.atKey($page.data('key'))
+  if site = action.fork
+    pageObject.apply {'type':'fork','site':site,'date':(new Date()).getTime()}
+    delete action.fork
+  pageObject.apply deepCopy(action)
+  localStorage.setItem pagePutInfo.slug, JSON.stringify(pageObject.getRawPage())
+  pageEmitter.emit 'refresh', $page
+
 
 pushToServer = ($page, pagePutInfo, action) ->
 
@@ -137,12 +148,14 @@ pushToServer = ($page, pagePutInfo, action) ->
       pageObject.apply action if pageObject?.apply
       addToJournal $page.find('.journal'), action
       if action.type == 'fork' # push
-        localStorage.removeItem $page.attr('id')
+        localStorage.removeItem pagePutInfo.slug
     error: (xhr, type, msg) ->
       action.error = {type, msg, response: xhr.responseText}
-      pushToLocal $page, pagePutInfo, action
+      pageObject.becomeLocal()
+      pushToLocal $page, pagePutInfo, bundle
 
 pageHandler.put = ($page, action) ->
+  pageObject = lineup.atKey($page.data('key'))
 
   checkedSite = () ->
     switch site = $page.data('site')
@@ -161,12 +174,14 @@ pageHandler.put = ($page, action) ->
   console.log 'pageHandler.put', action, pagePutInfo
 
   # detect when fork to local storage
-  if pageHandler.useLocalStorage()
-    if pagePutInfo.site?
-      console.log 'remote => local'
-    else if !pagePutInfo.local
-      console.log 'origin => local'
-      action.site = forkFrom = location.host
+
+  # if pageHandler.useLocalStorage()
+  #   if pagePutInfo.site?
+  #     console.log 'remote => local'
+  #   else if !pagePutInfo.local
+  #     console.log 'origin => local'
+  #     action.site = forkFrom = location.host
+
     # else if !pageFromLocalStorage(pagePutInfo.slug)
     #   console.log ''
     #   action.site = forkFrom = pagePutInfo.site
@@ -195,7 +210,7 @@ pageHandler.put = ($page, action) ->
         date: action.date
 
   # store as appropriate
-  if pageHandler.useLocalStorage() or pagePutInfo.site == 'local'
+  if pagePutInfo.site == 'local'
     pushToLocal($page, pagePutInfo, action)
   else
     pushToServer($page, pagePutInfo, action)
