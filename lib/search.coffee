@@ -3,6 +3,7 @@
 # page to present them.
 
 link = require './link'
+active = require './active'
 newPage = require('./page').newPage
 
 createSearch = ({neighborhood})->
