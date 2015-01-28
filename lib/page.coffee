@@ -45,8 +45,8 @@ newPage = (json, site) ->
   isPlugin = ->
     page.plugin?
 
-  isRemote = (host = null) ->
-    ! (site in [undefined, null, host, 'view', 'origin', 'local'])
+  isRemote = ->
+    ! (site in [undefined, null, 'view', 'origin', 'local'])
 
   isLocal = ->
     site == 'local'
@@ -127,9 +127,6 @@ newPage = (json, site) ->
   become = (template) ->
     page.story = template?.getRawPage().story || []
 
-  becomeLocal = ->
-    site = 'local'
-
   siteLineup = ->
     slug = getSlug()
     path = if slug == 'welcome-visitors'
@@ -161,6 +158,6 @@ newPage = (json, site) ->
     revision.apply page, action
     site = null if action.site
 
-  {getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, setTitle, getRevision, getTimestamp, addItem, getItem, addParagraph, seqItems, seqActions, become, becomeLocal, siteLineup, merge, apply}
+  {getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, setTitle, getRevision, getTimestamp, addItem, getItem, addParagraph, seqItems, seqActions, become, siteLineup, merge, apply}
 
 module.exports = {newPage, asSlug, pageEmitter}

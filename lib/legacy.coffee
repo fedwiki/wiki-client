@@ -62,35 +62,6 @@ $ ->
     link.doInternalLink name, page, $(e.target).data('site')
     return false
 
-  pageDump = (element) ->
-    $page = $(element)
-    slug = element.id
-    console.log '---- dom ------------------------------'
-    console.log slug
-    console.log element
-    console.log $page.find('.item').map((i,e)->$(e).data('id')).toArray()
-    console.log $page.find('.item').map((i,e)->$(e).data('item').type).toArray()
-    console.log '---- lineup ---------------------------'
-    console.log $page.data('key')
-    pageObject = lineup.atKey($page.data('key'))
-    slug = pageObject.getSlug()
-    console.log slug
-    console.log 'local' if pageObject.isLocal()
-    console.log 'plugin' if pageObject.isPlugin()
-    console.log pageObject.getRemoteSite() if pageObject.isRemote()
-    console.log (item.id for item in pageObject.getRawPage().story)
-    console.log (item.type for item in pageObject.getRawPage().story)
-    if json = localStorage.getItem(slug)
-      console.log '---- localStorage ---------------------'
-      page = JSON.parse(json)
-      console.log (item.id for item in page.story)
-      console.log (item.type for item in page.story)
-    $.getJSON "http:/#{slug}.json", (page) ->
-      console.log '---- server ---------------------------'
-      console.log (item.id for item in page.story)
-      console.log (item.type for item in page.story)
-      console.log '---------------------------------------'
-
   $('.main')
     .delegate '.show-page-source', 'click', (e) ->
       e.preventDefault()
@@ -100,9 +71,6 @@ $ ->
 
     .delegate '.page', 'click', (e) ->
       active.set this unless $(e.target).is("a")
-
-    .delegate '.page', 'dblclick', (e) ->
-      pageDump this if $(e.target).is('.page')
 
     .delegate '.internal', 'click', (e) ->
       name = $(e.target).data 'pageName'
@@ -149,6 +117,7 @@ $ ->
       pageObject = lineup.atKey $page.data('key')
       action = {type: 'fork'}
       if $page.hasClass('local')
+        return if pageHandler.useLocalStorage()
         $page.removeClass('local')
       else if pageObject.isRemote()
         action.site = pageObject.getRemoteSite()
@@ -156,12 +125,6 @@ $ ->
         $page.removeClass('ghost')
         $page.find('.revision').remove()
       pageHandler.put $page, action
-
-    .delegate '.add-factory', 'click', (e) ->
-      e.preventDefault()
-      $page = $(e.target).parents('.page')
-      return if $page.hasClass 'ghost'
-      refresh.createFactory($page)
 
     .delegate '.action', 'hover', (e) ->
       id = $(this).data('id')
