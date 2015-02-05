@@ -144,6 +144,7 @@ emitHeader = ($header, $page, pageObject) ->
   $header.append """
     <h1 title="#{tooltip}">
       <a href="#{pageObject.siteLineup()}">
+      <a href="#{pageObject.siteLineup()}" target="#{remote}">
         <img src="//#{remote}/favicon.png" height="32px" class="favicon">
       </a> #{resolve.escape pageObject.getTitle()}
     </h1>
