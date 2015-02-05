@@ -138,7 +138,7 @@ handleHeaderClick = (e) ->
     crumbs = lineup.crumbs $page.data('key'), location.host
     [target, ] = crumbs
     newWindow = window.open "//#{crumbs.join '/'}", target
-    newWindow.focus
+    newWindow.focus()
 
 
 emitHeader = ($header, $page, pageObject) ->
