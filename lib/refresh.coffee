@@ -136,14 +136,17 @@ handleHeaderClick = (e) ->
     lineup.debugSelfCheck ($(each).data('key') for each in $('.page'))
     $page = $(e.target).parents('.page:first')
     crumbs = lineup.crumbs $page.data('key'), location.host
-    window.location = "//#{crumbs.join '/'}"
+    [target, ] = crumbs
+    newWindow = window.open "//#{crumbs.join '/'}", target
+    newWindow.focus()
+
 
 emitHeader = ($header, $page, pageObject) ->
   remote = pageObject.getRemoteSite location.host
   tooltip = pageObject.getRemoteSiteDetails location.host
   $header.append """
     <h1 title="#{tooltip}">
-      <a href="#{pageObject.siteLineup()}">
+      <a href="#{pageObject.siteLineup()}" target="#{remote}">
         <img src="//#{remote}/favicon.png" height="32px" class="favicon">
       </a> #{resolve.escape pageObject.getTitle()}
     </h1>
@@ -176,7 +179,7 @@ emitFooter = ($footer, pageObject) ->
   $footer.append """
     <a id="license" href="http://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a> .
     <a class="show-page-source" href="/#{slug}.json?random=#{random.randomBytes(4)}" title="source">JSON</a> .
-    <a href= "//#{host}/#{slug}.html">#{host}</a>
+    <a href= "//#{host}/#{slug}.html" target="#{host}">#{host} </a>
   """
 
 editDate = (journal) ->
