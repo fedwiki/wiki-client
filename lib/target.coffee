@@ -8,7 +8,7 @@ action = null
 
 bind = ->
   $(document)
-    .keydown (e) -> startTargeting e if e.keyCode = 16        
+    .keydown (e) -> startTargeting e if e.keyCode = 16
     .keyup (e) -> stopTargeting e if e.keyCode = 16
   $('.main')
     .delegate '.item', 'mouseenter', enterItem
@@ -21,11 +21,15 @@ bind = ->
 
 
 startTargeting = (e) ->
-  targeting = true
+  targeting = e.shiftKey
+  if targeting and action
+    $("[data-id=#{action}]").addClass('target')
+
 
 stopTargeting = (e) ->
-  targeting = false
-  $('.item, .action').removeClass 'target'
+  targeting = e.shiftKey
+  unless targeting
+    $('.item, .action').removeClass 'target'
 
 
 
