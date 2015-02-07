@@ -23,6 +23,6 @@ module.exports = ($journal, action) ->
     $action
       .css("background-image", "url(//#{action.site}/favicon.png)")
       .attr("href", "//#{action.site}/#{$page.attr('id')}.html")
+      .attr("target", "#{action.site}")
       .data("site", action.site)
       .data("slug", $page.attr('id'))
-
