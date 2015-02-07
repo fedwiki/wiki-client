@@ -1,4 +1,8 @@
-# Manage the .target highlighting
+# Target handles hovers over items and actions. Other visible
+# items and actions with the same id will highlight. In some cases
+# an event is generated inviting other pages to scroll the item
+# into view. Target tracks hovering even when not requested so
+# that highlighting can be immediate when requested.
 
 targeting = false
 item = null
@@ -8,15 +12,14 @@ action = null
 
 bind = ->
   $(document)
-    .keydown (e) -> startTargeting e if e.keyCode = 16
-    .keyup (e) -> stopTargeting e if e.keyCode = 16
+    .keydown (e) -> startTargeting e if e.keyCode == 16
+    .keyup (e) -> stopTargeting e if e.keyCode == 16
   $('.main')
     .delegate '.item', 'mouseenter', enterItem
     .delegate '.item', 'mouseleave', leaveItem
     .delegate '.action', 'mouseenter', enterAction
     .delegate '.action', 'mouseleave', leaveAction
     .delegate '.page', 'align-item', alignItem
-
 
 
 
@@ -31,7 +34,6 @@ stopTargeting = (e) ->
   targeting = e.shiftKey
   unless targeting
     $('.item, .action').removeClass 'target'
-
 
 
 enterItem = (e) ->
