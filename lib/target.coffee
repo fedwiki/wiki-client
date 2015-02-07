@@ -22,8 +22,9 @@ bind = ->
 
 startTargeting = (e) ->
   targeting = e.shiftKey
-  if targeting and action
-    $("[data-id=#{action}]").addClass('target')
+  if targeting
+    if id = item || action
+      $("[data-id=#{id}]").addClass('target')
 
 
 stopTargeting = (e) ->
@@ -36,11 +37,13 @@ stopTargeting = (e) ->
 enterItem = (e) ->
   item = $(this).attr('data-id')
   if targeting
-    $(".action[data-id=#{item}]").addClass('target')
+    $("[data-id=#{item}]").addClass('target')
+    key = $(this).parents('.page:first').data('key')
+    $('.page').trigger('align-item', {key, id:item})
 
 leaveItem = (e) ->
   if targeting
-    $(".action[data-id=#{item}]").removeClass('target')
+    $('.item, .action').removeClass('target')
   item = null
 
 
