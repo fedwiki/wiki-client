@@ -11,6 +11,7 @@ lineup = require './lineup'
 drop = require './drop'
 dialog = require './dialog'
 link = require './link'
+target = require './target'
 
 asSlug = require('./page').asSlug
 
@@ -126,23 +127,6 @@ $ ->
         $page.find('.revision').remove()
       pageHandler.put $page, action
 
-    .delegate '.action', 'hover', (e) ->
-      if e.shiftKey
-        id = $(this).data('id')
-        $("[data-id=#{id}]").toggleClass('target')
-        key = $(this).parents('.page:first').data('key')
-        $('.page').trigger('align-item', {key, id})
-
-    .delegate '.item', 'hover', (e) ->
-      if e.shiftKey
-        id = $(this).attr('data-id')
-        $(".action[data-id=#{id}]").toggleClass('target')
-
-    $(document).keyup (e) ->
-        console.log 'keyup', e.keyCode
-        if e.keyCode = 16
-          $('.action').removeClass 'target'
-
     .delegate 'button.create', 'click', (e) ->
       getTemplate $(e.target).data('slug'), (template) ->
         $page = $(e.target).parents('.page:first')
@@ -152,14 +136,6 @@ $ ->
         page = pageObject.getRawPage()
         refresh.rebuildPage pageObject, $page.empty()
         pageHandler.put $page, {type: 'create', id: page.id, item: {title:page.title, story:page.story}}
-
-    .delegate '.page', 'align-item', (e, align) ->
-      $page = $(this)
-      return if $page.data('key') == align.key
-      $item = $page.find(".item[data-id=#{align.id}]")
-      return unless $item.length
-      position = $item.offset().top + $page.scrollTop() - $page.height()/2
-      $page.stop().animate {scrollTop: position}, 'slow'
 
     .delegate '.score', 'hover', (e) ->
       $('.main').trigger 'thumb', $(e.target).data('thumb')
@@ -183,6 +159,9 @@ $ ->
     .appendTo('footer')
     .click ->
       dialog.open "Lineup Activity", lineupActivity.show()
+
+  target.bind()
+
 
   $ ->
     state.first()
