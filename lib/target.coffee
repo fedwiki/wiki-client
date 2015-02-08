@@ -37,11 +37,12 @@ stopTargeting = (e) ->
 
 
 enterItem = (e) ->
-  item = $(this).attr('data-id')
+  item = ($item = $(this)).attr('data-id')
   if targeting
     $("[data-id=#{item}]").addClass('target')
-    key = $(this).parents('.page:first').data('key')
-    $('.page').trigger('align-item', {key, id:item})
+    key = ($page = $(this).parents('.page:first')).data('key')
+    place = $item.offset().top + $page.scrollTop()
+    $('.page').trigger('align-item', {key, id:item, place})
 
 leaveItem = (e) ->
   if targeting
@@ -69,8 +70,9 @@ alignItem = (e, align) ->
   return if $page.data('key') == align.key
   $item = $page.find(".item[data-id=#{align.id}]")
   return unless $item.length
-  position = $item.offset().top + $page.scrollTop() - $page.height()/2
-  $page.stop().animate {scrollTop: position}, 'slow'
+  place = align.place || $page.height()/2
+  offset = $item.offset().top + $page.scrollTop() - place
+  $page.stop().animate {scrollTop: offset}, 'slow'
 
 
 
