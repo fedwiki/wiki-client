@@ -41,7 +41,7 @@ enterItem = (e) ->
   if targeting
     $("[data-id=#{item}]").addClass('target')
     key = ($page = $(this).parents('.page:first')).data('key')
-    place = $item.offset().top + $page.scrollTop()
+    place = $item.offset().top
     $('.page').trigger('align-item', {key, id:item, place})
 
 leaveItem = (e) ->
