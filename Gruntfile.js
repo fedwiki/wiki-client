@@ -51,6 +51,7 @@ module.exports = function (grunt) {
         //   uglified version is 'client.js', so we don't need changes elsewhere.
         options: {
           sourceMap: true,
+          sourceMapRoot: "/",
           sourceMapName: 'client/client.map',
           banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
                   '<%= grunt.template.today("yyyy-mm-dd") %> */'
