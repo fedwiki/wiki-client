@@ -53,8 +53,10 @@ module.exports = function (grunt) {
           sourceMap: true,
           sourceMapRoot: "/",
           sourceMapName: 'client/client.map',
-          banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
-                  '<%= grunt.template.today("yyyy-mm-dd") %> */'
+          banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
+                  '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
+                  ' * Copyright <%= grunt.template.today("yyyy") %> <%= pkg.author.name %> and other contributors;' +
+                  ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */'
         },
         files: {
           'client/client.js': ['client/client.max.js']
