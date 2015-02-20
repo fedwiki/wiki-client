@@ -14,6 +14,34 @@ module.exports = function (grunt) {
 
     pkg: grunt.file.readJSON('package.json'),
 
+    authors: {
+      prior: [
+        "Ward Cunningham <ward@c2.com>",
+        "Stephen Judkins <stephen.judkins@gmail.com>",
+        "Sam Goldstein <sam@aboutus.org>",
+        "Steven Black <steveb@stevenblack.com>",
+        "Don Park <don@donpark.org>",
+        "Sven Dowideit <SvenDowideit@fosiki.com>",
+        "Adam Solove <asolove@gmail.com>",
+        "Nick Niemeir <nick.niemeir@gmail.com>",
+        "Erkan Yilmaz <erkan77@gmail.com>",
+        "Matt Niemeir <matt.niemeir@gmail.com>",
+        "Daan van Berkel <daan.v.berkel.1980@gmail.com>",
+        "Nicholas Hallahan <nick@theoutpost.io>",
+        "Ola Bini <ola.bini@gmail.com>",
+        "Danilo Sato <dtsato@gmail.com>",
+        "Henning Schumann <henning.schumann@gmail.com>",
+        "Michael Deardeuff <michael.deardeuff@gmail.com>",
+        "Pete Hodgson <git@thepete.net>",
+        "Marcin Cieslak <saper@saper.info>",
+        "M. Kelley Harris (http://www.kelleyharris.com)",
+        "Ryan Bennett <nomad.ry@gmail.com>",
+        "Paul Rodwell <paul.rodwell@btinternet.com>",
+        "David Turnbull <dturnbull@gmail.com>",
+        "Austin King <shout@ozten.com>"
+      ]
+    },
+
     // tidy-up before we start the build
     clean: ['build/*', 'client/client.js', 'client/client.map', 'client/client.*.js', 'client/client.*.map', 'client/test/testclient.js'],
 
@@ -89,6 +117,24 @@ module.exports = function (grunt) {
         tasks: ['build']
       }
     }
+  });
+
+  grunt.registerTask( "update-authors", function () {
+    var getAuthors = require("grunt-git-authors"),
+    done = this.async();
+
+    getAuthors({
+      priorAuthors: grunt.config( "authors.prior")
+    }, function(error, authors) {
+      if (error) {
+        grunt.log.error(error);
+        return done(false);
+      }
+
+      grunt.file.write("AUTHORS.txt",
+      "Authors ordered by first contribution\n\n" +
+      authors.join("\n") + "\n");
+    });
   });
 
   // build without sourcemaps
