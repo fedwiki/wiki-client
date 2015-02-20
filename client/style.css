@@ -243,7 +243,9 @@ p.readout {
 
 .footer {
   clear: both;
-  margin-bottom: 1em; }
+  margin-bottom: 1em;
+  padding-bottom: 500px;
+}
 
 .page {
   float: left;    /* inline-block preferred? */
