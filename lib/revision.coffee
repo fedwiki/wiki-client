@@ -5,7 +5,7 @@
 apply = (page, action) ->
 
   order = ->
-    (item.id for item in page.story||[])
+    (item?.id for item in page.story||[])
 
   add = (after, item) ->
     index = order().indexOf(after) + 1
@@ -47,7 +47,7 @@ create = (revIndex, data) ->
   revJournal = data.journal[0..revIndex]
   revPage = {title: data.title, story: []}
   for action in revJournal
-    apply revPage, action
+    apply revPage, action||{}
   return revPage
 
 module.exports = {create, apply}

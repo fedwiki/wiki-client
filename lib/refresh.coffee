@@ -238,13 +238,9 @@ renderPageIntoPageElement = (pageObject, $page) ->
   emitTimestamp $header, $page, pageObject
 
   pageObject.seqItems (item, done) ->
-    if item?.type and item?.id
-      $item = $ """<div class="item #{item.type}" data-id="#{item.id}">"""
-      $story.append $item
-      plugin.do $item, item, done
-    else
-      $story.append $ """<div><p class="error">Can't make sense of story[#{i}]</p></div>"""
-      done()
+    $item = $ """<div class="item #{item.type}" data-id="#{item.id}">"""
+    $story.append $item
+    plugin.do $item, item, done
 
   pageObject.seqActions (each, done) ->
     addToJournal $journal, each.separator if each.separator
