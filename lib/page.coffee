@@ -39,7 +39,7 @@ newPage = (json, site) ->
     context = ['view']
     context.push site if isRemote()
     addContext = (site) -> context.push site if site? and not _.include context, site
-    addContext action.site for action in page.journal.slice(0).reverse()
+    addContext action?.site for action in page.journal.slice(0).reverse()
     context
 
   isPlugin = ->
@@ -70,9 +70,9 @@ newPage = (json, site) ->
     else
       neighbors.push host if host?
     for item in page.story
-      neighbors.push item.site if item.site?
+      neighbors.push item.site if item?.site?
     for action in page.journal
-      neighbors.push action.site if action.site?
+      neighbors.push action.site if action?.site?
     _.uniq neighbors
 
   getTitle = ->
@@ -100,7 +100,7 @@ newPage = (json, site) ->
   seqItems = (each) ->
     emitItem = (i) ->
       return if i >= page.story.length
-      each page.story[i], -> emitItem i+1
+      each page.story[i]||{text:'null'}, -> emitItem i+1
     emitItem 0
 
   addParagraph = (text) ->
@@ -114,7 +114,7 @@ newPage = (json, site) ->
     sections = nowSections (new Date).getTime()
     emitAction = (i) ->
       return if i >= page.journal.length
-      action = page.journal[i]
+      action = page.journal[i]||{}
       bigger = action.date || 0
       separator = null
       for section in sections
