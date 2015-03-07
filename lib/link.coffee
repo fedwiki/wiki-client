@@ -8,10 +8,10 @@ active = require './active'
 refresh = require './refresh'
 {asSlug, pageEmitter} = require './page'
 
-createPage = (name, loc) ->
+createPage = (slug, loc, title=null) ->
   site = loc if loc and loc isnt 'view'
   $page = $ """
-    <div class="page" id="#{name}">
+    <div class="page" id="#{slug}">
       <div class="twins"> <p> </p> </div>
       <div class="header">
         <h1> <img class="favicon" src="#{ if site then "//#{site}" else "" }/favicon.png" height="32px"> #{name} </h1>
@@ -19,16 +19,17 @@ createPage = (name, loc) ->
     </div>
   """
   $page.data('site', site) if site
+  $page.data('title', title) if title
   $page
 
-showPage = (name, loc) ->
-  createPage(name, loc).appendTo('.main').each refresh.cycle
+showPage = (slug, loc, title=null) ->
+  createPage(slug, loc, title).appendTo('.main').each refresh.cycle
 
 doInternalLink = (name, $page, site=null) ->
-  name = asSlug(name)
+  slug = asSlug(name)
   $($page).nextAll().remove() if $page?
   lineup.removeAllAfterKey $($page).data('key') if $page?
-  showPage(name,site)
+  showPage(slug,site,name)
   active.set($('.page').last())
 
 showResult = (pageObject) ->
