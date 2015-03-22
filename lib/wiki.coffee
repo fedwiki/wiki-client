@@ -101,6 +101,7 @@ wiki.log = (things...) ->
 # known use: wiki.neighborhood wiki-plugin-activity/client/activity.coffee:
 
 wiki.neighborhood = require('./neighborhood').sites
+wiki.neighborhoodObject = require './neighborhood'
 
 # known use: wiki.pageHandler  wiki-plugin-changes/client/changes.coffee:
 # known use: wiki.pageHandler  wiki-plugin-map/client/map.coffee:
@@ -158,4 +159,3 @@ wiki.createSynopsis = require('./synopsis') ##
 
 
 module.exports = wiki
-
