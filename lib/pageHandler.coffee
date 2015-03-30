@@ -181,7 +181,7 @@ pageHandler.put = ($page, action) ->
     # pull remote site closer to us
     $page.find('h1').prop('title',location.host)
     $page.find('h1 img').attr('src', '/favicon.png')
-    $page.find('h1 a').attr('href', '/')
+    $page.find('h1 a').attr('href', "/view/welcome-visitors/view/#{pagePutInfo.slug}").attr('target',location.host)
     $page.data('site', null)
     $page.removeClass('remote')
     #STATE -- update url when site changes
