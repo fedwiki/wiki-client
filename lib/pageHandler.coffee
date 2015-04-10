@@ -64,7 +64,9 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
         console.log 'pageHandler.get error', xhr, xhr.status, type, msg
         #NEWPAGE trouble from PageHandler.get
         troublePageObject = newPage {title: "Trouble: Can't Get Page"}, null
-        troublePageObject.addParagraph """
+        troublePageObject.addItem
+          type: 'html'
+          text: """
 The page handler has run into problems with this   request.
 <pre class=error>#{JSON.stringify pageInformation}</pre>
 The requested url.
