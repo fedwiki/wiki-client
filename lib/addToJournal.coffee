@@ -7,7 +7,9 @@ actionSymbols = require './actionSymbols'
 
 module.exports = ($journal, action) ->
   $page = $journal.parents('.page:first')
-  title = action.type || 'separator'
+  title = ''
+  title += "#{action.site}\n" if action.site?
+  title += action.type || 'separator'
   title += " #{util.formatElapsedTime(action.date)}" if action.date?
   $action = $("""<a href="#" /> """).addClass("action").addClass(action.type || 'separator')
     .text(action.symbol || actionSymbols.symbols[action.type])
