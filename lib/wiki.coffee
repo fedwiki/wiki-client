@@ -99,9 +99,12 @@ wiki.log = (things...) ->
   console.log things... if console?.log?
 
 # known use: wiki.neighborhood wiki-plugin-activity/client/activity.coffee:
+# known use: wiki.neighborhoodObject  wiki-plugin-activity/client/activity.coffee:
 
-wiki.neighborhood = require('./neighborhood').sites
-wiki.neighborhoodObject = require './neighborhood'
+
+neighborhood = require './neighborhood'
+wiki.neighborhood = neighborhood.sites
+wiki.neighborhoodObject = neighborhood
 
 # known use: wiki.pageHandler  wiki-plugin-changes/client/changes.coffee:
 # known use: wiki.pageHandler  wiki-plugin-map/client/map.coffee:
