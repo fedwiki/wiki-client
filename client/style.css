@@ -116,6 +116,19 @@ footer {
 .story {
   padding-bottom: 5px; }
 
+.story code {
+  background: rgba(0,0,0,0.04);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+}
+
+.story blockquote {
+  margin-left: 0;
+  padding: 0 10px;
+  color: #777;
+  border-left: 4px solid #ddd;
+}
+
 .data,
 .chart,
 .image {
