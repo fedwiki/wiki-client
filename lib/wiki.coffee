@@ -100,6 +100,7 @@ wiki.log = (things...) ->
 
 # known use: wiki.neighborhood wiki-plugin-activity/client/activity.coffee:
 # known use: wiki.neighborhoodObject  wiki-plugin-activity/client/activity.coffee:
+# known use: wiki.neighborhoodObject  wiki-plugin-roster/client/roster.coffee:
 
 
 neighborhood = require './neighborhood'
