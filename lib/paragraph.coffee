@@ -6,6 +6,12 @@ editor = require './editor'
 resolve = require './resolve'
 itemz = require './itemz'
 
+type = (text) ->
+  if text.match /<(i|b|p|a|h\d|hr|br|li|img|div|span|table|blockquote)\b.*?>/i
+    'html'
+  else
+    'markdown'
+
 emit = ($item, item) ->
   for text in item.text.split /\n\n+/
     $item.append "<p>#{resolve.resolveLinks(text)}</p>" if text.match /\S/
@@ -13,7 +19,7 @@ emit = ($item, item) ->
 bind = ($item, item) ->
   $item.dblclick (e) ->
     if e.shiftKey
-      item.type = 'html'
+      item.type = type(item.text)
       itemz.replaceItem $item, 'paragraph', item
     else
       editor.textEditor $item, item, {'append': true}
