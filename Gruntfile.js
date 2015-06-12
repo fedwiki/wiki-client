@@ -4,6 +4,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-git-authors');
 
   // N.B. The development build includes paths in the mapfile, at the browserify step, that are not accessable
   //      from the browser.
@@ -117,24 +118,6 @@ module.exports = function (grunt) {
         tasks: ['build']
       }
     }
-  });
-
-  grunt.registerTask( "update-authors", function () {
-    var getAuthors = require("grunt-git-authors"),
-    done = this.async();
-
-    getAuthors({
-      priorAuthors: grunt.config( "authors.prior")
-    }, function(error, authors) {
-      if (error) {
-        grunt.log.error(error);
-        return done(false);
-      }
-
-      grunt.file.write("AUTHORS.txt",
-      "Authors ordered by first contribution\n\n" +
-      authors.join("\n") + "\n");
-    });
   });
 
   // build without sourcemaps
