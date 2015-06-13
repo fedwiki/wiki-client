@@ -51,6 +51,9 @@ $ ->
       #   </li>
       # """
 
+  commas = (number) ->
+    "#{number}".replace /(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"
+
   readFile = (file) ->
     if file?.type == 'application/json'
       reader = new FileReader()
@@ -61,7 +64,7 @@ $ ->
         resultPage.setTitle "Import from #{file.name}"
         resultPage.addParagraph """
           Import of #{Object.keys(pages).length} pages
-          (#{file.size} bytes)
+          (#{commas file.size} bytes)
           from an export file dated #{file.lastModifiedDate}.
         """
         resultPage.addItem
