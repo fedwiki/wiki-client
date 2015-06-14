@@ -31,10 +31,12 @@ doInternalLink = (name, $page, site=null) ->
   showPage(name,site)
   active.set($('.page').last())
 
-showResult = (pageObject) ->
-  $page = createPage(pageObject.getSlug()).addClass('ghost')
-  $page.appendTo($('.main'))
-  refresh.buildPage( pageObject, $page )
+showResult = (resultObject, $page) ->
+  $($page).nextAll().remove() if $page?
+  lineup.removeAllAfterKey $($page).data('key') if $page?
+  $resultPage = createPage(resultObject.getSlug()).addClass('ghost')
+  $resultPage.appendTo($('.main'))
+  refresh.buildPage( resultObject, $resultPage )
   active.set($('.page').last())
 
 pageEmitter.on 'show', (page) ->
