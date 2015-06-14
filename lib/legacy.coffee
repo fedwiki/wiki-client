@@ -67,10 +67,7 @@ $ ->
           (#{commas file.size} bytes)
           from an export file dated #{file.lastModifiedDate}.
         """
-        resultPage.addItem
-          type: 'markdown'
-          pages: pages
-          text: (page.title || slug for slug, page of pages).join "\n"
+        resultPage.addItem {type: 'importer', pages: pages}
         link.showResult resultPage
       reader.readAsText(file)
 

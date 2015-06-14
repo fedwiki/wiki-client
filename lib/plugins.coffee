@@ -8,3 +8,4 @@ window.plugins =
   paragraph: require './paragraph'
   image: require './image'
   future: require './future'
+  importer: require './importer'
