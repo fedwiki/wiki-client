@@ -17,8 +17,11 @@ emit = ($item, item) ->
     result = []
     for slug, page of pages
       line = "<a href=#{slug}>#{ page.title || slug }</a>"
-      if page.journal && (date = page.journal[page.journal.length - 1].date)
-        line += " &nbsp; from #{util.formatElapsedTime date}"
+      if page.journal
+        if (date = page.journal[page.journal.length - 1].date)
+          line += " &nbsp; from #{util.formatElapsedTime date}"
+        else
+          line += " &nbsp; from revision #{page.journal.length - 1}"
       result.push line
     result.join '<br>'
 
