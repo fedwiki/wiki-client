@@ -14,6 +14,8 @@ link = require './link'
 target = require './target'
 
 asSlug = require('./page').asSlug
+newPage = require('./page').newPage
+
 
 $ ->
   dialog.emit()
@@ -48,6 +50,26 @@ $ ->
       #     Error on #{settings.url}: #{request.responseText}
       #   </li>
       # """
+
+  commas = (number) ->
+    "#{number}".replace /(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"
+
+  readFile = (file) ->
+    if file?.type == 'application/json'
+      reader = new FileReader()
+      reader.onload = (e) ->
+        result = e.target.result
+        pages = JSON.parse result
+        resultPage = newPage()
+        resultPage.setTitle "Import from #{file.name}"
+        resultPage.addParagraph """
+          Import of #{Object.keys(pages).length} pages
+          (#{commas file.size} bytes)
+          from an export file dated #{file.lastModifiedDate}.
+        """
+        resultPage.addItem {type: 'importer', pages: pages}
+        link.showResult resultPage
+      reader.readAsText(file)
 
   getTemplate = (slug, done) ->
     return done(null) unless slug
@@ -144,6 +166,7 @@ $ ->
     .bind 'dragover', (evt) -> evt.preventDefault()
     .bind "drop", drop.dispatch
       page: (item) -> link.doInternalLink item.slug, null, item.site
+      file: (file) -> readFile file
 
   $(".provider input").click ->
     $("footer input:first").val $(this).attr('data-provider')
