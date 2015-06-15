@@ -4,19 +4,18 @@ util = require './util'
 link = require './link'
 newPage = require('./page').newPage
 
-expand = (text)->
+escape = (text)->
   text
     .replace /&/g, '&amp;'
     .replace /</g, '&lt;'
     .replace />/g, '&gt;'
-
 
 emit = ($item, item) ->
 
   render = (pages) ->
     result = []
     for slug, page of pages
-      line = "<a href=#{slug}>#{ page.title || slug }</a>"
+      line = "<a href=#{slug}>#{ escape(page.title) || slug }</a>"
       if page.journal
         if (date = page.journal[page.journal.length - 1].date)
           line += " &nbsp; from #{util.formatElapsedTime date}"
@@ -37,9 +36,6 @@ bind = ($item, item) ->
     $page = $(e.target).parents('.page') unless e.shiftKey
     pageObject = newPage(item.pages[slug])
     link.showResult pageObject, {$page, rev:pageObject.getRevision()}
-
     false
-
-  # $item.dblclick -> wiki.textEditor $item, item
 
 module.exports = {emit, bind}
