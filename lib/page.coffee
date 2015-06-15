@@ -85,8 +85,14 @@ newPage = (json, site) ->
     page.journal.length-1
 
   getTimestamp = ->
-    date = page.journal[getRevision()].date
-    if date? then formatDate(date) else "Revision #{getRevision()}"
+    action = page.journal[getRevision()]
+    if action?
+      if action.date?
+        formatDate(action.date)
+      else
+        "Revision #{getRevision()}"
+    else
+      "Unrecorded Date"
 
   addItem = (item) ->
     item = _.extend {}, {id: random.itemId()}, item
