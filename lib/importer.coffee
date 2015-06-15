@@ -34,8 +34,9 @@ emit = ($item, item) ->
 bind = ($item, item) ->
   $item.find('a').click (e) ->
     slug = $(e.target).attr('href')
-    page = $(e.target).parents('.page') unless e.shiftKey
-    link.showResult newPage(item.pages[slug]), page
+    $page = $(e.target).parents('.page') unless e.shiftKey
+    pageObject = newPage(item.pages[slug])
+    link.showResult pageObject, {$page, rev:pageObject.getRevision()}
 
     false
 
