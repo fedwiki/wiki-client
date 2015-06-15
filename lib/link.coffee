@@ -31,14 +31,14 @@ doInternalLink = (name, $page, site=null) ->
   showPage(name,site)
   active.set($('.page').last())
 
-showResult = (resultObject, options={}) ->
+showResult = (pageObject, options={}) ->
   $(options.$page).nextAll().remove() if options.$page?
   lineup.removeAllAfterKey $(options.$page).data('key') if options.$page?
-  slug = resultObject.getSlug()
+  slug = pageObject.getSlug()
   slug += "_rev#{options.rev}" if options.rev?
   $page = createPage(slug).addClass('ghost')
   $page.appendTo($('.main'))
-  refresh.buildPage( resultObject, $page )
+  refresh.buildPage( pageObject, $page )
   active.set($('.page').last())
 
 pageEmitter.on 'show', (page) ->
