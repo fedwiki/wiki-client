@@ -71,6 +71,19 @@ $ ->
         link.showResult resultPage
       reader.readAsText(file)
 
+  readBlog = ({resource, user, key}) ->
+    $.getJSON "#{resource}.json", (outline) ->
+      pageObject = newPage
+        title: outline.text
+        journal: [
+          type: "create"
+          date: new Date(outline.created).getTime()
+          item: {title: outline.text, story: []} ]
+      for node in outline.subs || []
+        markup = node.text.replace /<a href="(.+?)">(.+?)<\/a>/g, '[$1 $2]'
+        pageObject.addParagraph markup
+      link.showResult pageObject
+
   getTemplate = (slug, done) ->
     return done(null) unless slug
     console.log 'getTemplate', slug
@@ -166,6 +179,7 @@ $ ->
     .bind 'dragover', (evt) -> evt.preventDefault()
     .bind "drop", drop.dispatch
       page: (item) -> link.doInternalLink item.slug, null, item.site
+      blog: (blog) -> readBlog blog
       file: (file) -> readFile file
 
   $(".provider input").click ->

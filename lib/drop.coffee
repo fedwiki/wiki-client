@@ -22,6 +22,12 @@ isPage = (url) ->
     return item
   null
 
+isLiveblog = (url) ->
+  if found = url.match /^((https?:\/\/liveblog\.co\/users\/[a-z]+)\/\d+\/\d+\/\d+\/([a-zA-Z]+)).html$/
+    [ignore, resource, user, key] = found
+    return {resource, user, key}
+  null
+
 isVideo = (url) ->
   if found = url.match /^https?:\/\/www.youtube.com\/watch\?v=([\w\-]+).*$/
     return {text: "YOUTUBE #{found[1]}"}
@@ -50,6 +56,9 @@ dispatch = (handlers) ->
       if page = isPage url
         if (handle = handlers.page)?
           return stop handle page
+      if blog = isLiveblog url
+        if (handle = handlers.blog)?
+          return stop handle blog
       if video = isVideo url
         if (handle = handlers.video)?
           return stop handle video
