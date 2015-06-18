@@ -114,7 +114,11 @@ bind = ($item, item) ->
         reader.readAsText(file)
       else
         punt
-          file: file
+          name: file.name
+          type: file.type
+          size: file.size
+          fileName: file.fileName
+          lastModified: file.lastModified
 
   $item.dblclick (e) ->
     if e.shiftKey
