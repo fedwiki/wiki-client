@@ -9,23 +9,19 @@ describe 'plugin', ->
   before ->
     $page = $('<div id="plugin" />')
     $page.appendTo('body')
-    fakeDeferred = {}
-    fakeDeferred.done = sinon.mock().returns(fakeDeferred)
-    fakeDeferred.fail = sinon.mock().returns(fakeDeferred)
-
-    sinon.stub(jQuery,'getScript').returns(fakeDeferred)
+    sinon.spy(jQuery, 'ajax')
 
   after ->
-    jQuery.getScript.restore()
+    jQuery.ajax.restore()
     $page.empty()
 
   it 'should have default image type', ->
     expect(window.plugins).to.have.property('image')
 
   it 'should fetch a plugin script from the right location', ->
-    plugin.get 'test'
-    expect(jQuery.getScript.calledOnce).to.be(true)
-    expect(jQuery.getScript.args[0][0]).to.be('/plugins/test/test.js')
+    plugin.get 'activity'
+    expect(jQuery.ajax.calledOnce).to.be(true)
+    expect(jQuery.ajax.args[0][0].url).to.be('/plugins/activity/activity.js')
 
   it 'should render a plugin', ->
     item =
@@ -34,4 +30,3 @@ describe 'plugin', ->
     plugin.do $('#plugin'), item
     expect($('#plugin').html()).to
       .be('<p>blah <a class="internal" href="/link.html" data-page-name="link" title="view">Link</a> asdf</p>')
-

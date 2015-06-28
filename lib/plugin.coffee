@@ -13,7 +13,7 @@ escape = (s) ->
     .replace(/\//g,'&#x2F;')
 
 # define cachedScript that allows fetching a cached script.
-# see example in http://api.jquery.com/jQuery.getScript/ 
+# see example in http://api.jquery.com/jQuery.getScript/
 
 cachedScript = (url, options) ->
   options = $.extend(options or {},
@@ -28,8 +28,8 @@ getScript = plugin.getScript = (url, callback = () ->) ->
   # console.log "URL :", url, "\nCallback :", callback
   if url in scripts
     callback()
-  else 
-    cachedScript(url)
+  else
+    cachedScript url
       .done ->
         scripts.push url
         callback()
@@ -100,5 +100,3 @@ plugin.do = plugin.doPlugin = (div, item, done=->) ->
 
 plugin.registerPlugin = (pluginName,pluginFn)->
   window.plugins[pluginName] = pluginFn($)
-
-
