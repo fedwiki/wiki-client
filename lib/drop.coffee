@@ -22,6 +22,10 @@ isPage = (url) ->
     return item
   null
 
+isImage = (url) ->
+  if found = url.match /^https?:\/\/(.+?)\.(jpg|jpeg|gif|png)$/
+    return url
+
 isLiveblog = (url) ->
   if found = url.match /^((https?:\/\/liveblog\.co\/users\/[a-z]+)\/\d+\/\d+\/\d+\/([a-zA-Z]+)).html$/
     [ignore, resource, user, key] = found
@@ -56,6 +60,9 @@ dispatch = (handlers) ->
       if page = isPage url
         if (handle = handlers.page)?
           return stop handle page
+      if imageurl = isImage url
+        if (handle = handlers.imageurl)?
+          return stop handle imageurl
       if blog = isLiveblog url
         if (handle = handlers.blog)?
           return stop handle blog

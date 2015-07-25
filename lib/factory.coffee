@@ -88,6 +88,23 @@ bind = ($item, item) ->
     item.text = "#{video.text}\n(double-click to edit caption)\n"
     syncEditAction()
 
+  addImage = (url) ->
+    debugger
+    getImage = ->
+      img = new Image
+      img.src = url
+      canvas = document.createElement 'canvas'
+      canvas.width = cW = img.width
+      canvas.height = cH = img.height
+      context = canvas.getContext '2d'
+      context.drawImage img, 0, 0, cW, cH
+      canvas.toDataURL 'image/jpeg', .5
+    item.type = 'image'
+    item.url = resizeImage getImage()
+    item.caption ||= "Uploaded image. [#{url} expand]"
+    syncEditAction()
+
+
   readFile = (file) ->
     if file?
       [majorType, minorType] = file.type.split("/")
@@ -128,6 +145,7 @@ bind = ($item, item) ->
   $item.bind 'dragover', (evt) -> evt.preventDefault()
   $item.bind "drop", drop.dispatch
     page: addReference
+    imageurl: addImage
     file: readFile
     video: addVideo
     punt: punt
