@@ -13,6 +13,7 @@ wiki = {}
 # known use: wiki.asSlug wiki-plugin-reduce/client/reduce.coffee:
 
 wiki.asSlug = require('./page').asSlug
+wiki.newPage = require('./page').newPage
 
 # known use: wiki.createItem wiki-plugin-parse/client/parse.coffee:
 # known use: wiki.removeItem wiki-plugin-parse/client/parse.coffee:
@@ -42,6 +43,7 @@ wiki.dialog = dialog.open
 link = require('./link')
 wiki.createPage = link.createPage ##
 wiki.doInternalLink = link.doInternalLink
+wiki.showResult = link.showResult
 
 # known use: wiki.getScript  wiki-plugin-bars/client/bars.coffee:
 # known use: wiki.getScript  wiki-plugin-code/client/code.coffee:
