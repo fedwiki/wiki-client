@@ -25,6 +25,8 @@
     }
   ],
   "dependencies": {
+    "filereader-stream": "^0.2.0",
+    "ipfs-api": "^2.1.6",
     "underscore": "*"
   },
   "scripts": {
