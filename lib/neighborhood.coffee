@@ -8,7 +8,7 @@ module.exports = neighborhood = {}
 
 neighborhood.sites = {}
 nextAvailableFetch = 0
-nextFetchInterval = 2000
+nextFetchInterval = 500
 
 populateSiteInfoFor = (site,neighborInfo)->
   return if neighborInfo.sitemapRequestInflight
