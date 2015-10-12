@@ -46,5 +46,10 @@ describe 'resolve', ->
     it 'should be adulterated where unexpected', ->
       expect(r 'foo 〖12〗 bar').to.eql "foo 〖 12 〗 bar"
 
+  describe 'piped slug', ->
+    it 'should take slug after pipe', ->
+      expect(r '[[foo|bar]]').to.contain 'href="/bar.html"'
 
+    it 'should slugify text after pipe', ->
+      expect(r '[[baz|Foo Bar]]').to.contain 'href="/foo-bar.html"'
 
