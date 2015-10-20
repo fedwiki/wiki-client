@@ -294,7 +294,7 @@ p.readout {
 textarea {
   font-size: inherit;
   width: 100%;
-  height: 150px; }
+  min-height: 120px; }
 
 .clickable:hover {
   cursor: pointer; }
