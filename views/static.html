@@ -29,9 +29,11 @@
     </section>
     <footer>
 
-      {{#owned}}
-      <div class='footer-item'>Site Owned by: <span id='site-owner' style='text-transform:capitalize;'>{{ownedBy}}</span></div>
-      {{/owned}}
+      <div id='site-owner' class='footer-item'>
+        {{#owned}}
+          Site Owned by: <span id='site-owner' style='text-transform:capitalize;'>{{ownedBy}}</span></div>
+        {{/owned}}
+      </div>
 
       <div id='security' class='footer-item'></div>
 
