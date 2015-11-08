@@ -50,7 +50,7 @@ module.exports = function (grunt) {
       // build the client that we will include in the package
       packageClient: {
         src: ['./client.coffee'],
-        dest: 'client/client.max.js',
+        dest: 'client/client.js',
         options: {
           transform: ['coffeeify'],
           browserifyOptions: {
@@ -88,7 +88,7 @@ module.exports = function (grunt) {
                   ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */'
         },
         files: {
-          'client/client.js': ['client/client.max.js']
+          'client/client.js': ['client/client.js']
         }
       }
     },
