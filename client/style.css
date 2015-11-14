@@ -379,5 +379,12 @@ textarea {
 }
 
 .reference {
-  background-color: #f0f8ff;
+  box-shadow: 0px 0px 10px 0px rgba(0, 180, 220, 0.5) inset;
+  margin-left: 15px;
+  padding: 7px;
+}
+
+.reference p {
+    margin-top: 3px;
+    margin-bottom: 3px;
 }
