@@ -51,6 +51,9 @@ plugin.do = plugin.doPlugin = (div, item, done=->) ->
         <button>help</button><br>
       </div>
     """
+    if item.text?
+      div.find('.error').dblclick (e) ->
+        wiki.textEditor div, item
     div.find('button').on 'click', ->
       wiki.dialog ex.toString(), """
         <p> This "#{item.type}" plugin won't show.</p>
