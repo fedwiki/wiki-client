@@ -152,9 +152,9 @@ wiki.textEditor = editor.textEditor
 
 wiki.util = require './util'
 
-# known use: wiki.persona wiki-node-server/views/static.html
+# known use: wiki.security views/static.html
+wiki.security = require './security'
 
-wiki.persona = require './persona'
 
 # known use: require wiki-clint/lib/synopsis wiki-node-server/lib/page.coffee
 # known use: require wiki-clint/lib/synopsis wiki-node-server/lib/leveldb.js
