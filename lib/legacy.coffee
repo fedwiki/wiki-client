@@ -184,7 +184,7 @@ $ ->
       resultPage.addParagraph "Find pages sharing any of these items."
       resultPage.addItem
         type: 'search'
-        text: "SEARCH OR ITEMS #{(item.id for item in pageObject.getRawPage().story).join ' '}"
+        text: "SEARCH ANY ITEMS #{(item.id for item in pageObject.getRawPage().story).join ' '}"
       $page.nextAll().remove() unless e.shiftKey
       lineup.removeAllAfterKey(key) unless e.shiftKey
       link.showResult resultPage
