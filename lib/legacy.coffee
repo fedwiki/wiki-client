@@ -162,6 +162,33 @@ $ ->
     .delegate '.score', 'hover', (e) ->
       $('.main').trigger 'thumb', $(e.target).data('thumb')
 
+    .delegate 'a.search', 'click', (e) ->
+      $page = $(e.target).parents('.page')
+      key = $page.data('key')
+      pageObject = lineup.atKey key
+      resultPage = newPage()
+      resultPage.setTitle "Search from '#{pageObject.getTitle()}'"
+      resultPage.addParagraph """
+          Search for pages related to '#{pageObject.getTitle()}'.
+          Each search on this page will find pages related in a different way.
+          Choose the search of interest. Be patient.
+      """
+      resultPage.addParagraph "Find pages with links to this title."
+      resultPage.addItem
+        type: 'search'
+        text: "SEARCH LINKS #{pageObject.getSlug()}"
+      resultPage.addParagraph "Find pages neighboring  this site."
+      resultPage.addItem
+        type: 'search'
+        text: "SEARCH SITES #{pageObject.getRemoteSite(location.host)}"
+      resultPage.addParagraph "Find pages sharing any of these items."
+      resultPage.addItem
+        type: 'search'
+        text: "SEARCH ANY ITEMS #{(item.id for item in pageObject.getRawPage().story).join ' '}"
+      $page.nextAll().remove() unless e.shiftKey
+      lineup.removeAllAfterKey(key) unless e.shiftKey
+      link.showResult resultPage
+
     .bind 'dragenter', (evt) -> evt.preventDefault()
     .bind 'dragover', (evt) -> evt.preventDefault()
     .bind "drop", drop.dispatch
