@@ -137,6 +137,7 @@ $ ->
 
     .delegate '.fork-page', 'click', (e) ->
       $page = $(e.target).parents('.page')
+      return if $page.find('.future')
       pageObject = lineup.atKey $page.data('key')
       action = {type: 'fork'}
       if $page.hasClass('local')
