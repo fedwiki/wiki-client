@@ -145,8 +145,8 @@ $ ->
       else if pageObject.isRemote()
         action.site = pageObject.getRemoteSite()
       if $page.data('rev')?
-        $page.removeClass('ghost')
         $page.find('.revision').remove()
+      $page.removeClass 'ghost'
       pageHandler.put $page, action
 
     .delegate 'button.create', 'click', (e) ->
