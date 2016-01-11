@@ -137,6 +137,7 @@ $ ->
 
     .delegate '.fork-page', 'click', (e) ->
       $page = $(e.target).parents('.page')
+      return if $page.find('.future')
       pageObject = lineup.atKey $page.data('key')
       action = {type: 'fork'}
       if $page.hasClass('local')
@@ -145,8 +146,8 @@ $ ->
       else if pageObject.isRemote()
         action.site = pageObject.getRemoteSite()
       if $page.data('rev')?
-        $page.removeClass('ghost')
         $page.find('.revision').remove()
+      $page.removeClass 'ghost'
       pageHandler.put $page, action
 
     .delegate 'button.create', 'click', (e) ->
