@@ -26,7 +26,7 @@ pageFromLocalStorage = (slug)->
     undefined
 
 recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
-  {slug,rev,site} = pageInformation
+  {slug,rev,site,title} = pageInformation
 
   if site
     localContext = []
@@ -55,6 +55,8 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
     type: 'GET'
     dataType: 'json'
     url: url + "?random=#{random.randomBytes(4)}"
+    data:
+      'title': title
     success: (page) ->
       page = revision.create rev, page if rev
       #NEWPAGE server from pageHandler.get

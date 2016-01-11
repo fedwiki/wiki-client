@@ -96,7 +96,7 @@ $ ->
       active.set this unless $(e.target).is("a")
 
     .delegate '.internal', 'click', (e) ->
-      name = $(e.target).data 'pageName'
+      name = $(e.target).text()
       # ensure that name is a string (using string interpolation)
       name = "#{name}"
       pageHandler.context = $(e.target).attr('title').split(' => ')
@@ -218,4 +218,3 @@ $ ->
     state.first()
     $('.page').each refresh.cycle
     active.set($('.page').last())
-

@@ -287,6 +287,7 @@ cycle = ->
     slug: slug
     rev: rev
     site: $page.data('site')
+    title: $page.data('title')
   }
 
   createGhostPage = ->

@@ -55,5 +55,3 @@ resolve.resolveLinks = (string, sanitize=escape) ->
     .replace /\[((http|https|ftp):.*?) (.*?)\]/gi, external
   sanitize string
     .replace /〖(\d+)〗/g, unstash
-
-
