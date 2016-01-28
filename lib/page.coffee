@@ -16,6 +16,9 @@ pageEmitter = new EventEmitter
 asSlug = (name) ->
   name.replace(/\s/g, '-').replace(/[^A-Za-z0-9-]/g, '').toLowerCase()
 
+asTitle = (slug) ->
+  slug.replace(/-/g, ' ')
+
 nowSections = (now) ->
   [
     {symbol: '❄', date: now-1000*60*60*24*366, period: 'a Year'}
@@ -166,4 +169,4 @@ newPage = (json, site) ->
 
   {getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, setTitle, getRevision, getTimestamp, addItem, getItem, addParagraph, seqItems, seqActions, become, siteLineup, merge, apply}
 
-module.exports = {newPage, asSlug, pageEmitter}
+module.exports = {newPage, asSlug, asTitle, pageEmitter}

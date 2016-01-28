@@ -6,15 +6,18 @@
 lineup = require './lineup'
 active = require './active'
 refresh = require './refresh'
-{asSlug, pageEmitter} = require './page'
+{asTitle, asSlug, pageEmitter} = require './page'
 
 createPage = (name, loc) ->
   site = loc if loc and loc isnt 'view'
+  title = asTitle(name)
   $page = $ """
     <div class="page" id="#{name}">
-      <div class="twins"> <p> </p> </div>
-      <div class="header">
-        <h1> <img class="favicon" src="#{ if site then "//#{site}" else "" }/favicon.png" height="32px"> #{name} </h1>
+      <div class="paper">
+        <div class="twins"> <p> </p> </div>
+        <div class="header">
+          <h1> <img class="favicon" src="#{ if site then "//#{site}" else "" }/favicon.png" height="32px"> #{title} </h1>
+        </div>
       </div>
     </div>
   """
