@@ -232,8 +232,11 @@ renderPageIntoPageElement = (pageObject, $page) ->
   resolve.resolutionContext = pageObject.getContext()
 
   $page.empty()
+  $paper = $("<div class='paper' />")
+  $paper.addClass('remote') if pageObject.isRemote()
+  $page.append($paper)
   [$twins, $header, $story, $journal, $footer] = ['twins', 'header', 'story', 'journal', 'footer'].map (className) ->
-    $("<div />").addClass(className).appendTo($page)
+    $("<div />").addClass(className).appendTo($paper)
 
   emitHeader $header, $page, pageObject
   emitTimestamp $header, $page, pageObject
@@ -261,7 +264,7 @@ createMissingFlag = ($page, pageObject) ->
 
 rebuildPage = (pageObject, $page) ->
   $page.addClass('local') if pageObject.isLocal()
-  $page.addClass('remote') if pageObject.isRemote()
+  # $page.addClass('remote') if pageObject.isRemote()
   $page.addClass('plugin') if pageObject.isPlugin()
 
   renderPageIntoPageElement pageObject, $page
