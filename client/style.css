@@ -266,7 +266,7 @@ p.readout {
   float: left;    /* inline-block preferred? */
   margin: 8px;
   /* padding: 0 31px; */
-  width: 430px;
+  /* width: 430px; */
   background-color: white;
   height: 100%;
   overflow: auto;
@@ -288,6 +288,7 @@ p.readout {
 }
 
 .paper {
+  width: 420px;
   padding: 30px;
 }
 
