@@ -137,7 +137,7 @@ $ ->
 
     .delegate '.fork-page', 'click', (e) ->
       $page = $(e.target).parents('.page')
-      return if $page.find('.future')
+      return if $page.hasClass 'ghost'
       pageObject = lineup.atKey $page.data('key')
       action = {type: 'fork'}
       if $page.hasClass('local')
@@ -218,4 +218,3 @@ $ ->
     state.first()
     $('.page').each refresh.cycle
     active.set($('.page').last())
-
