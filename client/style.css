@@ -288,8 +288,9 @@ p.readout {
 }
 
 .paper {
-  width: 420px;
+  width: 430px;
   padding: 30px;
+  min-height: 100%;
 }
 
 .factory,
