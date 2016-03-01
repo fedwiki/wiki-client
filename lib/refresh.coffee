@@ -114,10 +114,10 @@ initMerging = ($page) ->
     drop: handleMerging
 
 initAddButton = ($page) ->
-  $page.find(".add-factory").live "click", (evt) ->
+  $page.find(".add-factory").on("click", (evt) ->
     return if $page.hasClass 'ghost'
     evt.preventDefault()
-    createFactory($page)
+    createFactory($page))
 
 createFactory = ($page) ->
   item =
@@ -257,9 +257,9 @@ renderPageIntoPageElement = (pageObject, $page) ->
 
 createMissingFlag = ($page, pageObject) ->
   unless pageObject.isRemote()
-    $('img.favicon',$page).error ->
+    $('img.favicon',$page).on('error', ->
       plugin.get 'favicon', (favicon) ->
-        favicon.create()
+        favicon.create())
 
 rebuildPage = (pageObject, $page) ->
   $page.addClass('local') if pageObject.isLocal()
