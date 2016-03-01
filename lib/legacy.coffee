@@ -88,7 +88,7 @@ $ ->
   $('.main')
     .delegate '.show-page-source', 'click', (e) ->
       e.preventDefault()
-      $page = $(this).parent().parent()
+      $page = $(this).parents('.page')
       page = lineup.atKey($page.data('key')).getRawPage()
       dialog.open "JSON for #{page.title}",  $('<pre/>').text(JSON.stringify(page, null, 2))
 

@@ -56,7 +56,7 @@ textEditor = ($item, item, option={}) ->
 
       if e.which is $.ui.keyCode.ENTER
         return false unless sel
-        $page = $item.parent().parent()
+        $page = $item.parents('.page')
         text = $textarea.val()
         prefix = text.substring 0, sel.start
         suffix = text.substring(sel.end)
