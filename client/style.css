@@ -266,7 +266,7 @@ p.readout {
   float: left;    /* inline-block preferred? */
   margin: 8px;
   /* padding: 0 31px; */
-  /* width: 430px; */
+  width: 490px; 
   background-color: white;
   height: 100%;
   overflow: auto;
@@ -275,20 +275,20 @@ p.readout {
     box-shadow: 2px 1px 24px rgba(0, 0, 0, 0.4);
     z-index: 10; }
 
-.paper.plugin {
+.page.plugin > .paper {
   box-shadow: inset 0px 0px 40px 0px rgba(0,220,0,.5);
 }
 
-.paper.local {
+.page.local > .paper {
   box-shadow: inset 0px 0px 40px 0px rgba(220,180,0,.7);
 }
 
-.paper.remote {
+.page.remote > .paper {
   box-shadow: inset 0px 0px 40px 0px rgba(0,180,220,.5);
 }
 
 .paper {
-  width: 430px;
+  /*width: 430px;*/
   padding: 30px;
   min-height: 100%;
 }
