@@ -28,6 +28,7 @@ bind = ($item, item) ->
 
     params =
       title: $item.parents('.page').data('data').title
+      create: item.create
 
     req =
       type: "POST",
@@ -38,9 +39,7 @@ bind = ($item, item) ->
 
     $.ajax(req).done (page) ->
       $item.find('.caption').text 'ready'
-      console.log 'page', page
       resultPage = wiki.newPage(page)
-      # wiki.showResult resultPage
       $page = $item.parents('.page')
       pageObject = lineup.atKey $page.data('key')
       pageObject.become(resultPage,resultPage)
