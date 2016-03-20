@@ -7,11 +7,10 @@ neighborhood = require './neighborhood'
 
 lineup = require './lineup'
 refresh = require './refresh'
-transport = 'http://localhost:4020/proxy'
 
 emit = ($item, item) ->
   $item.append """#{item.text}<br><br><button class="create">create</button> new blank page"""
-  if true
+  if transport = item.create?.source?.transport
     $item.append """<br><button class="transport" data-slug=#{item.slug}>create</button> transport from #{transport}"""
     $item.append "<p class=caption> unavailable</p>"
     $.get 'http://localhost:4020', ->
@@ -32,7 +31,7 @@ bind = ($item, item) ->
 
     req =
       type: "POST",
-      url: transport
+      url: item.create.source.transport
       dataType: 'json',
       contentType: "application/json",
       data: JSON.stringify(params)
@@ -44,7 +43,7 @@ bind = ($item, item) ->
       # wiki.showResult resultPage
       $page = $item.parents('.page')
       pageObject = lineup.atKey $page.data('key')
-      pageObject.become(resultPage)
+      pageObject.become(resultPage,resultPage)
       page = pageObject.getRawPage()
       refresh.rebuildPage pageObject, $page.empty()
 

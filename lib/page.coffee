@@ -133,8 +133,9 @@ newPage = (json, site) ->
       each {action, separator}, -> emitAction i+1
     emitAction 0
 
-  become = (template) ->
-    page.story = template?.getRawPage().story || []
+  become = (story, journal) ->
+    page.story = story?.getRawPage().story || []
+    page.journal = journal?.getRawPage().journal if journal?
 
   siteLineup = ->
     slug = getSlug()
@@ -167,6 +168,10 @@ newPage = (json, site) ->
     revision.apply page, action
     site = null if action.site
 
-  {getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, setTitle, getRevision, getTimestamp, addItem, getItem, addParagraph, seqItems, seqActions, become, siteLineup, merge, apply}
+  getCreate = () ->
+    isCreate = (action) -> action.type == 'create'
+    page.journal.reverse().find(isCreate)
+
+  {getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, setTitle, getRevision, getTimestamp, addItem, getItem, addParagraph, seqItems, seqActions, become, siteLineup, merge, apply, getCreate}
 
 module.exports = {newPage, asSlug, asTitle, pageEmitter}
