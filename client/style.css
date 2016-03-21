@@ -380,19 +380,3 @@ textarea {
   opacity: 0.6;
   border-color: #eef2fe;
 }
-
-.reference {
-  background-color: #F0F8FF;
-  border-left: medium solid rgba(0, 180, 220, 0.5);
-  margin: 7px 0px 7px -10px;
-  padding: 7px;
-}
-
-.reference p {
-    margin-top: 3px;
-    margin-bottom: 3px;
-}
-
-.reference div {
-  margin-left: 20px;
-}
