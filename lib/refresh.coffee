@@ -293,6 +293,8 @@ cycle = ->
 
   createGhostPage = ->
     title = $("""a[href="/#{slug}.html"]:last""").text() or slug
+    key = $("""a[href="/#{slug}.html"]:last""").parents('.page').data('key')
+    create = lineup.atKey(key).getCreate()
     #NEWPAGE future after failed pageHandler.get then buildPage
     pageObject = newPage()
     pageObject.setTitle(title)
@@ -314,6 +316,7 @@ cycle = ->
         'type': 'future'
         'text': 'We could not find this page in the expected context.'
         'title': title
+        'create': create
       pageObject.addItem
         'type': 'paragraph'
         'text': "We did find the page in your current neighborhood."
@@ -323,6 +326,7 @@ cycle = ->
         'type': 'future'
         'text': 'We could not find this page.'
         'title': title
+        'create': create
 
     buildPage( pageObject, $page ).addClass('ghost')
 
