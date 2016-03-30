@@ -44,9 +44,10 @@
     </footer>
 
   <script>
-  var authUser = ('{{authenticated}}' === "true");
-  var owned = ('{{owned}}' === "true");
-  var owner = '{{ownedBy}}';
+  var isAuthenticated = ('{{authenticated}}' === "true");
+  var isClaimed = ('{{owned}}' === "true");
+  var isOwner = ('{{isOwner}}' === "true");
+  var ownerName = '{{ownedBy}}';
   var seedNeighbors = '{{seedNeighbors}}';
   var user = '{{user}}'
   wiki.security(user);
