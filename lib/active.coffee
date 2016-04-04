@@ -20,7 +20,7 @@ scrollTo = ($page) ->
   maxX = minX + bodyWidth
   target = $page.position().left
   width = $page.outerWidth(true)
-  contentWidth = $(".page").outerWidth(true) * $(".page").size()
+  contentWidth = $(".page").outerWidth(true) * $(".page").length
 
   if target < minX
     active.scrollContainer.animate scrollLeft: target
@@ -33,4 +33,3 @@ active.set = ($page) ->
   $page = $($page)
   $(".active").removeClass("active")
   scrollTo $page.addClass("active")
-
