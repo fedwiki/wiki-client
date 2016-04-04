@@ -294,7 +294,7 @@ cycle = ->
   createGhostPage = ->
     title = $("""a[href="/#{slug}.html"]:last""").text() or slug
     key = $("""a[href="/#{slug}.html"]:last""").parents('.page').data('key')
-    create = lineup.atKey(key).getCreate()
+    create = lineup.atKey(key)?.getCreate()
     #NEWPAGE future after failed pageHandler.get then buildPage
     pageObject = newPage()
     pageObject.setTitle(title)
