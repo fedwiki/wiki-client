@@ -160,6 +160,7 @@ footer {
 .action {
   font-size: 0.9em;
   background-color: #cccccc;
+  background-size: 24px 24px;
   color: #666666;
   text-align: center;
   text-decoration: none;
