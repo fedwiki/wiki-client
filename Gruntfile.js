@@ -5,6 +5,8 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-git-authors');
+  grunt.loadNpmTasks('grunt-retire');
+  grunt.loadNpmTasks('grunt-nsp');
 
   // N.B. The development build includes paths in the mapfile, at the browserify step, that are not accessable
   //      from the browser.
@@ -41,6 +43,15 @@ module.exports = function (grunt) {
         "David Turnbull <dturnbull@gmail.com>",
         "Austin King <shout@ozten.com>"
       ]
+    },
+
+    retire: {
+      js: ['client/js/*.js'],
+      options: {}
+    },
+
+    nsp: {
+      package: grunt.file.readJSON('package.json')
     },
 
     // tidy-up before we start the build
@@ -122,6 +133,11 @@ module.exports = function (grunt) {
 
   // build without sourcemaps
   grunt.registerTask('build', ['clean', 'mochaTest', 'browserify:packageClient', 'browserify:testClient', 'uglify:packageClient']);
+
+  // check for out-of-date libraries and known vulnerabilities
+
+  grunt.registerTask('check', ['nsp', 'retire']);
+
 
   // the default is to do the production build.
   grunt.registerTask('default', ['build']);
