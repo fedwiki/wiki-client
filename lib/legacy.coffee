@@ -160,7 +160,8 @@ $ ->
         refresh.rebuildPage pageObject, $page.empty()
         pageHandler.put $page, {type: 'create', id: page.id, item: {title:page.title, story:page.story}}
 
-    .delegate '.score', 'hover', (e) ->
+    .delegate '.score', 'mouseenter mouseleave', (e) ->
+      console.log "in .score..."
       $('.main').trigger 'thumb', $(e.target).data('thumb')
 
     .delegate 'a.search', 'click', (e) ->
