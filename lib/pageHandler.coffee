@@ -10,6 +10,7 @@ addToJournal = require './addToJournal'
 newPage = require('./page').newPage
 random = require './random'
 lineup = require './lineup'
+neighborhood = require './neighborhood'
 
 module.exports = pageHandler = {}
 
@@ -137,6 +138,7 @@ pushToServer = ($page, pagePutInfo, action) ->
     success: () ->
       # update pageObject (guard for tests)
       pageObject.apply action if pageObject?.apply
+      neighborhood.updateSitemap pageObject
       addToJournal $page.find('.journal'), action
       if action.type == 'fork' # push
         localStorage.removeItem $page.attr('id')
