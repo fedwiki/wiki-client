@@ -28,23 +28,23 @@
     "underscore": "*"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "grunt mochaTest"
   },
   "devDependencies": {
     "coffee-script": "*",
     "coffeeify": "*",
-    "mocha": "*",
-    "sinon": "~1.x",
     "expect.js": "*",
-    "grunt": "~0.4",
-    "grunt-browserify": "~4",
-    "grunt-contrib-watch": "~0.6",
-    "grunt-mocha-test": "~0.12",
-    "grunt-contrib-clean": "~0.7",
-    "grunt-contrib-uglify": "~0.11",
+    "grunt": "^1.0.1",
+    "grunt-browserify": "^5.0.0",
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-uglify": "^1.0.1",
+    "grunt-contrib-watch": "^1.0.0",
     "grunt-git-authors": "~3",
+    "grunt-mocha-test": "~0.12",
+    "grunt-nsp": "*",
     "grunt-retire": "*",
-    "grunt-nsp": "*"
+    "mocha": "2.4.5",
+    "sinon": "~1.x"
   },
   "license": "MIT",
   "repository": {
