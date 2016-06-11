@@ -140,6 +140,13 @@ handleHeaderClick = (e) ->
     newWindow = window.open "//#{crumbs.join '/'}", target
     newWindow.focus()
 
+emitHandles = ($handles) ->
+  $handles.append """
+    <div class="handles-buttons">
+      <a href="#" class="button close-page" title="close this page">#{actionSymbols.close}</a>
+      <a href="#" class="button pin-page" title="pin this page">#{actionSymbols.pin}</a>
+    </div>
+  """
 
 emitHeader = ($header, $page, pageObject) ->
   remote = pageObject.getRemoteSite location.host
@@ -234,11 +241,12 @@ renderPageIntoPageElement = (pageObject, $page) ->
   $page.empty()
   $paper = $("<div class='paper' />")
   $page.append($paper)
-  [$twins, $header, $story, $journal, $footer] = ['twins', 'header', 'story', 'journal', 'footer'].map (className) ->
+  [$twins, $handles, $header, $story, $journal, $footer] = ['twins', 'handles', 'header', 'story', 'journal', 'footer'].map (className) ->
     $("<div />").addClass(className).appendTo($paper)
 
   emitHeader $header, $page, pageObject
   emitTimestamp $header, $page, pageObject
+  emitHandles $handles
 
   pageObject.seqItems (item, done) ->
     $item = $ """<div class="item #{item.type}" data-id="#{item.id}">"""
@@ -253,7 +261,6 @@ renderPageIntoPageElement = (pageObject, $page) ->
   emitTwins $page
   emitControls $journal
   emitFooter $footer, pageObject
-
 
 createMissingFlag = ($page, pageObject) ->
   unless pageObject.isRemote()

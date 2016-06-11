@@ -79,6 +79,13 @@ $ ->
       whenNotGotten: -> done(null)
       pageInformation: {slug: slug}
 
+  finishCloseClick = (e, name) ->
+    e.preventDefault()
+    page = $(e.target).parents('.page') unless e.shiftKey
+    link.closePage name, page, $(e.target).data('site')
+    state.setUrl() # update URL
+    return false
+
   finishClick = (e, name) ->
     e.preventDefault()
     page = $(e.target).parents('.page') unless e.shiftKey
@@ -149,6 +156,14 @@ $ ->
         $page.find('.revision').remove()
       $page.removeClass 'ghost'
       pageHandler.put $page, action
+
+    .delegate '.pin-page', 'click', (e) ->
+      e.preventDefault()
+      console.log "pinned"
+
+    .delegate '.close-page', 'click', (e) ->
+      e.preventDefault()
+      finishCloseClick e, name
 
     .delegate 'button.create', 'click', (e) ->
       getTemplate $(e.target).data('slug'), (template) ->

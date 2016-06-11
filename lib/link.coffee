@@ -27,6 +27,13 @@ createPage = (name, loc) ->
 showPage = (name, loc) ->
   createPage(name, loc).appendTo('.main').each refresh.cycle
 
+closePage = (name, $page, site=null) ->
+  name = asSlug(name)
+  if lineup.debugKeys().length > 1 # keep minimum one tab
+    lineup.removeKey $($page).data('key') if $page?
+    $($page).remove() if $page?
+    active.set($('.page').last())
+
 doInternalLink = (name, $page, site=null) ->
   name = asSlug(name)
   $($page).nextAll().remove() if $page?
@@ -48,4 +55,4 @@ pageEmitter.on 'show', (page) ->
   console.log 'pageEmitter handling', page
   showResult page
 
-module.exports = {createPage, doInternalLink, showPage, showResult}
+module.exports = {createPage, doInternalLink, showPage, showResult, closePage}
