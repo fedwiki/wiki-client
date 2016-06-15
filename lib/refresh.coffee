@@ -143,6 +143,7 @@ handleHeaderClick = (e) ->
 emitHandles = ($handles) ->
   $handles.append """
     <div class="handles-buttons">
+      <a href="#" class="button close-all-pages" title="close all unpinned pages">#{actionSymbols.closeAll}</a>
       <a href="#" class="button pin-page" title="pin this page">#{actionSymbols.pin}</a>
       <a href="#" class="button close-page" title="close this page">#{actionSymbols.close}</a>
     </div>
