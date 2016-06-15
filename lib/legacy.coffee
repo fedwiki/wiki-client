@@ -173,6 +173,12 @@ $ ->
       e.preventDefault()
       finishCloseClick e, name
 
+    .delegate '.close-all-pages', 'click', (e) ->
+      e.preventDefault()
+      link.closeAllPages()
+      state.setUrl() # update URL
+      return false
+
     .delegate 'button.create', 'click', (e) ->
       getTemplate $(e.target).data('slug'), (template) ->
         $page = $(e.target).parents('.page:first')
@@ -227,15 +233,12 @@ $ ->
   $('body').on 'new-neighbor-done', (e, neighbor) ->
     $('.page').each (index, element) ->
       refresh.emitTwins $(element)
-
-  $("<span class='closeall'> #{symbols.close} </span>")
-    .css({"cursor":"pointer", "font-size": "120%"})
-    .appendTo('footer')
-    .click ->
-      link.closeAllPages()
-      state.setUrl() # update URL
-      return false
-
+  #
+  # $("<span class='closeall'> #{symbols.close} </span>")
+  #   .css({"cursor":"pointer", "font-size": "120%"})
+  #   .appendTo('footer')
+  #   .click ->
+  #     console.log "some action"
 
   target.bind()
 

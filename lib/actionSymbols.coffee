@@ -15,11 +15,13 @@ symbols =
   remove: '✕'
   pin: '📌'
   clock: '🕑'
+  closeAll: '≌'
 
 fork = symbols['fork']
 add = symbols['add']
 close = symbols['remove']
 pin = symbols['pin']
 clock = symbols['clock']
+closeAll = symbols['closeAll']
 
-module.exports = {symbols, fork, add, close, pin, clock}
+module.exports = {symbols, fork, add, close, pin, clock, closeAll}
