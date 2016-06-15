@@ -28,15 +28,6 @@ body {
   line-height: 1.3;
   color: #333333; }
 
-.main {
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  position: absolute;
-  bottom: 60px;
-  margin: 0;
-  width: 10000%; }
 
 footer {
   border-top: 1px solid #3d3c43;
@@ -263,18 +254,6 @@ p.readout {
   padding-bottom: 500px;
 }
 
-.page {
-  float: left;    /* inline-block preferred? */
-  margin: 8px;
-  /* padding: 0 31px; */
-  width: 490px; 
-  background-color: white;
-  height: 100%;
-  overflow: auto;
-  box-shadow: 2px 1px 4px rgba(0, 0, 0, 0.2); }
-  .page.active {
-    box-shadow: 2px 1px 24px rgba(0, 0, 0, 0.4);
-    z-index: 10; }
 
 .page.plugin > .paper {
   box-shadow: inset 0px 0px 40px 0px rgba(0,220,0,.5);
@@ -303,11 +282,6 @@ textarea {
 .clickable:hover {
   cursor: pointer; }
 
-@media all and (max-width: 400px) {
-  .page {
-    width: 0.9%;
-    margin: 0.01%;
-    padding: 0.04%; } }
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -380,4 +354,54 @@ textarea {
 .ghost {
   opacity: 0.6;
   border-color: #eef2fe;
+}
+
+
+/*
+* Mobile stuff
+*/
+
+/* Extra small devices (phones, less than 768px) */
+/* No media query since this is the default (mobile-first approach) */
+
+.main {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: absolute;
+  margin: 0;
+  width: 10000%;
+}
+
+
+.page {
+  float: left;    /* inline-block preferred? */
+  width: 100vw;
+  margin:0;
+  background-color: white;
+  height: 100%;
+  overflow: auto;
+  box-shadow: 2px 1px 4px rgba(0, 0, 0, 0.2); }
+  .page.active {
+    box-shadow: 2px 1px 24px rgba(0, 0, 0, 0.4);
+    z-index: 10;
+}
+
+/* Small devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+  .page {
+    width: 490px;
+    margin: 8px;
+  }
+}
+
+/* Medium devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+
+}
+
+/* Large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+
 }
