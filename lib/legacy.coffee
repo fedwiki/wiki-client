@@ -142,6 +142,11 @@ $ ->
           .each refresh.cycle
         active.set($('.page').last())
 
+    .delegate '.toggle-journal', 'click', (e) ->
+      e.preventDefault()
+      $page = $(e.target).parents('.page')
+      $page.find(".journal").toggle()
+
     .delegate '.fork-page', 'click', (e) ->
       $page = $(e.target).parents('.page')
       return if $page.find('.future').length
@@ -228,7 +233,6 @@ $ ->
       dialog.open "Lineup Activity", lineupActivity.show()
 
   target.bind()
-
 
   $ ->
     state.first()

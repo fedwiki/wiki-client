@@ -14,10 +14,12 @@ symbols =
   move: '↕'
   remove: '✕'
   pin: '📌'
+  clock: '🕑'
 
 fork = symbols['fork']
 add = symbols['add']
 close = symbols['remove']
 pin = symbols['pin']
+clock = symbols['clock']
 
-module.exports = {symbols, fork, add, close, pin}
+module.exports = {symbols, fork, add, close, pin, clock}
