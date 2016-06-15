@@ -12,6 +12,7 @@ drop = require './drop'
 dialog = require './dialog'
 link = require './link'
 target = require './target'
+symbols = require './actionSymbols'
 
 asSlug = require('./page').asSlug
 newPage = require('./page').newPage
@@ -227,12 +228,14 @@ $ ->
     $('.page').each (index, element) ->
       refresh.emitTwins $(element)
 
-  lineupActivity = require './lineupActivity'
-  $("<span class=menu> &nbsp; &equiv; &nbsp; </span>")
+  $("<span class='closeall'> #{symbols.close} </span>")
     .css({"cursor":"pointer", "font-size": "120%"})
     .appendTo('footer')
     .click ->
-      dialog.open "Lineup Activity", lineupActivity.show()
+      link.closeAllPages()
+      state.setUrl() # update URL
+      return false
+
 
   target.bind()
 
