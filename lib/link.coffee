@@ -29,6 +29,21 @@ createPage = (name, loc) ->
 showPage = (name, loc) ->
   createPage(name, loc).appendTo('.main').each refresh.cycle
 
+closeAllPages = () ->
+  toRemove = (key for key in lineup.debugKeys() when pinned.indexOf(key) == -1)
+
+  # make sure there is at least 1 page left after closing all
+  toRemove.splice(0,1) if toRemove.length == lineup.debugKeys().length
+
+  # remove pages that are not pinned
+  $(".page").each (i, p) ->
+    k = $( p ).data("key")
+    if k in toRemove
+      $(p).remove() if $(p)?
+      lineup.removeKey k
+
+  active.set $('.page').last()
+
 closePage = (name, $page, site=null) ->
   name = asSlug(name)
   if lineup.debugKeys().length > 1 # keep minimum one tab
@@ -68,4 +83,4 @@ pageEmitter.on 'show', (page) ->
   console.log 'pageEmitter handling', page
   showResult page
 
-module.exports = {createPage, doInternalLink, showPage, showResult, closePage, pinPage}
+module.exports = {createPage, doInternalLink, showPage, showResult, closePage, closeAllPages, pinPage}
