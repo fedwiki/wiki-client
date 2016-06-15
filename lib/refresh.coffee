@@ -140,6 +140,14 @@ handleHeaderClick = (e) ->
     newWindow = window.open "//#{crumbs.join '/'}", target
     newWindow.focus()
 
+emitHandles = ($handles) ->
+  $handles.append """
+    <div class="handles-buttons">
+      <a href="#" class="button close-all-pages" title="close all unpinned pages">#{actionSymbols.closeAll}</a>
+      <a href="#" class="button pin-page" title="pin this page">#{actionSymbols.pin}</a>
+      <a href="#" class="button close-page" title="close this page">#{actionSymbols.close}</a>
+    </div>
+  """
 
 emitHeader = ($header, $page, pageObject) ->
   remote = pageObject.getRemoteSite location.host
@@ -165,9 +173,10 @@ emitTimestamp = ($header, $page, pageObject) ->
       </h2>
     """
 
-emitControls = ($journal) ->
-  $journal.append """
+emitControls = ($controls) ->
+  $controls.append """
     <div class="control-buttons">
+      <a href="#" class="button toggle-journal" title="fork this page">#{actionSymbols.clock}</a>
       <a href="#" class="button fork-page" title="fork this page">#{actionSymbols.fork}</a>
       <a href="#" class="button add-factory" title="add paragraph">#{actionSymbols.add}</a>
     </div>
@@ -234,11 +243,12 @@ renderPageIntoPageElement = (pageObject, $page) ->
   $page.empty()
   $paper = $("<div class='paper' />")
   $page.append($paper)
-  [$twins, $header, $story, $journal, $footer] = ['twins', 'header', 'story', 'journal', 'footer'].map (className) ->
+  [$handles, $twins, $header, $story, $controls, $footer, $journal] = ['handles', 'twins', 'header', 'story', 'controls', 'footer', 'journal'].map (className) ->
     $("<div />").addClass(className).appendTo($paper)
 
   emitHeader $header, $page, pageObject
   emitTimestamp $header, $page, pageObject
+  emitHandles $handles
 
   pageObject.seqItems (item, done) ->
     $item = $ """<div class="item #{item.type}" data-id="#{item.id}">"""
@@ -251,8 +261,13 @@ renderPageIntoPageElement = (pageObject, $page) ->
     done()
 
   emitTwins $page
-  emitControls $journal
+  emitControls $controls
   emitFooter $footer, pageObject
+
+  $journal.hide() # hide journal by default
+
+  # hide close all on first page
+  $('.page').first().find(".close-all-pages").hide()
 
 
 createMissingFlag = ($page, pageObject) ->

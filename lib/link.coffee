@@ -8,6 +8,8 @@ active = require './active'
 refresh = require './refresh'
 {asTitle, asSlug, pageEmitter} = require './page'
 
+pinned = []
+
 createPage = (name, loc) ->
   site = loc if loc and loc isnt 'view'
   title = asTitle(name)
@@ -26,6 +28,39 @@ createPage = (name, loc) ->
 
 showPage = (name, loc) ->
   createPage(name, loc).appendTo('.main').each refresh.cycle
+
+closeAllPages = () ->
+  toRemove = (key for key in lineup.debugKeys() when pinned.indexOf(key) == -1)
+
+  # make sure there is at least 1 page left after closing all
+  toRemove.splice(0,1) if toRemove.length == lineup.debugKeys().length
+
+  # remove pages that are not pinned
+  $(".page").each (i, p) ->
+    k = $( p ).data("key")
+    if k in toRemove
+      $(p).remove() if $(p)?
+      lineup.removeKey k
+
+  active.set $('.page').last()
+
+closePage = (name, $page, site=null) ->
+  name = asSlug(name)
+  if lineup.debugKeys().length > 1 # keep minimum one tab
+    lineup.removeKey $($page).data('key') if $page?
+    $($page).remove() if $page?
+    active.set($('.page').last())
+
+pinPage = (name, $page, site=null) ->
+  name = asSlug(name)
+  key = $($page).data('key')
+  i = pinned.indexOf key
+  if i == -1
+    pinned.push key
+    $page.addClass("pinned")
+  else
+    pinned.splice(i, 1);
+    $page.removeClass("pinned")
 
 doInternalLink = (name, $page, site=null) ->
   name = asSlug(name)
@@ -48,4 +83,4 @@ pageEmitter.on 'show', (page) ->
   console.log 'pageEmitter handling', page
   showResult page
 
-module.exports = {createPage, doInternalLink, showPage, showResult}
+module.exports = {createPage, doInternalLink, showPage, showResult, closePage, closeAllPages, pinPage}

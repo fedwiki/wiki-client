@@ -12,10 +12,12 @@ drop = require './drop'
 dialog = require './dialog'
 link = require './link'
 target = require './target'
+symbols = require './actionSymbols'
 
 asSlug = require('./page').asSlug
 newPage = require('./page').newPage
 
+mobile = require './mobile'
 
 $ ->
   dialog.emit()
@@ -79,6 +81,13 @@ $ ->
       whenNotGotten: -> done(null)
       pageInformation: {slug: slug}
 
+  finishCloseClick = (e, name) ->
+    e.preventDefault()
+    page = $(e.target).parents('.page') unless e.shiftKey
+    link.closePage name, page, $(e.target).data('site')
+    state.setUrl() # update URL
+    return false
+
   finishClick = (e, name) ->
     e.preventDefault()
     page = $(e.target).parents('.page') unless e.shiftKey
@@ -135,6 +144,11 @@ $ ->
           .each refresh.cycle
         active.set($('.page').last())
 
+    .delegate '.toggle-journal', 'click', (e) ->
+      e.preventDefault()
+      $page = $(e.target).parents('.page')
+      $page.find(".journal").toggle()
+
     .delegate '.fork-page', 'click', (e) ->
       $page = $(e.target).parents('.page')
       return if $page.find('.future').length
@@ -149,6 +163,22 @@ $ ->
         $page.find('.revision').remove()
       $page.removeClass 'ghost'
       pageHandler.put $page, action
+
+    .delegate '.pin-page', 'click', (e) ->
+      e.preventDefault()
+      console.log "pinned"
+      page = $(e.target).parents('.page') unless e.shiftKey
+      link.pinPage name, page, $(e.target).data('site')
+
+    .delegate '.close-page', 'click', (e) ->
+      e.preventDefault()
+      finishCloseClick e, name
+
+    .delegate '.close-all-pages', 'click', (e) ->
+      e.preventDefault()
+      link.closeAllPages()
+      state.setUrl() # update URL
+      return false
 
     .delegate 'button.create', 'click', (e) ->
       getTemplate $(e.target).data('slug'), (template) ->
@@ -204,15 +234,15 @@ $ ->
   $('body').on 'new-neighbor-done', (e, neighbor) ->
     $('.page').each (index, element) ->
       refresh.emitTwins $(element)
-
-  lineupActivity = require './lineupActivity'
-  $("<span class=menu> &nbsp; &equiv; &nbsp; </span>")
-    .css({"cursor":"pointer", "font-size": "120%"})
-    .appendTo('footer')
-    .click ->
-      dialog.open "Lineup Activity", lineupActivity.show()
+  #
+  # $("<span class='closeall'> #{symbols.close} </span>")
+  #   .css({"cursor":"pointer", "font-size": "120%"})
+  #   .appendTo('footer')
+  #   .click ->
+  #     console.log "some action"
 
   target.bind()
+  mobile.mobileEvents()
 
 
   $ ->
