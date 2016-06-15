@@ -263,7 +263,12 @@ renderPageIntoPageElement = (pageObject, $page) ->
   emitTwins $page
   emitControls $controls
   emitFooter $footer, pageObject
+
   $journal.hide() # hide journal by default
+
+  # hide close all on first page
+  $('.page').first().find(".close-all-pages").hide()
+
 
 createMissingFlag = ($page, pageObject) ->
   unless pageObject.isRemote()
