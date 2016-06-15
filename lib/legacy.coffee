@@ -16,6 +16,7 @@ target = require './target'
 asSlug = require('./page').asSlug
 newPage = require('./page').newPage
 
+mobile = require './mobile'
 
 $ ->
   dialog.emit()
@@ -213,7 +214,8 @@ $ ->
       dialog.open "Lineup Activity", lineupActivity.show()
 
   target.bind()
-
+  
+  mobile.mobileEvents()
 
   $ ->
     state.first()
