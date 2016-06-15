@@ -356,6 +356,9 @@ textarea {
   border-color: #eef2fe;
 }
 
+.handles {
+  text-align: right;
+}
 
 /*
 * Mobile stuff

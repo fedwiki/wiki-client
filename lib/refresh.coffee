@@ -143,8 +143,8 @@ handleHeaderClick = (e) ->
 emitHandles = ($handles) ->
   $handles.append """
     <div class="handles-buttons">
-      <a href="#" class="button close-page" title="close this page">#{actionSymbols.close}</a>
       <a href="#" class="button pin-page" title="pin this page">#{actionSymbols.pin}</a>
+      <a href="#" class="button close-page" title="close this page">#{actionSymbols.close}</a>
     </div>
   """
 
@@ -242,7 +242,7 @@ renderPageIntoPageElement = (pageObject, $page) ->
   $page.empty()
   $paper = $("<div class='paper' />")
   $page.append($paper)
-  [$twins, $handles, $header, $story, $controls, $footer, $journal] = ['twins', 'handles', 'header', 'story', 'controls', 'footer', 'journal'].map (className) ->
+  [$handles, $twins, $header, $story, $controls, $footer, $journal] = ['handles', 'twins', 'header', 'story', 'controls', 'footer', 'journal'].map (className) ->
     $("<div />").addClass(className).appendTo($paper)
 
   emitHeader $header, $page, pageObject
