@@ -172,9 +172,10 @@ emitTimestamp = ($header, $page, pageObject) ->
       </h2>
     """
 
-emitControls = ($journal) ->
-  $journal.append """
+emitControls = ($controls) ->
+  $controls.append """
     <div class="control-buttons">
+      <a href="#" class="button toggle-journal" title="fork this page">#{actionSymbols.clock}</a>
       <a href="#" class="button fork-page" title="fork this page">#{actionSymbols.fork}</a>
       <a href="#" class="button add-factory" title="add paragraph">#{actionSymbols.add}</a>
     </div>
@@ -241,7 +242,7 @@ renderPageIntoPageElement = (pageObject, $page) ->
   $page.empty()
   $paper = $("<div class='paper' />")
   $page.append($paper)
-  [$twins, $handles, $header, $story, $journal, $footer] = ['twins', 'handles', 'header', 'story', 'journal', 'footer'].map (className) ->
+  [$twins, $handles, $header, $story, $controls, $footer, $journal] = ['twins', 'handles', 'header', 'story', 'controls', 'footer', 'journal'].map (className) ->
     $("<div />").addClass(className).appendTo($paper)
 
   emitHeader $header, $page, pageObject
@@ -259,8 +260,9 @@ renderPageIntoPageElement = (pageObject, $page) ->
     done()
 
   emitTwins $page
-  emitControls $journal
+  emitControls $controls
   emitFooter $footer, pageObject
+  $journal.hide() # hide journal by default
 
 createMissingFlag = ($page, pageObject) ->
   unless pageObject.isRemote()

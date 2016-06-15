@@ -251,7 +251,7 @@ p.readout {
 .footer {
   clear: both;
   margin-bottom: 1em;
-  padding-bottom: 500px;
+  /*padding-bottom: 500px;*/
 }
 
 
