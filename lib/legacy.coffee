@@ -166,6 +166,8 @@ $ ->
     .delegate '.pin-page', 'click', (e) ->
       e.preventDefault()
       console.log "pinned"
+      page = $(e.target).parents('.page') unless e.shiftKey
+      link.pinPage name, page, $(e.target).data('site')
 
     .delegate '.close-page', 'click', (e) ->
       e.preventDefault()

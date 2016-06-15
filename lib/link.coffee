@@ -8,6 +8,8 @@ active = require './active'
 refresh = require './refresh'
 {asTitle, asSlug, pageEmitter} = require './page'
 
+pinned = []
+
 createPage = (name, loc) ->
   site = loc if loc and loc isnt 'view'
   title = asTitle(name)
@@ -34,6 +36,17 @@ closePage = (name, $page, site=null) ->
     $($page).remove() if $page?
     active.set($('.page').last())
 
+pinPage = (name, $page, site=null) ->
+  name = asSlug(name)
+  key = $($page).data('key')
+  i = pinned.indexOf key
+  if i == -1
+    pinned.push key
+    $page.addClass("pinned")
+  else
+    pinned.splice(i, 1);
+    $page.removeClass("pinned")
+
 doInternalLink = (name, $page, site=null) ->
   name = asSlug(name)
   $($page).nextAll().remove() if $page?
@@ -55,4 +68,4 @@ pageEmitter.on 'show', (page) ->
   console.log 'pageEmitter handling', page
   showResult page
 
-module.exports = {createPage, doInternalLink, showPage, showResult, closePage}
+module.exports = {createPage, doInternalLink, showPage, showResult, closePage, pinPage}

@@ -360,6 +360,9 @@ textarea {
   text-align: right;
 }
 
+.pinned .pin-page {
+  color: yellowgreen
+}
 /*
 * Mobile stuff
 */
