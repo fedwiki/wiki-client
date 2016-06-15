@@ -385,3 +385,7 @@ textarea {
 .handles {
   text-align: right;
 }
+
+.pinned .pin-page {
+  color: yellowgreen
+}
