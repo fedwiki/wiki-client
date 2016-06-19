@@ -303,11 +303,13 @@ textarea {
 .clickable:hover {
   cursor: pointer; }
 
-@media all and (max-width: 400px) {
+@media all and (max-width: 490px) {
   .page {
-    width: 0.9%;
-    margin: 0.01%;
-    padding: 0.04%; } }
+    width: 1%;
+    margin: 8px;
+    padding: 0; }
+}
+
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
