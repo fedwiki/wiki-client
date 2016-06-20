@@ -146,7 +146,10 @@ $ ->
     .delegate '.toggle-journal', 'click', (e) ->
       e.preventDefault()
       $page = $(e.target).parents('.page')
-      $page.find(".journal").toggle()
+      $journal = $page.find(".journal")
+      $journal.toggle()
+      if $journal.is(':visible')
+       $page.animate({scrollTop: $journal.offset().top});
 
     .delegate '.fork-page', 'click', (e) ->
       $page = $(e.target).parents('.page')
