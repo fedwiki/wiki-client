@@ -15,7 +15,7 @@ symbols =
   remove: '✕'
   pin: '📌'
   clock: '🕑'
-  closeAll: '≌'
+  closeAll: '∅'
 
 fork = symbols['fork']
 add = symbols['add']
