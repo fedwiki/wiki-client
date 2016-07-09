@@ -52,6 +52,23 @@ neighborhood.registerNeighbor = (site)->
   populateSiteInfoFor( site, neighborInfo )
   $('body').trigger 'new-neighbor', site
 
+neighborhood.updateSitemap = (pageObject)->
+  site = location.host
+  return unless neighborInfo = neighborhood.sites[site]
+  return if neighborInfo.sitemapRequestInflight
+  slug = pageObject.getSlug()
+  date = pageObject.getDate()
+  title = pageObject.getTitle()
+  synopsis = pageObject.getSynopsis()
+  entry = {slug, date, title, synopsis}
+  sitemap = neighborInfo.sitemap
+  index = sitemap.findIndex (slot) -> slot.slug == slug
+  if index >= 0
+    sitemap[index] = entry
+  else
+    sitemap.push entry
+  $('body').trigger 'new-neighbor-done', site
+
 neighborhood.listNeighbors = ()->
   _.keys( neighborhood.sites )
 

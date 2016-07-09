@@ -9,6 +9,7 @@ pageHandler = require './pageHandler'
 editor = require './editor'
 synopsis = require './synopsis'
 drop = require './drop'
+active = require './active'
 
 escape = (line) ->
   line
@@ -37,6 +38,8 @@ emit = ($item, item) ->
     menu.find('a.menu').click (evt)->
       $item.removeClass('factory').addClass(item.type=evt.target.text.toLowerCase())
       $item.unbind()
+      evt.preventDefault()
+      active.set $item.parents(".page")
       editor.textEditor $item, item
 
   showPrompt = ->

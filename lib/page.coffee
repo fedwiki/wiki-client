@@ -5,6 +5,7 @@
 formatDate = require('./util').formatDate
 random = require './random'
 revision = require './revision'
+synopsis = require './synopsis'
 _ = require 'underscore'
 
 # http://pragprog.com/magazines/2011-08/decouple-your-apps-with-eventdriven-coffeescript
@@ -87,6 +88,13 @@ newPage = (json, site) ->
   getRevision = ->
     page.journal.length-1
 
+  getDate = ->
+    action = page.journal[getRevision()]
+    if action?
+      if action.date?
+        return action.date
+    return undefined
+
   getTimestamp = ->
     action = page.journal[getRevision()]
     if action?
@@ -96,6 +104,9 @@ newPage = (json, site) ->
         "Revision #{getRevision()}"
     else
       "Unrecorded Date"
+
+  getSynopsis = ->
+    synopsis page
 
   addItem = (item) ->
     item = _.extend {}, {id: random.itemId()}, item
@@ -172,6 +183,6 @@ newPage = (json, site) ->
     isCreate = (action) -> action.type == 'create'
     page.journal.reverse().find(isCreate)
 
-  {getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, setTitle, getRevision, getTimestamp, addItem, getItem, addParagraph, seqItems, seqActions, become, siteLineup, merge, apply, getCreate}
+  {getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, setTitle, getRevision, getDate, getTimestamp, getSynopsis, addItem, getItem, addParagraph, seqItems, seqActions, become, siteLineup, merge, apply, getCreate}
 
 module.exports = {newPage, asSlug, asTitle, pageEmitter}
