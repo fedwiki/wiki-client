@@ -45,8 +45,8 @@
     "grunt-git-authors": "^3.2.0",
     "grunt-mocha-test": "~0.12",
     "grunt-nsp": "*",
-    "grunt-retire": "*",
-    "mocha": "*",
+    "grunt-retire": "^1.0.1",
+    "mocha": "^2.5.3",
     "sinon": "^1.17.4"
   },
   "license": "MIT",
