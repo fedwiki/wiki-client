@@ -11,6 +11,12 @@ synopsis = require './synopsis'
 drop = require './drop'
 active = require './active'
 
+# ipfs things
+fileStream = require 'filereader-stream'
+ipfsApi = require 'ipfs-api'
+# TODO: change api addr + ports from user config
+ipfs = ipfsApi '127.0.0.1', '5001'
+
 escape = (line) ->
   line
     .replace(/&/g, '&amp;')
@@ -96,12 +102,21 @@ bind = ($item, item) ->
       [majorType, minorType] = file.type.split("/")
       reader = new FileReader()
       if majorType == "image"
-        reader.onload = (loadEvent) ->
-          item.type = 'image'
-          item.url = resizeImage loadEvent.target.result
-          item.caption ||= "Uploaded image"
-          syncEditAction()
-        reader.readAsDataURL(file)
+        # let's read the file as a stream.
+        addFileToIpfs file, (err, hashes) ->
+          throw err if err
+          # now do the original wiki-client stuff.
+          # we read the file twice here-- once via the stream, and once
+          # more here. perhaps this part can be done at the same time.
+          reader.onload = (loadEvent) ->
+            item.type = 'image'
+            item.url = resizeImage loadEvent.target.result
+            item.caption ||= "Uploaded image"
+            # you can add the ipfsHash to
+            # item.ipfsHash = hashes.Hash
+            syncEditAction()
+          reader.readAsDataURL(file)
+
       else if majorType == "text"
         reader.onload = (loadEvent) ->
           result = loadEvent.target.result
@@ -184,5 +199,17 @@ resizeImage = (dataURL) ->
   img.src = dataURL
   return dataURL if smallEnough img
   squeezeSteps(img).toDataURL 'image/jpeg', .5  # medium quality encoding
+
+addFileToIpfs = (file, cb) ->
+  console.log 'adding ' + file.name + ' to ipfs'
+  addfile = { path: file.name, contents: fileStream(file) }
+  addopts = { wrap: true } # wrap with a dir to preserve filename.
+  ipfs.add addfile, addopts, (err, res) ->
+    return cb(err) if err
+    unless Array.isArray res
+      res = [res]
+    for r in res
+      console.log('added', r.Hash, r.Name)
+    cb(null, res)
 
 module.exports = {emit, bind}
