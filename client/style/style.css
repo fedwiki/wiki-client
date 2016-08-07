@@ -80,16 +80,17 @@ img.remote,
   -moz-animation: rotatecw 2s linear infinite;
   animation: rotatecw 2s linear infinite;
 }
-.fetch {
+.neighbor .fetch {
   -webkit-animation: rotatecw .5s linear infinite;
   -moz-animation: rotatecw .5s linear infinite;
   animation: rotatecw .5s linear infinite;
 }
-.fail {
+.neighbor .fail {
   -webkit-transform: rotate(15deg);
   -moz-transform: rotate(15deg);
   transform: rotate(15deg);
 }
+
 @-webkit-keyframes rotatecw { 100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); } }
 @-moz-keyframes rotatecw { 100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); } }
 @keyframes rotatecw { 100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); } }
@@ -267,7 +268,7 @@ p.readout {
   float: left;    /* inline-block preferred? */
   margin: 8px;
   /* padding: 0 31px; */
-  width: 490px; 
+  width: 490px;
   background-color: white;
   height: 100%;
   overflow: auto;
