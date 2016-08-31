@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class='no-js'>
   <head>
-    <title>Smallest Federated Wiki</title>
+    <title>{{title}}</title>
     <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
     <meta content='width=device-width, height=device-height, initial-scale=1.0, user-scalable=no' name='viewport'>
     <link id='favicon' href='/favicon.png' rel='icon' type='image/png'>
@@ -22,7 +22,11 @@
   <body>
     <section class='main'>
       {{#pages}}
-      <div class='page' id={{page}} {{{origin}}} {{{generated}}}>{{{story}}}</div>
+      <div class='page' id='{{page}}' {{{origin}}} {{{generated}}}>
+        <div class='paper'>
+          {{{story}}}
+        </div>
+      </div>
       {{/pages}}
     </section>
     <footer>
