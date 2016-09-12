@@ -6,7 +6,7 @@
     <meta content='width=device-width, height=device-height, initial-scale=1.0, user-scalable=no' name='viewport'>
     <link id='favicon' href='/favicon.png' rel='icon' type='image/png'>
 
-    <link href='/style.css' rel='stylesheet' type='text/css' media='screen'>
+    <link href='/style/style.css' rel='stylesheet' type='text/css' media='screen'>
     <link href='/theme/style.css' rel='stylesheet' type='text/css' media='screen'>
     <link href='/style/print.css' rel='stylesheet' type='text/css' media='print'>
     <link href='/js/jquery-ui/1.11.4/jquery-ui.min.css' rel='stylesheet' type='text/css'>
@@ -30,7 +30,6 @@
       {{/pages}}
     </section>
     <footer>
-
       <div id='site-owner' class='footer-item'>
         {{#owned}}
           Site Owned by: <span id='site-owner' style='text-transform:capitalize;'>{{ownedBy}}</span></div>
@@ -39,7 +38,7 @@
 
       <div id='security' class='footer-item'></div>
 
-      <span class='searchbox'>
+      <span class='searchbox' class='footer-item'>
         Search:
         <input class='search' name='search' type='text'>
         <span class='pages'></span>
@@ -47,10 +46,12 @@
 
       <span class='neighborhood'></span>
     </footer>
+
   <script>
-  var authUser = ('{{authenticated}}' === "true");
-  var owned = ('{{owned}}' === "true");
-  var owner = '{{ownedBy}}';
+  var isAuthenticated = ('{{authenticated}}' === "true");
+  var isClaimed = ('{{owned}}' === "true");
+  var isOwner = ('{{isOwner}}' === "true");
+  var ownerName = '{{ownedBy}}';
   var seedNeighbors = '{{seedNeighbors}}';
   var user = '{{user}}'
   wiki.security(user);

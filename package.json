@@ -1,6 +1,9 @@
 {
   "name": "wiki-client",
-  "version": "0.7.9",
+  "version": "0.8.0-5",
+  "publishConfig": {
+    "tag": "next"
+  },
   "description": "Federated Wiki - Client-side Javascript",
   "keywords": [
     "wiki",
@@ -39,12 +42,12 @@
     "grunt-contrib-clean": "^1.0.0",
     "grunt-contrib-uglify": "^1.0.1",
     "grunt-contrib-watch": "^1.0.0",
-    "grunt-git-authors": "~3",
+    "grunt-git-authors": "^3.2.0",
     "grunt-mocha-test": "~0.12",
-    "grunt-nsp": "*",
-    "grunt-retire": "*",
-    "mocha": "2.4.5",
-    "sinon": "~1.x"
+    "grunt-nsp": "^2.3.0",
+    "grunt-retire": "^1.0.1",
+    "mocha": "^2.5.3",
+    "sinon": "^1.17.4"
   },
   "license": "MIT",
   "repository": {

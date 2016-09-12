@@ -95,8 +95,8 @@ module.exports = function (grunt) {
           sourceMapName: 'client/client.map',
           banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
                   '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
-                  ' * Copyright <%= grunt.template.today("yyyy") %> <%= pkg.author.name %> and other contributors; ' +
-                  ' Licensed <%= (pkg.license) %> */'
+                  ' * Copyright <%= grunt.template.today("yyyy") %> <%= pkg.author.name %> and other contributors;\n' +
+                  ' * Released under the <%= pkg.license %> license */',
         },
         files: {
           'client/client.js': ['client/client.max.js']
