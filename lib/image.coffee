@@ -11,11 +11,14 @@ emit = ($item, item) ->
   $item.append "<img class=thumbnail src=\"#{item.url}\"> <p>#{resolve.resolveLinks(item.text)}</p>"
 
 bind = ($item, item) ->
-  $item.dblclick -> editor.textEditor $item, item
+  $item.dblclick ->
+    editor.textEditor $item, item
   url = item.url
   if item.ipfs?
     $.get "http://localhost:8080/ipfs/#{item.ipfs}", ->
       url = "http://localhost:8080/ipfs/#{item.ipfs}"
-  $item.find('img').dblclick -> dialog.open item.text, "<img  style=\"width:100%\" src=\"#{url}\">"
+  $item.find('img').dblclick (event) ->
+    event.stopPropagation()
+    dialog.open item.text, "<img  style=\"width:100%\" src=\"#{url}\">"
 
 module.exports = {emit, bind}
