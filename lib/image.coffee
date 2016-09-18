@@ -12,6 +12,10 @@ emit = ($item, item) ->
 
 bind = ($item, item) ->
   $item.dblclick -> editor.textEditor $item, item
-  $item.find('img').dblclick -> dialog.open item.text, this
+  url = item.url
+  if item.ipfs?
+    $.get "http://localhost:8080/ipfs/#{item.ipfs}", ->
+      url = "http://localhost:8080/ipfs/#{item.ipfs}"
+  $item.find('img').dblclick -> dialog.open item.text, "<img  style=\"width:100%\" src=\"#{url}\">"
 
 module.exports = {emit, bind}
