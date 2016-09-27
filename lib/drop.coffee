@@ -1,6 +1,8 @@
 # handle drops of wiki pages or thing that go on wiki pages
 # (we'll move decoding logic out of factory)
 
+nurl = require 'url'
+
 isFile = (event) ->
   if (dt = event.originalEvent.dataTransfer)?
     if 'Files' in dt.types
@@ -23,23 +25,36 @@ isPage = (url) ->
   null
 
 isVideo = (url) ->
-  if found = url.match /^https?:\/\/www.youtube.com\/watch\?v=([\w\-]+).*$/
-    return {text: "YOUTUBE #{found[1]}"}
-  if found = url.match /^https?:\/\/youtu.be\/([\w\-]+).*$/
-    return {text: "YOUTUBE #{found[1]}"}
-  if found = url.match /www.youtube.com%2Fwatch%3Fv%3D([\w\-]+).*$/
-    return {text: "YOUTUBE #{found[1]}"}
-  if found = url.match /^https?:\/\/vimeo.com\/([0-9]+).*$/
-    return {text: "VIMEO #{found[1]}"}
-  if found = url.match /url=https?%3A%2F%2Fvimeo.com%2F([0-9]+).*$/
-    return {text: "VIMEO #{found[1]}"}
-  if found = url.match /https?:\/\/archive.org\/details\/([\w\.\-]+).*$/
-    return {text: "ARCHIVE #{found[1]}"}
-  if found = url.match /https?:\/\/tedxtalks.ted.com\/video\/([\w\-]+).*$/
-    return {text: "TEDX #{found[1]}"}
-  if found = url.match /https?:\/\/www.ted.com\/talks\/([\w\.\-]+).*$/
-    return {text: "TED #{found[1]}"}
-  null
+  parsedURL = nurl.parse(url, true, true)
+  # check if video dragged from search (Google)
+  try
+    if parsedURL.query.source is 'video'
+      parsedURL = nurl.parse(parsedURL.query.url, true, true)
+  catch error
+
+
+  switch parsedURL.hostname
+    when "www.youtube.com"
+      if parsedURL.query.list?
+        return {text: "YOUTUBE PLAYLIST #{parsedURL.query.list}"}
+      else
+        return {text: "YOUTUBE #{parsedURL.query.v}"}
+    when "youtu.be"  # should redirect to www.youtube.com, but...
+      if parsedURL.query.list?
+        return {text: "YOUTUBE PLAYLIST #{parsedURL.query.list}"}
+      else
+        return {text: "YOUTUBE #{parsedURL.pathname.substr(1)}"}
+    when "vimeo.com"
+      return {text: "VIMEO #{parsedURL.pathname.substr(1)}"}
+    when "archive.org"
+      return {text: "ARCHIVE #{parsedURL.pathname.substr(parsedURL.pathname.lastIndexOf('/') + 1)}"}
+    when "tedxtalks.ted.com"
+      return {text: "TEDX #{parsedURL.pathname.substr(parsedURL.pathname.lastIndexOf('/') + 1)}"}
+    when "www.ted.com"
+      return {text: "TED #{parsedURL.pathname.substr(parsedURL.pathname.lastIndexOf('/') + 1)}"}
+    else
+      null
+
 
 dispatch = (handlers) ->
   (event) ->
