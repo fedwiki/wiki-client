@@ -42,6 +42,46 @@ describe 'drop', ->
     signal event, drop.dispatch
       page: (page) -> expect(page).to.eql({slug: 'pattern-language', site: 'sfw.c2.com'})
 
+  it 'should handle a YouTube video', ->
+    event = mockUrl 'text/uri-list', 'https://www.youtube.com/watch?v=rFpDK2KhAgw'
+    signal event, drop.dispatch
+      video: (video) -> expect(video).to.eql({text: 'YOUTUBE rFpDK2KhAgw'})
+
+  it 'should handle a YouTube playlist', ->
+    event = mockUrl 'text/uri-list', 'https://www.youtube.com/watch?v=ksoe4Un7bLo&list=PLze65Ckn-WXZpRzLeUPxqsEkFY6vt2hF7'
+    signal event, drop.dispatch
+      video: (video) -> expect(video).to.eql({text: 'YOUTUBE PLAYLIST PLze65Ckn-WXZpRzLeUPxqsEkFY6vt2hF7'})
+
+  it 'should handle a YouTu.be video', ->
+    event = mockUrl 'text/uri-list', 'https://youtu.be/z2p4VRKgQYU'
+    signal event, drop.dispatch
+      video: (video) -> expect(video).to.eql({text: 'YOUTUBE z2p4VRKgQYU'})
+
+  it 'should handle a YouTu.be playlist', ->
+    event = mockUrl 'text/uri-list', 'https://youtu.be/pBu6cixcaxI?list=PL0LQM0SAx601_99m2E2NPsm62pKoSCnV5'
+    signal event, drop.dispatch
+      video: (video) -> expect(video).to.eql({text: 'YOUTUBE PLAYLIST PL0LQM0SAx601_99m2E2NPsm62pKoSCnV5'})
+
+  it 'should handle a vimeo video', ->
+    event = mockUrl 'text/uri-list', 'https://vimeo.com/90834988'
+    signal event, drop.dispatch
+      video: (video) -> expect(video).to.eql({text: 'VIMEO 90834988'})
+
+  it 'should handle a archive.org video', ->
+    event = mockUrl 'text/uri-list', 'https://archive.org/details/IcelandJazz'
+    signal event, drop.dispatch
+      video: (video) -> expect(video).to.eql({text: 'ARCHIVE IcelandJazz'})
+
+  it 'should handle a TEDX video', ->
+    event = mockUrl 'text/uri-list', 'http://tedxtalks.ted.com/video/Be-a-Daydream-Believer-Anne-Zac'
+    signal event, drop.dispatch
+      video: (video) -> expect(video).to.eql({text: 'TEDX Be-a-Daydream-Believer-Anne-Zac'})
+
+  it 'should handle a TED video', ->
+    event = mockUrl 'text/uri-list', 'http://www.ted.com/talks/david_camarillo_why_helmets_don_t_prevent_concussions_and_what_might'
+    signal event, drop.dispatch
+      video: (video) -> expect(video).to.eql({text: 'TED david_camarillo_why_helmets_don_t_prevent_concussions_and_what_might'})
+
   it 'should handle text file', ->
     file = {name: "foo.txt", type: "text/plain"}
     event = mockFile file
