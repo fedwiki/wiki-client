@@ -27,18 +27,6 @@ bind = ($item, item) ->
       "#{gateway}/ipfs/#{item.ipfs}"
     else
       item.url
-    dialog.open item.text,
-      if !ipfs and item.ipfs?
-        docs = "https://github.com/fedwiki/wiki-client/pull/173"
-        """
-          <div class=revision>
-            <span style="top:40px">
-              <b>Available<br>in <a href="#{docs}" target=_blank>IPFS</a></b>
-            </span>
-            <img style="width:100%" src="#{url}">
-          </div>
-        """
-      else
-        """<img style="width:100%" src="#{url}">"""
+    dialog.open item.text, """<img style="width:100%" src="#{url}">"""
 
 module.exports = {emit, bind}
