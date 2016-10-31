@@ -25,15 +25,15 @@
     }
   ],
   "dependencies": {
-    "underscore": "*"
+    "underscore": "^1.8.3"
   },
   "scripts": {
     "test": "grunt mochaTest"
   },
   "devDependencies": {
-    "coffee-script": "^1.11.0",
-    "coffeeify": "*",
-    "expect.js": "*",
+    "coffee-script": "^1.11.1",
+    "coffeeify": "^2.0.1",
+    "expect.js": "^0.3.1",
     "grunt": "^1.0.1",
     "grunt-browserify": "^5.0.0",
     "grunt-contrib-clean": "^1.0.0",
@@ -43,7 +43,7 @@
     "grunt-mocha-test": "^0.13.2",
     "grunt-nsp": "^2.3.1",
     "grunt-retire": "^1.0.3",
-    "mocha": "^3.1.0",
+    "mocha": "^3.1.2",
     "sinon": "^1.17.6"
   },
   "license": "MIT",
@@ -55,6 +55,6 @@
     "url": "https://github.com/fedwiki/wiki-client/issues"
   },
   "engines": {
-    "node": ">=0.10"
+    "node": ">=4.x"
   }
 }
