@@ -21,7 +21,7 @@ populateSiteInfoFor = (site,neighborInfo)->
       .addClass(to)
 
   fetchMap = ->
-    sitemapUrl = "http://#{site}/system/sitemap.json"
+    sitemapUrl = "//#{site}/system/sitemap.json"
     transition site, 'wait', 'fetch'
     request = $.ajax
       type: 'GET'
@@ -98,4 +98,3 @@ neighborhood.search = (searchQuery)->
         rank: 1 # HARDCODED FOR NOW
   tally['msec'] = Date.now() - start
   { finds, tally }
-

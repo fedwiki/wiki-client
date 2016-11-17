@@ -177,7 +177,7 @@ emitFooter = ($footer, pageObject) ->
   host = pageObject.getRemoteSite(location.host)
   slug = pageObject.getSlug()
   $footer.append """
-    <a id="license" href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> .
+    <a id="license" href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a> .
     <a class="show-page-source" href="/#{slug}.json?random=#{random.randomBytes(4)}" title="source">JSON</a> .
     <a href= "//#{host}/#{slug}.html" target="#{host}">#{host} </a> .
     <a href= "#" class=search>search</a>

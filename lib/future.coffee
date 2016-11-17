@@ -13,7 +13,7 @@ emit = ($item, item) ->
   if transport = item.create?.source?.transport
     $item.append """<br><button class="transport" data-slug=#{item.slug}>create</button> transport from #{transport}"""
     $item.append "<p class=caption> unavailable</p>"
-    $.get 'http://localhost:4020', ->
+    $.get '//localhost:4020', ->
       $item.find('.caption').text 'ready'
   if (info = neighborhood.sites[location.host])? and info.sitemap?
     for item in info.sitemap
