@@ -77,7 +77,7 @@ bind = ($item, item) ->
     syncEditAction()
 
   addReference = (data) ->
-    $.getJSON "http://#{data.site}/#{data.slug}.json", (remote) ->
+    $.getJSON "//#{data.site}/#{data.slug}.json", (remote) ->
       item.type = 'reference'
       item.site = data.site
       item.slug = data.slug

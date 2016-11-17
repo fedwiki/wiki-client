@@ -48,7 +48,7 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
       if site == 'origin'
         url = "/#{slug}.json"
       else
-        url = "http://#{site}/#{slug}.json"
+        url = "//#{site}/#{slug}.json"
   else
     url = "/#{slug}.json"
 

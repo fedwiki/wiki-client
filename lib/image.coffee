@@ -7,7 +7,7 @@ editor = require './editor'
 resolve = require './resolve'
 
 ipfs = false
-gateway = "http://localhost:8080"
+gateway = "//localhost:8080"
 $.ajax "#{gateway}/ipfs/Qmb1oS3TaS8vekxXqogoYsixe47sXcVxQ22kPWH8VSd7yQ",
   timeout: 30000
   success: (data) -> ipfs = data == "wiki\n"

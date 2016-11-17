@@ -37,4 +37,3 @@ bind = ->
       link.doInternalLink 'welcome-visitors', null, @.title.split("\n")[0]
 
 module.exports = {inject, bind}
-
