@@ -17,7 +17,7 @@ isUrl = (event) ->
   null
 
 isPage = (url) ->
-  if found = url.match /^http:\/\/([a-zA-Z0-9:.-]+)(\/([a-zA-Z0-9:.-]+)\/([a-z0-9-]+(_rev\d+)?))+$/
+  if found = url.match /^https?:\/\/([a-zA-Z0-9:.-]+)(\/([a-zA-Z0-9:.-]+)\/([a-z0-9-]+(_rev\d+)?))+$/
     item = {}
     [ignore, origin, ignore, item.site, item.slug, ignore] = found
     item.site = origin if item.site in ['view','local','origin']
