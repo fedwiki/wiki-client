@@ -152,7 +152,7 @@ footer {
   clear: both;
   background-color: #eeeeee;
   overflow: auto;
-  /*padding: 3px; */
+  padding: 1px;
 }
 
 .action.fork {
