@@ -36,7 +36,7 @@ describe 'pageHandler.get', ->
       whenGotten = sinon.spy()
       whenNotGotten = sinon.spy()
 
-      pageHandler.get 
+      pageHandler.get
         pageInformation: _.clone( genericPageInformation )
         whenGotten: whenGotten
         whenNotGotten: whenNotGotten
@@ -48,7 +48,7 @@ describe 'pageHandler.get', ->
       whenGotten = sinon.spy()
       whenNotGotten = sinon.spy()
 
-      pageHandler.get 
+      pageHandler.get
         pageInformation: _.clone( pageInformationWithoutSite )
         whenGotten: whenGotten
         whenNotGotten: whenNotGotten
@@ -63,14 +63,14 @@ describe 'pageHandler.get', ->
 
     it 'should get a page from specific site', ->
       whenGotten = sinon.spy()
-      pageHandler.get 
+      pageHandler.get
         pageInformation: _.clone( genericPageInformation )
         whenGotten: whenGotten
 
       expect(whenGotten.calledOnce).to.be.true
       expect(jQuery.ajax.calledOnce).to.be.true
       expect(jQuery.ajax.args[0][0]).to.have.property('type', 'GET')
-      expect(jQuery.ajax.args[0][0].url).to.match(///^http://siteName/slugName\.json\?random=[a-z0-9]{8}$///)
+      expect(jQuery.ajax.args[0][0].url).to.match(///^//siteName/slugName\.json\?random=[a-z0-9]{8}$///)
 
     after ->
       jQuery.ajax.restore()
@@ -81,15 +81,15 @@ describe 'pageHandler.get', ->
       pageHandler.context = ['view', 'example.com', 'asdf.test', 'foo.bar']
 
     it 'should search through the context for a page', ->
-      pageHandler.get 
+      pageHandler.get
         pageInformation: _.clone( pageInformationWithoutSite )
         whenGotten: sinon.stub()
         whenNotGotten: sinon.stub()
 
       expect(jQuery.ajax.args[0][0].url).to.match(///^/slugName\.json\?random=[a-z0-9]{8}$///)
-      expect(jQuery.ajax.args[1][0].url).to.match(///^http://example.com/slugName\.json\?random=[a-z0-9]{8}$///)
-      expect(jQuery.ajax.args[2][0].url).to.match(///^http://asdf.test/slugName\.json\?random=[a-z0-9]{8}$///)
-      expect(jQuery.ajax.args[3][0].url).to.match(///^http://foo.bar/slugName\.json\?random=[a-z0-9]{8}$///)
+      expect(jQuery.ajax.args[1][0].url).to.match(///^//example.com/slugName\.json\?random=[a-z0-9]{8}$///)
+      expect(jQuery.ajax.args[2][0].url).to.match(///^//asdf.test/slugName\.json\?random=[a-z0-9]{8}$///)
+      expect(jQuery.ajax.args[3][0].url).to.match(///^//foo.bar/slugName\.json\?random=[a-z0-9]{8}$///)
 
     after ->
       jQuery.ajax.restore()
@@ -107,4 +107,3 @@ describe 'pageHandler.put', ->
 
   after ->
     jQuery.ajax.restore()
-
