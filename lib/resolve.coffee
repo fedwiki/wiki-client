@@ -38,7 +38,10 @@ resolve.resolveLinks = (string, sanitize=escape) ->
 
   internal = (match, name) ->
     slug = asSlug name
-    stash """<a class="internal" href="/#{slug}.html" data-page-name="#{slug}" title="#{resolve.resolutionContext.join(' => ')}">#{escape name}</a>"""
+    if slug.length
+      stash """<a class="internal" href="/#{slug}.html" data-page-name="#{slug}" title="#{resolve.resolutionContext.join(' => ')}">#{escape name}</a>"""
+    else
+      match
 
   external = (match, href, protocol, rest) ->
     stash """<a class="external" target="_blank" href="#{href}" title="#{href}" rel="nofollow">#{escape rest} <img src="/images/external-link-ltr-icon.png"></a>"""
