@@ -11,10 +11,11 @@ totalPages = 0
 
 flag = (site) ->
   # status class progression: .wait, .fetch, .fail or .done
+  url = wiki.site(site).url('favicon.png')
   """
     <span class="neighbor" data-site="#{site}">
       <div class="wait">
-        <img src="http://#{site}/favicon.png" title="#{site}">
+        <img src="#{url}" title="#{site}">
       </div>
     </span>
   """
