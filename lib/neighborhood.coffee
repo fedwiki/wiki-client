@@ -21,19 +21,14 @@ populateSiteInfoFor = (site,neighborInfo)->
       .addClass(to)
 
   fetchMap = ->
-    sitemapUrl = "//#{site}/system/sitemap.json"
     transition site, 'wait', 'fetch'
-    request = $.ajax
-      type: 'GET'
-      dataType: 'json'
-      url: sitemapUrl
-    request
-      .always( -> neighborInfo.sitemapRequestInflight = false )
-      .done (data)->
+    wiki.site(site).get 'system/sitemap.json', (err, data) ->
+      neighborInfo.sitemapRequestInflight = false
+      if !err
         neighborInfo.sitemap = data
         transition site, 'fetch', 'done'
         $('body').trigger 'new-neighbor-done', site
-      .fail (data)->
+      else
         transition site, 'fetch', 'fail'
 
   now = Date.now()
