@@ -144,15 +144,15 @@ handleHeaderClick = (e) ->
 emitHeader = ($header, $page, pageObject) ->
   remote = pageObject.getRemoteSite location.host
   tooltip = pageObject.getRemoteSiteDetails location.host
-  url = wiki.site(remote).url('favicon.png')
-  $header.append """
-    <h1 title="#{tooltip}">
-      <a href="#{pageObject.siteLineup()}" target="#{remote}">
-        <img src="#{url}" height="32px" class="favicon">
-      </a> #{resolve.escape pageObject.getTitle()}
-    </h1>
-  """
-  $header.find('a').on 'click', handleHeaderClick
+  wiki.site(remote).getURL 'favicon.png', (url) ->
+    $header.append """
+      <h1 title="#{tooltip}">
+        <a href="#{pageObject.siteLineup()}" target="#{remote}">
+          <img src="#{url}" height="32px" class="favicon">
+        </a> #{resolve.escape pageObject.getTitle()}
+      </h1>
+    """
+    $header.find('a').on 'click', handleHeaderClick
 
 emitTimestamp = ($header, $page, pageObject) ->
   if $page.attr('id').match /_rev/

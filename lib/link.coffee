@@ -11,19 +11,19 @@ refresh = require './refresh'
 createPage = (name, loc) ->
   site = loc if loc and loc isnt 'view'
   title = asTitle(name)
-  url = wiki.site(site).url('favicon.png')
-  $page = $ """
-    <div class="page" id="#{name}">
-      <div class="paper">
-        <div class="twins"> <p> </p> </div>
-        <div class="header">
-          <h1> <img class="favicon" src="#{url}" height="32px"> #{title} </h1>
+  wiki.site(site).getURL 'favicon.png', (url) ->
+    $page = $ """
+      <div class="page" id="#{name}">
+        <div class="paper">
+          <div class="twins"> <p> </p> </div>
+          <div class="header">
+            <h1> <img class="favicon" src="#{url}" height="32px"> #{title} </h1>
+          </div>
         </div>
       </div>
-    </div>
-  """
-  $page.data('site', site) if site
-  $page
+    """
+    $page.data('site', site) if site
+    $page
 
 showPage = (name, loc) ->
   createPage(name, loc).appendTo('.main').each refresh.cycle

@@ -11,14 +11,14 @@ totalPages = 0
 
 flag = (site) ->
   # status class progression: .wait, .fetch, .fail or .done
-  url = wiki.site(site).url('favicon.png')
-  """
-    <span class="neighbor" data-site="#{site}">
-      <div class="wait">
-        <img src="#{url}" title="#{site}">
-      </div>
-    </span>
-  """
+  wiki.site(site).getURL 'favicon.png', (url) ->
+    """
+      <span class="neighbor" data-site="#{site}">
+        <div class="wait">
+          <img src="#{url}" title="#{site}">
+        </div>
+      </span>
+    """
 
 inject = (neighborhood) ->
   sites = neighborhood.sites
@@ -27,7 +27,9 @@ bind = ->
   $neighborhood = $('.neighborhood')
   $('body')
     .on 'new-neighbor', (e, site) ->
-      $neighborhood.append flag site
+      $thisNeighborhood = $neighborhood
+      flag site, (siteFlag) ->
+        $thisNeighborhood.append siteFlag
     .on 'new-neighbor-done', (e, site) ->
       pageCount = sites[site].sitemap.length
       img = $(""".neighborhood .neighbor[data-site="#{site}"]""").find('img')

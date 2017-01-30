@@ -22,10 +22,11 @@ module.exports = ($journal, action) ->
   else
     $action.appendTo($journal)
   if action.type == 'fork' and action.site?
-    url = wiki.site(action.site).url('favicon.png')
-    $action
-      .css("background-image", "url(#{url})")
-      .attr("href", "//#{action.site}/#{$page.attr('id')}.html")
-      .attr("target", "#{action.site}")
-      .data("site", action.site)
-      .data("slug", $page.attr('id'))
+    wiki.site(action.site).getURL 'favicon.png', (backgroundURL) ->
+      wiki.site(action.site).getURL "#{$page.attr('id')}.html", (forkedPage) ->
+        $action
+          .css("background-image", "url(#{backgroundURL})")
+          .attr("href", "#{forkedPage}")
+          .attr("target", "#{action.site}")
+          .data("site", action.site)
+          .data("slug", $page.attr('id'))

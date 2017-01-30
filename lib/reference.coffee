@@ -14,21 +14,21 @@ emit = ($item, item) ->
   slug ||= page.asSlug item.title if item.title?
   slug ||= 'welcome-visitors'
   site = item.site
-  url = wiki.site(site).url('favicon.png')
-  resolve.resolveFrom site, ->
-    $item.append """
-      <p>
-        <img class='remote'
-          src='#{url}'
-          title='#{site}'
-          data-site="#{site}"
-          data-slug="#{slug}"
-        >
-        #{resolve.resolveLinks "[[#{item.title or slug}]]"}
-        —
-        #{resolve.resolveLinks(item.text)}
-      </p>
-    """
+  wiki.site(site).getURL 'favicon.png', (url) ->
+    resolve.resolveFrom site, ->
+      $item.append """
+        <p>
+          <img class='remote'
+            src='#{url}'
+            title='#{site}'
+            data-site="#{site}"
+            data-slug="#{slug}"
+          >
+          #{resolve.resolveLinks "[[#{item.title or slug}]]"}
+          —
+          #{resolve.resolveLinks(item.text)}
+        </p>
+      """
 bind = ($item, item) ->
   $item.dblclick -> editor.textEditor $item, item
 

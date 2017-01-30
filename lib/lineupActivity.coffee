@@ -22,7 +22,7 @@ sparks = (journal) ->
 row = (page) ->
   remote = page.getRemoteSite location.host
   title = page.getTitle()
-  url = wiki.site(remote).url('favicion.png')
+  url = wiki.site(remote).url('favicon.png')
   """
     <tr><td align=right>
       #{sparks page.getRawPage().journal}
