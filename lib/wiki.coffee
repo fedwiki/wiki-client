@@ -163,5 +163,10 @@ wiki.security = require './security'
 
 wiki.createSynopsis = require('./synopsis') ##
 
+siteAdapter = require './siteAdapter'
+wiki.local = siteAdapter.local
+wiki.origin = siteAdapter.origin
+wiki.site = siteAdapter.site
+
 
 module.exports = wiki
