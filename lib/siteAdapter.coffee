@@ -37,7 +37,7 @@ siteAdapter.origin = {
 }
 
 siteAdapter.site = (site) ->
-  return siteAdapter.origin if !site or site == window.location.host
+  return siteAdapter.origin if !site or site is window.location.host
 
   tryURL = (url, cb) ->
     if not this.inuse
