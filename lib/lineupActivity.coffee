@@ -1,6 +1,7 @@
 # Compare journal activity for pages in the current lineup.
 
 lineup = require './lineup'
+wiki = require './wiki'
 
 day = 24 * hour = 60 * minute = 60 * second = 1000
 

@@ -11,6 +11,7 @@ newPage = require('./page').newPage
 random = require './random'
 lineup = require './lineup'
 neighborhood = require './neighborhood'
+wiki = require './wiki'
 
 module.exports = pageHandler = {}
 

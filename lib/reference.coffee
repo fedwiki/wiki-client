@@ -6,6 +6,7 @@
 editor = require './editor'
 resolve = require './resolve'
 page = require './page'
+wiki = require './wiki'
 
 # see http://fed.wiki.org/about-reference-plugin.html
 

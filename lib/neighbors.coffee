@@ -4,6 +4,7 @@
 # cause them to animate as an indication of work in progress.
 
 link = require './link'
+wiki = require './wiki'
 
 sites = null
 totalPages = 0
@@ -11,7 +12,8 @@ totalPages = 0
 
 flag = (site) ->
   # status class progression: .wait, .fetch, .fail or .done
-  wiki.site(site).getURL 'favicon.png', (url) ->
+  console.log "neighbors flag #{site}"
+  return wiki.site(site).getURL 'favicon.png', (url) ->
     """
       <span class="neighbor" data-site="#{site}">
         <div class="wait">
@@ -24,12 +26,23 @@ inject = (neighborhood) ->
   sites = neighborhood.sites
 
 bind = ->
+  console.log 'neighbors - bind'
   $neighborhood = $('.neighborhood')
   $('body')
     .on 'new-neighbor', (e, site) ->
-      $thisNeighborhood = $neighborhood
-      flag site, (siteFlag) ->
-        $thisNeighborhood.append siteFlag
+      console.log 'new-neighbor', site
+      wiki.site(site).getURL 'favicon.png', (url) ->
+        console.log 'appending', site, url
+        $neighborhood.append """
+          <span class="neighbor" data-site="#{site}">
+            <div class="wait">
+              <img src="#{url}" title="#{site}">
+            </div>
+          </span>
+        """
+#      flag site, (siteFlag) ->
+#        console.log 'neighbors - bind flag', siteFlag
+#        $neighborhood.append siteFlag
     .on 'new-neighbor-done', (e, site) ->
       pageCount = sites[site].sitemap.length
       img = $(""".neighborhood .neighbor[data-site="#{site}"]""").find('img')

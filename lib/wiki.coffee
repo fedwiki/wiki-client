@@ -168,9 +168,6 @@ wiki.createSynopsis = require('./synopsis') ##
 siteAdapter = require './siteAdapter'
 wiki.local = siteAdapter.local
 wiki.origin = siteAdapter.origin
-wiki.same = siteAdapter.same
-wiki.byProxy = siteAdapter.byProxy
-wiki.tls = siteAdapter.tls
 wiki.site = siteAdapter.site
 
 

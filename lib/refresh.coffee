@@ -23,6 +23,7 @@ actionSymbols = require './actionSymbols'
 lineup = require './lineup'
 resolve = require './resolve'
 random = require './random'
+wiki = require './wiki'
 
 pageModule = require('./page')
 newPage = pageModule.newPage

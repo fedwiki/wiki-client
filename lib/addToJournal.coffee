@@ -4,6 +4,7 @@
 
 util = require './util'
 actionSymbols = require './actionSymbols'
+wiki = require './wiki'
 
 module.exports = ($journal, action) ->
   $page = $journal.parents('.page:first')

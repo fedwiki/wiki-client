@@ -6,6 +6,7 @@
 lineup = require './lineup'
 active = require './active'
 refresh = require './refresh'
+wiki = require './wiki'
 {asTitle, asSlug, pageEmitter} = require './page'
 
 createPage = (name, loc) ->
