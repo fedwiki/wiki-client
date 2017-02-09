@@ -9,7 +9,7 @@ siteAdapter = require './siteAdapter'
 sites = null
 totalPages = 0
 
-
+###
 flag = (site, cb) ->
   # status class progression: .wait, .fetch, .fail or .done
   siteAdapter.site(site).getURL 'favicon.png', (url) ->
@@ -20,6 +20,7 @@ flag = (site, cb) ->
         </div>
       </span>
     """
+###
 
 inject = (neighborhood) ->
   sites = neighborhood.sites
@@ -29,10 +30,16 @@ bind = ->
   $neighborhood = $('.neighborhood')
   $('body')
     .on 'new-neighbor', (e, site) ->
-      console.log 'in new-neighbor, about to call flag', site
-      flag site, (flagSpan) ->
-        console.log "in new-neighbor: ", flagSpan
-        $neighborhood.append flagSpan
+      console.log 'in new-neighbor, about to call getURL', site
+      siteAdapter.site(site).getURL 'favicon.png', (url) ->
+        console.log 'in new-neighbor', url
+        $neighborhood.append """
+          <span class="neighbor" data-site="#{site}">
+            <div class="wait">
+              <img src="#{url}" title="#{site}">
+            </div>
+          </span>
+        """
     .on 'new-neighbor-done', (e, site) ->
       pageCount = sites[site].sitemap.length
       img = $(""".neighborhood .neighbor[data-site="#{site}"]""").find('img')
