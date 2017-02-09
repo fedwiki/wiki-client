@@ -7,6 +7,33 @@ module.exports = siteAdapter = {}
 # requests, we will store them here keyed by site.
 sitePrefix = {}
 
+tryURL = (site) ->
+  tryURL: (url, done) ->
+
+    console.log "tryURL #{url}"
+    this.inuse = true
+    this.callback = done
+    _that = this
+    this.img = new Image()
+    this.img.onload = () ->
+      _that.inuse = false
+      _that.callback(true)
+    this.img.onerror = (e) ->
+      if _that.inuse
+        console.log "tryURL onerror", e
+        _that.inuse = false
+        _that.callback(false)
+    this.start = new Date().getTime()
+    this.img.src = url
+    this.timer = setTimeout( () ->
+      if _that.inUse
+        console.log "tryURL #{url} - timeout"
+        _that.inUse = false
+        _that.callback(false)
+    , 1500)
+
+
+
 siteAdapter.local = {
   url: (route) ->
     "/#{route}?adapted"
@@ -39,29 +66,6 @@ siteAdapter.origin = {
 siteAdapter.site = (site) ->
   return siteAdapter.origin if !site or site is window.location.host
 
-  tryURL = (url, cb) ->
-    if not this.inuse
-      console.log "trying #{url}"
-      this.inuse = true
-      this.callback = cb
-      _that = this
-      this.img = new Image()
-      this.img.onload = () ->
-        _that.inuse = false
-        _that.callback(true)
-      this.img.onerror = (e) ->
-        if _that.inuse
-          console.log "tryURL onerror", e
-          _that.inuse = false
-          _that.callback(false)
-      this.start = new Date().getTime()
-      this.img.src = url
-      this.timer = setTimeout( () ->
-        if _that.inUse
-          _that.inUse = false
-          _that.callback(false)
-      , 1500)
-
   {
     url: (route) ->
       if sitePrefix[site]?
@@ -72,46 +76,44 @@ siteAdapter.site = (site) ->
     getURL: (route, done) ->
       console.log "siteAdapter getURL #{site}"
       if sitePrefix[site]?
-        console.log "getURL - prefix ", sitePrefix[site]
+        console.log "getURL#{site} - prefix ", sitePrefix[site]
         done "#{sitePrefix[site]}#{route}?adapted"
 
       console.log "wiki.site(#{site}).getURL", route
-      testURL = "//#{site}/favicon.png"
-      tryURL testURL, (worked) ->
+      testURL = location.protocol + "//#{site}/favicon.png"
+      tryURL(site).tryURL testURL, (worked) ->
         if worked
-          console.log "#{site} - same"
           sitePrefix[site] = "//#{site}/"
-          console.log "  -  //#{site}/#{route}?adapted"
+          console.log "getURL  -  //#{site}/#{route}?adapted"
           done "//#{site}/#{route}?adapted"
         else
           switch location.protocol
             when 'http:'
               testURL = "https://#{site}/favicon.png"
-              tryURL testURL, (worked) ->
+              tryURL(site).tryURL testURL, (worked) ->
                 if worked
                   sitePrefix[site] = "https://#{site}/"
-                  console.log "  -  https://#{site}/#{route}?adapted"
+                  console.log "getURL  -  https://#{site}/#{route}?adapted"
                   done "https://#{site}/#{route}?adapted"
                 else
                   sitePrefix[site] = "//#{site}/"
-                  console.log "  -  //#{site}/#{route}?adapted"
+                  console.log "getURL  -  //#{site}/#{route}?adapted"
                   done "//#{site}/#{route}?adapted"
             when 'https:'
               testURL = "/proxy/#{site}/favicon.png"
-              tryURL testURL, (worked) ->
-                console.log "tried proxy", worked
+              tryURL(site).tryURL testURL, (worked) ->
                 if worked
                   sitePrefix[site] = "/proxy/#{site}/"
-                  console.log "  -  /proxy/#{site}/#{route}?adapted"
+                  console.log "getURL  -  /proxy/#{site}/#{route}?adapted"
                   done "/proxy/#{site}/#{route}?adapted"
                 else
                   sitePrefix[site] = "//#{site}/"
-                  console.log "  -  //#{site}/#{route}?adapted"
+                  console.log "getURL  -  //#{site}/#{route}?adapted"
                   done "//#{site}/#{route}?adapted"
             else
-              console.log "#{site} - unavailable"
+              console.log "getURL #{site} - unavailable"
               sitePrefix[site] = "//#{site}/"
-              console.log "  -  //#{site}/#{route}?adapted"
+              console.log "getURL  -  //#{site}/#{route}?adapted"
               done "//#{site}/#{route}?adapted"
     get: (route, cb) ->
       this.getURL route, (myURL) ->
