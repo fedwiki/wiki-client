@@ -3,6 +3,7 @@
 # slowly and keeps track of get requests in flight.
 
 _ = require 'underscore'
+siteAdapter = require './siteAdapter'
 
 module.exports = neighborhood = {}
 
@@ -21,19 +22,15 @@ populateSiteInfoFor = (site,neighborInfo)->
       .addClass(to)
 
   fetchMap = ->
-    sitemapUrl = "//#{site}/system/sitemap.json"
     transition site, 'wait', 'fetch'
-    request = $.ajax
-      type: 'GET'
-      dataType: 'json'
-      url: sitemapUrl
-    request
-      .always( -> neighborInfo.sitemapRequestInflight = false )
-      .done (data)->
+    siteAdapter.site(site).get 'system/sitemap.json', (err, data) ->
+      neighborInfo.sitemapRequestInflight = false
+      if !err
         neighborInfo.sitemap = data
         transition site, 'fetch', 'done'
+        console.log 'about to trigger new-neighbor-done', site
         $('body').trigger 'new-neighbor-done', site
-      .fail (data)->
+      else
         transition site, 'fetch', 'fail'
 
   now = Date.now()
@@ -50,6 +47,7 @@ neighborhood.registerNeighbor = (site)->
   neighborInfo = {}
   neighborhood.sites[site] = neighborInfo
   populateSiteInfoFor( site, neighborInfo )
+  console.log 'about to trigger new-neighbor', site
   $('body').trigger 'new-neighbor', site
 
 neighborhood.updateSitemap = (pageObject)->
