@@ -11,7 +11,7 @@ newPage = require('./page').newPage
 random = require './random'
 lineup = require './lineup'
 neighborhood = require './neighborhood'
-wiki = require './wiki'
+siteAdapter = require './siteAdapter'
 
 module.exports = pageHandler = {}
 
@@ -32,10 +32,10 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
 
   localBeforeOrigin = {
     get: (slug, done) ->
-      wiki.local.get slug, (err, page) ->
+      siteAdapter.local.get slug, (err, page) ->
         console.log [err, page]
         if err?
-          wiki.origin.get slug, done
+          siteAdapter.origin.get slug, done
         else
           site = 'local'
           done null, page
@@ -50,10 +50,10 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
   site = 'view' if site == null
 
   adapter = switch site
-    when 'local' then wiki.local
-    when 'origin' then wiki.origin
+    when 'local' then siteAdapter.local
+    when 'origin' then siteAdapter.origin
     when 'view' then localBeforeOrigin
-    else wiki.site(site)
+    else siteAdapter.site(site)
 
   adapter.get "#{slug}.json", (err, page) ->
     if !err

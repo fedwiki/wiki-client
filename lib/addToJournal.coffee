@@ -4,7 +4,7 @@
 
 util = require './util'
 actionSymbols = require './actionSymbols'
-wiki = require './wiki'
+siteAdapter = require './siteAdapter'
 
 module.exports = ($journal, action) ->
   $page = $journal.parents('.page:first')
@@ -23,8 +23,8 @@ module.exports = ($journal, action) ->
   else
     $action.appendTo($journal)
   if action.type == 'fork' and action.site?
-    wiki.site(action.site).getURL 'favicon.png', (backgroundURL) ->
-      wiki.site(action.site).getURL "#{$page.attr('id')}.html", (forkedPage) ->
+    siteAdapter.site(action.site).getURL 'favicon.png', (backgroundURL) ->
+      siteAdapter.site(action.site).getURL "#{$page.attr('id')}.html", (forkedPage) ->
         $action
           .css("background-image", "url(#{backgroundURL})")
           .attr("href", "#{forkedPage}")

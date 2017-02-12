@@ -3,7 +3,7 @@
 # slowly and keeps track of get requests in flight.
 
 _ = require 'underscore'
-wiki = require './wiki'
+siteAdapter = require './siteAdapter'
 
 module.exports = neighborhood = {}
 
@@ -23,7 +23,7 @@ populateSiteInfoFor = (site,neighborInfo)->
 
   fetchMap = ->
     transition site, 'wait', 'fetch'
-    return wiki.site(site).get 'system/sitemap.json', (err, data) ->
+    siteAdapter.site(site).get 'system/sitemap.json', (err, data) ->
       neighborInfo.sitemapRequestInflight = false
       if !err
         neighborInfo.sitemap = data

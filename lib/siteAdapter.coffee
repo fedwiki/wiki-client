@@ -1,15 +1,38 @@
-###
-Notes:
-url: needs to change to using a callback - if the correct form of url is not
-already known the code to determine the correct route is async...
-add getURL: (route, done) as a step forward...
-###
+# The siteAdapter handles fetching resources from remote sites, including the
+# origin. It contains logic to check the correct protocol is used.
 
-module.exports = siteAdapter = {}
-
+# for sites we have already determined the correct prefix for the
+# requests, we will store them here keyed by site.
 sitePrefix = {}
 
-siteAdapter.local = {
+tryURL = (site) ->
+  tryURL: (url, done) ->
+
+    console.log "tryURL #{url}"
+    this.inuse = true
+    this.callback = done
+    _that = this
+    this.img = new Image()
+    this.img.onload = () ->
+      _that.inuse = false
+      _that.callback(true)
+    this.img.onerror = (e) ->
+      if _that.inuse
+        console.log "tryURL onerror", e
+        _that.inuse = false
+        _that.callback(false)
+    this.start = new Date().getTime()
+    this.img.src = url
+    this.timer = setTimeout( () ->
+      if _that.inUse
+        console.log "tryURL #{url} - timeout"
+        _that.inUse = false
+        _that.callback(false)
+    , 1500)
+
+
+
+local = {
   url: (route) ->
     "/#{route}?adapted"
   getURL: (route, done) ->
@@ -22,7 +45,7 @@ siteAdapter.local = {
       done {msg: "no page named '#{route}' in browser local storage"}, null
 }
 
-siteAdapter.origin = {
+origin = {
   url: (route) ->
     "/#{route}?adapted"
   getURL: (route, done) ->
@@ -38,34 +61,8 @@ siteAdapter.origin = {
       error: (xhr, type, msg) -> done {msg, xhr}, null
 }
 
-
-
-siteAdapter.site = (site) ->
-  return siteAdapter.origin if !site or site == window.location.host
-
-  tryURL = (url, cb) ->
-    if not this.inuse
-      console.log "trying #{url}"
-      this.inuse = true
-      this.callback = cb
-      _that = this
-      this.img = new Image()
-      this.img.onload = () ->
-        _that.inuse = false
-        _that.callback(true)
-      this.img.onerror = (e) ->
-        if _that.inuse
-          console.log "tryURL onerror", e
-          _that.inuse = false
-          _that.callback(false)
-      this.start = new Date().getTime()
-      this.img.src = url
-      this.timer = setTimeout( () ->
-        if _that.inUse
-          _that.inUse = false
-          _that.callback(false)
-      , 1500)
-
+site = (site) ->
+  return origin if !site or site is window.location.host
   {
     url: (route) ->
       if sitePrefix[site]?
@@ -73,57 +70,57 @@ siteAdapter.site = (site) ->
         "#{sitePrefix[site]}#{route}?adapted"
       else
         "//#{site}/#{route}?adapted"
-    getURL: (route, getCB) ->
-      console.log "siteAdapter getURL #{site}"
+    getURL: (route, done) ->
+      console.log "siteAdapter getURL #{site}, #{route}"
       if sitePrefix[site]?
-        console.log "getURL - prefix ", sitePrefix[site]
-        getCB "#{sitePrefix[site]}#{route}?adapted"
+        console.log "getURL#{site} - prefix ", sitePrefix[site]
+        done "#{sitePrefix[site]}#{route}?adapted"
 
       console.log "wiki.site(#{site}).getURL", route
-      testURL = "//#{site}/favicon.png"
-      tryURL testURL, (worked) ->
+      testURL = location.protocol + "//#{site}/favicon.png"
+      tryURL(site).tryURL testURL, (worked) ->
         if worked
-          console.log "#{site} - same"
           sitePrefix[site] = "//#{site}/"
-          console.log "  -  //#{site}/#{route}?adapted"
-          getCB "//#{site}/#{route}?adapted"
+          console.log "getURL  -  //#{site}/#{route}?adapted"
+          done "//#{site}/#{route}?adapted"
         else
           switch location.protocol
             when 'http:'
               testURL = "https://#{site}/favicon.png"
-              tryURL testURL, (worked) ->
+              tryURL(site).tryURL testURL, (worked) ->
                 if worked
                   sitePrefix[site] = "https://#{site}/"
-                  console.log "  -  https://#{site}/#{route}?adapted"
-                  getCB "https://#{site}/#{route}?adapted"
+                  console.log "getURL  -  https://#{site}/#{route}?adapted"
+                  done "https://#{site}/#{route}?adapted"
                 else
                   sitePrefix[site] = "//#{site}/"
-                  console.log "  -  //#{site}/#{route}?adapted"
-                  getCB "//#{site}/#{route}?adapted"
+                  console.log "getURL  -  //#{site}/#{route}?adapted"
+                  done "//#{site}/#{route}?adapted"
             when 'https:'
               testURL = "/proxy/#{site}/favicon.png"
-              tryURL testURL, (worked) ->
-                console.log "tried proxy", worked
+              tryURL(site).tryURL testURL, (worked) ->
                 if worked
                   sitePrefix[site] = "/proxy/#{site}/"
-                  console.log "  -  /proxy/#{site}/#{route}?adapted"
-                  getCB "/proxy/#{site}/#{route}?adapted"
+                  console.log "getURL  -  /proxy/#{site}/#{route}?adapted"
+                  done "/proxy/#{site}/#{route}?adapted"
                 else
                   sitePrefix[site] = "//#{site}/"
-                  console.log "  -  //#{site}/#{route}?adapted"
-                  getCB "//#{site}/#{route}?adapted"
+                  console.log "getURL  -  //#{site}/#{route}?adapted"
+                  done "//#{site}/#{route}?adapted"
             else
-              console.log "#{site} - unavailable"
+              console.log "getURL #{site} - unavailable"
               sitePrefix[site] = "//#{site}/"
-              console.log "  -  //#{site}/#{route}?adapted"
-              getCB "//#{site}/#{route}?adapted"
-    get: (route, done) ->
+              console.log "getURL  -  //#{site}/#{route}?adapted"
+              done "//#{site}/#{route}?adapted"
+    get: (route, cb) ->
       this.getURL route, (myURL) ->
         console.log "wiki.site(#{site}).get",route, myURL
         $.ajax
           type: 'GET'
           dataType: 'json'
           url: myURL
-          success: (page) -> done null, page
-          error: (xhr, type, msg) -> done {msg, xhr}, null
-  }
+          success: (page) -> cb null, page
+          error: (xhr, type, msg) -> cb {msg, xhr}, null
+}
+
+module.exports = {local, origin, site}

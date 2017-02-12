@@ -6,13 +6,13 @@
 lineup = require './lineup'
 active = require './active'
 refresh = require './refresh'
-wiki = require './wiki'
+siteAdapter = require './siteAdapter'
 {asTitle, asSlug, pageEmitter} = require './page'
 
 createPage = (name, loc) ->
   site = loc if loc and loc isnt 'view'
   title = asTitle(name)
-  wiki.site(site).getURL 'favicon.png', (url) ->
+  siteAdapter.site(site).getURL 'favicon.png', (url) ->
     $page = $ """
       <div class="page" id="#{name}">
         <div class="paper">

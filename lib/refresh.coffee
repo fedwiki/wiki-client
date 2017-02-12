@@ -23,7 +23,7 @@ actionSymbols = require './actionSymbols'
 lineup = require './lineup'
 resolve = require './resolve'
 random = require './random'
-wiki = require './wiki'
+siteAdapter = require './siteAdapter'
 
 pageModule = require('./page')
 newPage = pageModule.newPage
@@ -145,7 +145,7 @@ handleHeaderClick = (e) ->
 emitHeader = ($header, $page, pageObject) ->
   remote = pageObject.getRemoteSite location.host
   tooltip = pageObject.getRemoteSiteDetails location.host
-  wiki.site(remote).getURL 'favicon.png', (url) ->
+  siteAdapter.site(remote).getURL 'favicon.png', (url) ->
     $header.append """
       <h1 title="#{tooltip}">
         <a href="#{pageObject.siteLineup()}" target="#{remote}">
