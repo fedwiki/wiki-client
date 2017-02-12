@@ -11,6 +11,7 @@ newPage = require('./page').newPage
 random = require './random'
 lineup = require './lineup'
 neighborhood = require './neighborhood'
+siteAdapter = require './siteAdapter'
 
 module.exports = pageHandler = {}
 
@@ -29,72 +30,62 @@ pageFromLocalStorage = (slug)->
 recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
   {slug,rev,site} = pageInformation
 
+  localBeforeOrigin = {
+    get: (slug, done) ->
+      siteAdapter.local.get slug, (err, page) ->
+        console.log [err, page]
+        if err?
+          siteAdapter.origin.get slug, done
+        else
+          site = 'local'
+          done null, page
+  }
+
   if site
     localContext = []
   else
     site = localContext.shift()
 
   site = 'origin' if site is window.location.host
-  site = null if site=='view'
+  site = 'view' if site == null
 
-  if site?
-    if site == 'local'
-      if localPage = pageFromLocalStorage(pageInformation.slug)
-        #NEWPAGE local from pageHandler.get
-        return whenGotten newPage(localPage, 'local' )
-      else
-        return whenNotGotten()
-    else
-      if site == 'origin'
-        url = "/#{slug}.json"
-      else
-        url = "//#{site}/#{slug}.json"
-  else
-    url = "/#{slug}.json"
+  adapter = switch site
+    when 'local' then siteAdapter.local
+    when 'origin' then siteAdapter.origin
+    when 'view' then localBeforeOrigin
+    else siteAdapter.site(site)
 
-  $.ajax
-    type: 'GET'
-    dataType: 'json'
-    url: url + "?random=#{random.randomBytes(4)}"
-    success: (page) ->
+  adapter.get "#{slug}.json", (err, page) ->
+    if !err
+      console.log 'got', site, page
       page = revision.create rev, page if rev
-      #NEWPAGE server from pageHandler.get
-      return whenGotten newPage(page, site)
-    error: (xhr, type, msg) ->
-      if (xhr.status != 404) and (xhr.status != 0)
-        console.log 'pageHandler.get error', xhr, xhr.status, type, msg
-        #NEWPAGE trouble from PageHandler.get
-        troublePageObject = newPage {title: "Trouble: Can't Get Page"}, null
-        troublePageObject.addItem
-          type: 'html'
-          text: """
-The page handler has run into problems with this   request.
-<pre class=error>#{JSON.stringify pageInformation}</pre>
-The requested url.
-<pre class=error>#{url}</pre>
-The server reported status.
-<pre class=error>#{xhr.status}</pre>
-The error type.
-<pre class=error>#{type}</pre>
-The error message.
-<pre class=error>#{msg}</pre>
-These problems are rarely solved by reporting issues.
-There could be additional information reported in the browser's console.log.
-More information might be accessible by fetching the page outside of wiki.
-<a href="#{url}" target="_blank">try-now</a>
-"""
-        return whenGotten troublePageObject
-      if localContext.length > 0
-        recursiveGet( {pageInformation, whenGotten, whenNotGotten, localContext} )
+      whenGotten newPage(page, site)
+    else
+      if (err.xhr.status == 404) or (err.xhr.status == 0)
+        if localContext.length > 0
+          recursiveGet( {pageInformation, whenGotten, whenNotGotten, localContext} )
+        else
+          whenNotGotten()
       else
-        whenNotGotten()
+        text = """
+          The page handler has run into problems with this request.
+          <pre class=error>#{JSON.stringify pageInformation}</pre>
+          The requested url.
+          <pre class=error>#{url}</pre>
+          The server reported status.
+          <pre class=error>#{err.xhr?.status}</pre>
+          The error message.
+          <pre class=error>#{err.msg}</pre>
+          These problems are rarely solved by reporting issues.
+          There could be additional information reported in the browser's console.log.
+          More information might be accessible by fetching the page outside of wiki.
+          <a href="#{url}" target="_blank">try-now</a>
+        """
+        trouble = newPage {title: "Trouble: Can't Get Page"}, null
+        trouble.addItem {type:'html', text}
+        whenGotten trouble
 
 pageHandler.get = ({whenGotten,whenNotGotten,pageInformation}  ) ->
-
-  unless pageInformation.site
-    if localPage = pageFromLocalStorage(pageInformation.slug)
-      localPage = revision.create pageInformation.rev, localPage if pageInformation.rev
-      return whenGotten newPage( localPage, 'local' )
 
   pageHandler.context = ['view'] unless pageHandler.context.length
 

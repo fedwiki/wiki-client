@@ -4,6 +4,7 @@
 
 util = require './util'
 actionSymbols = require './actionSymbols'
+siteAdapter = require './siteAdapter'
 
 module.exports = ($journal, action) ->
   $page = $journal.parents('.page:first')
@@ -22,9 +23,11 @@ module.exports = ($journal, action) ->
   else
     $action.appendTo($journal)
   if action.type == 'fork' and action.site?
-    $action
-      .css("background-image", "url(//#{action.site}/favicon.png)")
-      .attr("href", "//#{action.site}/#{$page.attr('id')}.html")
-      .attr("target", "#{action.site}")
-      .data("site", action.site)
-      .data("slug", $page.attr('id'))
+    siteAdapter.site(action.site).getURL 'favicon.png', (backgroundURL) ->
+      siteAdapter.site(action.site).getURL "#{$page.attr('id')}.html", (forkedPage) ->
+        $action
+          .css("background-image", "url(#{backgroundURL})")
+          .attr("href", "#{forkedPage}")
+          .attr("target", "#{action.site}")
+          .data("site", action.site)
+          .data("slug", $page.attr('id'))

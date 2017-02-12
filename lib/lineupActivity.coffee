@@ -1,6 +1,7 @@
 # Compare journal activity for pages in the current lineup.
 
 lineup = require './lineup'
+wiki = require './wiki'
 
 day = 24 * hour = 60 * minute = 60 * second = 1000
 
@@ -22,11 +23,12 @@ sparks = (journal) ->
 row = (page) ->
   remote = page.getRemoteSite location.host
   title = page.getTitle()
+  url = wiki.site(remote).url('favicon.png')
   """
     <tr><td align=right>
       #{sparks page.getRawPage().journal}
     <td>
-      <img class="remote" src="//#{remote}/favicon.png">
+      <img class="remote" src="#{url}">
       #{title}
   """
 

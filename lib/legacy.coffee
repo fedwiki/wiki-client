@@ -216,6 +216,7 @@ $ ->
 
 
   $ ->
+    console.log 'legacy - starting with first page refresh'
     state.first()
     $('.page').each refresh.cycle
     active.set($('.page').last())

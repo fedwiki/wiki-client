@@ -6,6 +6,7 @@
 editor = require './editor'
 resolve = require './resolve'
 page = require './page'
+wiki = require './wiki'
 
 # see http://fed.wiki.org/about-reference-plugin.html
 
@@ -14,20 +15,21 @@ emit = ($item, item) ->
   slug ||= page.asSlug item.title if item.title?
   slug ||= 'welcome-visitors'
   site = item.site
-  resolve.resolveFrom site, ->
-    $item.append """
-      <p>
-        <img class='remote'
-          src='//#{site}/favicon.png'
-          title='#{site}'
-          data-site="#{site}"
-          data-slug="#{slug}"
-        >
-        #{resolve.resolveLinks "[[#{item.title or slug}]]"}
-        —
-        #{resolve.resolveLinks(item.text)}
-      </p>
-    """
+  wiki.site(site).getURL 'favicon.png', (url) ->
+    resolve.resolveFrom site, ->
+      $item.append """
+        <p>
+          <img class='remote'
+            src='#{url}'
+            title='#{site}'
+            data-site="#{site}"
+            data-slug="#{slug}"
+          >
+          #{resolve.resolveLinks "[[#{item.title or slug}]]"}
+          —
+          #{resolve.resolveLinks(item.text)}
+        </p>
+      """
 bind = ($item, item) ->
   $item.dblclick -> editor.textEditor $item, item
 

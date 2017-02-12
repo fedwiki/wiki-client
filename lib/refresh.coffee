@@ -23,6 +23,7 @@ actionSymbols = require './actionSymbols'
 lineup = require './lineup'
 resolve = require './resolve'
 random = require './random'
+siteAdapter = require './siteAdapter'
 
 pageModule = require('./page')
 newPage = pageModule.newPage
@@ -144,14 +145,15 @@ handleHeaderClick = (e) ->
 emitHeader = ($header, $page, pageObject) ->
   remote = pageObject.getRemoteSite location.host
   tooltip = pageObject.getRemoteSiteDetails location.host
-  $header.append """
-    <h1 title="#{tooltip}">
-      <a href="#{pageObject.siteLineup()}" target="#{remote}">
-        <img src="//#{remote}/favicon.png" height="32px" class="favicon">
-      </a> #{resolve.escape pageObject.getTitle()}
-    </h1>
-  """
-  $header.find('a').on 'click', handleHeaderClick
+  siteAdapter.site(remote).getURL 'favicon.png', (url) ->
+    $header.append """
+      <h1 title="#{tooltip}">
+        <a href="#{pageObject.siteLineup()}" target="#{remote}">
+          <img src="#{url}" height="32px" class="favicon">
+        </a> #{resolve.escape pageObject.getTitle()}
+      </h1>
+    """
+    $header.find('a').on 'click', handleHeaderClick
 
 emitTimestamp = ($header, $page, pageObject) ->
   if $page.attr('id').match /_rev/
@@ -213,8 +215,9 @@ emitTwins = ($page) ->
         a.item.date < b.item.date
       flags = for {remoteSite, item}, i in bin
         break if i >= 8
+        url = wiki.site(remoteSite).url('favicon.png')
         """<img class="remote"
-          src="http://#{remoteSite}/favicon.png"
+          src="#{url}"
           data-slug="#{slug}"
           data-site="#{remoteSite}"
           title="#{remoteSite}">
