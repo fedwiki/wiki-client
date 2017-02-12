@@ -170,6 +170,6 @@ wiki.local = siteAdapter.local
 wiki.origin = siteAdapter.origin
 wiki.site = siteAdapter.site
 
-
+console.log "wiki global init done"
 
 module.exports = wiki
