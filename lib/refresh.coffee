@@ -144,10 +144,11 @@ handleHeaderClick = (e) ->
 emitHeader = ($header, $page, pageObject) ->
   remote = pageObject.getRemoteSite location.host
   tooltip = pageObject.getRemoteSiteDetails location.host
+  url = wiki.site(remote).url('favicon.png')
   $header.append """
     <h1 title="#{tooltip}">
       <a href="#{pageObject.siteLineup()}" target="#{remote}">
-        <img src="//#{remote}/favicon.png" height="32px" class="favicon">
+        <img src="#{url}" height="32px" class="favicon">
       </a> #{resolve.escape pageObject.getTitle()}
     </h1>
   """
@@ -213,8 +214,9 @@ emitTwins = ($page) ->
         a.item.date < b.item.date
       flags = for {remoteSite, item}, i in bin
         break if i >= 8
+        url = wiki.site(remoteSite).url('favicon.png')
         """<img class="remote"
-          src="http://#{remoteSite}/favicon.png"
+          src="#{url}"
           data-slug="#{slug}"
           data-site="#{remoteSite}"
           title="#{remoteSite}">

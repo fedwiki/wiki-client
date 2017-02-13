@@ -14,11 +14,12 @@ emit = ($item, item) ->
   slug ||= page.asSlug item.title if item.title?
   slug ||= 'welcome-visitors'
   site = item.site
+  url = wiki.site(site).url('favicon.png')
   resolve.resolveFrom site, ->
     $item.append """
       <p>
         <img class='remote'
-          src='//#{site}/favicon.png'
+          src='#{url}'
           title='#{site}'
           data-site="#{site}"
           data-slug="#{slug}"
