@@ -91,3 +91,10 @@ factory = switch window?.location.protocol || 'http:'
 
 siteAdapter.site = (site) ->
   return adapters[site||host] || adapters[site] = factory(site)
+
+# here we add an experimental adapter that works by
+# completely different means, parsing a export file of pages
+
+exportAdapter = require './exportAdapter'
+adapters['oop.json'] = exportAdapter.file('http://c2.com/wiki/oop.json')
+
