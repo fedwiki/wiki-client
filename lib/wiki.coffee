@@ -165,43 +165,9 @@ wiki.createSynopsis = require('./synopsis') ##
 
 # known use: (eventually all server directed xhr and some tags)
 
-wiki.local = {
-  url: -> wiki.origin.url
-  get: (route, done) ->
-    console.log 'wiki.local.get',route
-    if page = localStorage.getItem(route.replace(/\.json$/,''))
-      done null, JSON.parse page
-    else
-      done {msg: "no page named '#{route}' in browser local storage"}, null
-}
-
-wiki.origin = {
-  url: (route) ->
-    "/#{route}?adapted"
-  get: (route, done) ->
-    console.log 'wiki.origin.get',route
-    $.ajax
-      type: 'GET'
-      dataType: 'json'
-      url: this.url(route)
-      success: (page) -> done null, page
-      error: (xhr, type, msg) -> done {msg, xhr}, null
-}
-
-wiki.site = (site) ->
-  return wiki.origin if !site or site == window.location.host
-  {
-    url: (route) ->
-      "//#{site}/#{route}?adapted"
-    get: (route, done) ->
-      console.log 'wiki.site(site).get',route
-      $.ajax
-        type: 'GET'
-        dataType: 'json'
-        url: this.url(route)
-        success: (page) -> done null, page
-        error: (xhr, type, msg) -> done {msg, xhr}, null
-  }
-
+siteAdapter = require './siteAdapter'
+wiki.local = siteAdapter.local
+wiki.origin = siteAdapter.origin
+wiki.site = siteAdapter.site
 
 module.exports = wiki
