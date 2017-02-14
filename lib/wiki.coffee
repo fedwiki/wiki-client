@@ -10,6 +10,13 @@
 
 wiki = {}
 
+# known use: (eventually all server directed xhr and some tags)
+
+siteAdapter = require './siteAdapter'
+wiki.local = siteAdapter.local
+wiki.origin = siteAdapter.origin
+wiki.site = siteAdapter.site
+
 # known use: wiki.asSlug wiki-plugin-reduce/client/reduce.coffee:
 
 wiki.asSlug = require('./page').asSlug

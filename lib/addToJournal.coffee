@@ -23,7 +23,7 @@ module.exports = ($journal, action) ->
     $action.appendTo($journal)
   if action.type == 'fork' and action.site?
     $action
-      .css("background-image", "url(//#{action.site}/favicon.png)")
+      .css("background-image", "url(#{wiki.site(action.site).flag()}")
       .attr("href", "//#{action.site}/#{$page.attr('id')}.html")
       .attr("target", "#{action.site}")
       .data("site", action.site)

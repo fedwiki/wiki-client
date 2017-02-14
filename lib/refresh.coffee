@@ -147,7 +147,7 @@ emitHeader = ($header, $page, pageObject) ->
   $header.append """
     <h1 title="#{tooltip}">
       <a href="#{pageObject.siteLineup()}" target="#{remote}">
-        <img src="//#{remote}/favicon.png" height="32px" class="favicon">
+        <img src="#{wiki.site(remote).flag()}" height="32px" class="favicon">
       </a> #{resolve.escape pageObject.getTitle()}
     </h1>
   """
@@ -214,7 +214,7 @@ emitTwins = ($page) ->
       flags = for {remoteSite, item}, i in bin
         break if i >= 8
         """<img class="remote"
-          src="http://#{remoteSite}/favicon.png"
+          src="#{wiki.site(remoteSite).flag()}"
           data-slug="#{slug}"
           data-site="#{remoteSite}"
           title="#{remoteSite}">

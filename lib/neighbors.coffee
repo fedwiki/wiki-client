@@ -11,10 +11,11 @@ totalPages = 0
 
 flag = (site) ->
   # status class progression: .wait, .fetch, .fail or .done
+  console.log 'neighbor - flag'
   """
     <span class="neighbor" data-site="#{site}">
       <div class="wait">
-        <img src="http://#{site}/favicon.png" title="#{site}">
+        <img src="#{wiki.site(site).flag()}" title="#{site}">
       </div>
     </span>
   """
