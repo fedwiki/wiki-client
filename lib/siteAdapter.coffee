@@ -51,7 +51,7 @@ findAdapter = (site) ->
                 sitePrefix[site] = "https://#{site}"
                 done "https://#{site}"
               else
-                #
+                # site is not http or https, so could be using something else, or down...
                 sitePrefix[site] = "//#{site}"
                 done "//#{site}"
           when 'https:'
@@ -61,7 +61,7 @@ findAdapter = (site) ->
                 sitePrefix[site] = "/proxy/#{site}"
                 done "/proxy/#{site}"
               else
-                #
+                # site is not http or https, so could be using something else, or down...
                 sitePrefix[site] = "//#{site}"
                 done "//#{site}"
           else
@@ -149,6 +149,24 @@ siteAdapter.site = (site) ->
         tempFlags[site] = tempFlag
         tempFlag
 
-    get: (route, cb) ->
+    get: (route, done) ->
+      if sitePrefix[site]?
+        url = "#{sitePrefix[site]}/#{route}?adapted"
+        $.ajax
+          type: 'GET'
+          dataType: 'json'
+          url: url
+          success: (data) -> done null, data
+          error: (xhr, type, msg) -> done {msg, xhr}, null
+      else
+        findAdapter(site).prefix (prefix) ->
+          url = "#{prefix}/#{route}?adapted"
+          $.ajax
+            type: 'GET'
+            dataType: 'json'
+            url: url
+            success: (data) -> done null, data
+            error: (xhr, type, msg) -> done {msg, xhr}, null
+
 
   }
