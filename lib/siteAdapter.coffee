@@ -37,7 +37,7 @@ findAdapter = (site) ->
     if sitePrefix[site]?
       done sitePrefix[site]
 
-    testURL = "//#{site}/favicon.png"
+    testURL = "//#{site}/favicon.png?testing"
     this.test testURL, (worked) ->
       if worked
         sitePrefix[site] = "//#{site}"
@@ -45,30 +45,30 @@ findAdapter = (site) ->
       else
         switch location.protocol
           when 'http:'
-            testURL = "https://#{site}/favicon.png"
+            testURL = "https://#{site}/favicon.png?testing"
             this.test testURL, (worked) ->
               if worked
                 sitePrefix[site] = "https://#{site}"
                 done "https://#{site}"
               else
                 # site is not http or https, so could be using something else, or down...
-                sitePrefix[site] = "//#{site}"
-                done "//#{site}"
+                sitePrefix[site] = ""
+                done ""
           when 'https:'
-            testURL = "/proxy/#{site}/favicon.png"
+            testURL = "/proxy/#{site}/favicon.png?testing"
             this.test testURL, (worked) ->
               if worked
                 sitePrefix[site] = "/proxy/#{site}"
                 done "/proxy/#{site}"
               else
                 # site is not http or https, so could be using something else, or down...
-                sitePrefix[site] = "//#{site}"
-                done "//#{site}"
+                sitePrefix[site] = ""
+                done ""
           else
             # if we are here we have a different the origin on a different protocol
             # maybe we should try https and http, but that's for later...
-            sitePrefix[site] = "//#{site}"
-            done "//#{site}"
+            sitePrefix[site] = ""
+            done ""
 
 siteAdapter.local = {
   flag: -> "/favicon.png?adapted"
@@ -125,8 +125,11 @@ siteAdapter.site = (site) ->
   {
     flag: ->
       if sitePrefix[site]?
-        # we already know how to construct flag url
-        sitePrefix[site] + "/favicon.png?adapted"
+        if sitePrefix[site] is ""
+          tempFlags[site]
+        else
+          # we already know how to construct flag url
+          sitePrefix[site] + "/favicon.png?adapted"
       else if tempFlags[site]?
         # we already have a temp. flag
         console.log "wiki.site(#{site}).flag - have temp. flag"
@@ -135,14 +138,18 @@ siteAdapter.site = (site) ->
         # we don't know the url to the real flag, or have a temp flag
 
         findAdapter(site).prefix (prefix) ->
-          console.log "Prefix for #{site} is #{prefix}"
-          # replace temp flags
-          tempFlag = tempFlags[site]
-          realFlag = sitePrefix[site] + "/favicon.png?replaceTemp"
-          # replace temporary flag where it is used as an image
-          $('img[src="' + tempFlag + '"]').attr('src', realFlag)
-          # replace temporary flag where its used as a background to fork event in journal
-          $('a[target="' + site + '"]').attr('style', 'background-image: url(' + realFlag + ')')
+          if prefix is ""
+            console.log "Prefix for #{site} is undetermined..."
+          else
+            console.log "Prefix for #{site} is #{prefix}"
+            # replace temp flags
+            tempFlag = tempFlags[site]
+            realFlag = sitePrefix[site] + "/favicon.png?replaceTemp"
+            # replace temporary flag where it is used as an image
+            $('img[src="' + tempFlag + '"]').attr('src', realFlag)
+            # replace temporary flag where its used as a background to fork event in journal
+            $('a[target="' + site + '"]').attr('style', 'background-image: url(' + realFlag + ')')
+
 
         # create a temp flag, save it for reuse, and return it
         tempFlag = createTempFlag(site)
@@ -151,22 +158,30 @@ siteAdapter.site = (site) ->
 
     get: (route, done) ->
       if sitePrefix[site]?
-        url = "#{sitePrefix[site]}/#{route}?adapted"
-        $.ajax
-          type: 'GET'
-          dataType: 'json'
-          url: url
-          success: (data) -> done null, data
-          error: (xhr, type, msg) -> done {msg, xhr}, null
-      else
-        findAdapter(site).prefix (prefix) ->
-          url = "#{prefix}/#{route}?adapted"
+        if sitePrefix[site] is ""
+          console.log "#{site} is unreachable"
+          done {"#{site} is unreachable"}, null
+        else
+          url = "#{sitePrefix[site]}/#{route}?adapted"
           $.ajax
             type: 'GET'
             dataType: 'json'
             url: url
             success: (data) -> done null, data
             error: (xhr, type, msg) -> done {msg, xhr}, null
+      else
+        findAdapter(site).prefix (prefix) ->
+          if sitePrefix[site] is ""
+            console.log "#{site} is unreachable"
+            done {"#{site} is unreachable"}, null
+          else
+            url = "#{prefix}/#{route}?adapted"
+            $.ajax
+              type: 'GET'
+              dataType: 'json'
+              url: url
+              success: (data) -> done null, data
+              error: (xhr, type, msg) -> done {msg, xhr}, null
 
 
   }
