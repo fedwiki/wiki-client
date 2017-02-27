@@ -72,6 +72,7 @@ findAdapter = (site) ->
 
 siteAdapter.local = {
   flag: -> "/favicon.png?adapted"
+  getURL: (route) -> "/#{route}"
   get: (route, done) ->
     console.log "wiki.local.get #{route}"
     if page = localStorage.getItem(route.replace(/\.json$/,''))
@@ -82,6 +83,7 @@ siteAdapter.local = {
 
 siteAdapter.origin = {
   flag: -> "/favicon.png?adapted"
+  getURL: (route) -> "/#{route}"
   get: (route, done) ->
     console.log "wiki.origin.get #{route}"
     $.ajax
@@ -156,6 +158,35 @@ siteAdapter.site = (site) ->
         tempFlags[site] = tempFlag
         tempFlag
 
+    getURL: (route) ->
+      if sitePrefix[site]?
+        if sitePrefix[site] is ""
+          console.log "#{site} is unreachable, can't link to #{route}"
+          ""
+        else
+          if /proxy/.test(sitePrefix[site])
+            thisSite = sitePrefix[site].substring(7)
+            thisPrefix = "http://#{thisSite}"
+          else
+            thisPrefix = sitePrefix[site]
+          "#{thisPrefix}/#{route}"
+      else
+        # don't yet know how to construct links for site, so find how and fixup
+        findAdapter(site).prefix (prefix) ->
+          if prefix is ""
+            console.log "#{site} is unreachable"
+          else
+            console.log "Prefix for #{site} is #{prefix}, about to fixup links"
+            # add href to journal fork
+            $('a[target="' + site + '"]').each( () ->
+              if /proxy/.test(prefix)
+                thisSite = prefix.substring(7)
+                thisPrefix = "http://#{thisSite}"
+              else
+                thisPrefix = prefix
+              $(this).attr('href', "#{thisPrefix}/#{$(this).data("slug")}.html") )
+        ""
+
     get: (route, done) ->
       if sitePrefix[site]?
         if sitePrefix[site] is ""
@@ -171,7 +202,7 @@ siteAdapter.site = (site) ->
             error: (xhr, type, msg) -> done {msg, xhr}, null
       else
         findAdapter(site).prefix (prefix) ->
-          if sitePrefix[site] is ""
+          if prefix is ""
             console.log "#{site} is unreachable"
             done {"#{site} is unreachable"}, null
           else
