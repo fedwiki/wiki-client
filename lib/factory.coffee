@@ -50,7 +50,7 @@ emit = ($item, item) ->
   else if window.catalog?
     showMenu()
   else
-    $.getJSON '/system/factories.json', (data) ->
+    wiki.origin.get '/system/factories.json', (data) ->
       window.catalog = data
       showMenu()
 
@@ -77,7 +77,7 @@ bind = ($item, item) ->
     syncEditAction()
 
   addReference = (data) ->
-    $.getJSON "//#{data.site}/#{data.slug}.json", (remote) ->
+    wiki.site(data.site).get "#{data-slug}.json", (remote) ->
       item.type = 'reference'
       item.site = data.site
       item.slug = data.slug
