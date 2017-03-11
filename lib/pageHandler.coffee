@@ -114,9 +114,9 @@ pushToLocal = ($page, pagePutInfo, action) ->
       page.journal = page.journal.concat({'type':'fork','site':site,'date':(new Date()).getTime()})
       delete action['fork']
   revision.apply page, action
-  localStorage.setItem(pagePutInfo.slug, JSON.stringify(page))
-  addToJournal $page.find('.journal'), action
-  $page.addClass("local")
+  wiki.local.put pagePutInfo.slug, page, () ->
+    addToJournal $page.find('.journal'), action
+    $page.addClass("local")
 
 pushToServer = ($page, pagePutInfo, action) ->
 
@@ -126,21 +126,16 @@ pushToServer = ($page, pagePutInfo, action) ->
   if action.type == 'fork'
     bundle.item = deepCopy pageObject.getRawPage()
 
-  $.ajax
-    type: 'PUT'
-    url: "/page/#{pagePutInfo.slug}/action"
-    data:
-      'action': JSON.stringify(bundle)
-    success: () ->
-      # update pageObject (guard for tests)
+  wiki.origin.put pagePutInfo.slug, bundle, (error) ->
+    if error
+      action.error = {error.type, error.msg, response: error.xhr.responseText}
+      pushToLocal $page, pagePutInfo, action
+    else
       pageObject.apply action if pageObject?.apply
       neighborhood.updateSitemap pageObject
       addToJournal $page.find('.journal'), action
-      if action.type == 'fork' # push
-        localStorage.removeItem $page.attr('id')
-    error: (xhr, type, msg) ->
-      action.error = {type, msg, response: xhr.responseText}
-      pushToLocal $page, pagePutInfo, action
+      if action.type == 'fork'
+        wiki.local.delete $page.attr('id')
 
 pageHandler.put = ($page, action) ->
 

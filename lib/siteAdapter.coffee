@@ -79,6 +79,13 @@ siteAdapter.local = {
       done null, JSON.parse page
     else
       done {msg: "no page named '#{route}' in browser local storage"}
+  put: (route, data, done) ->
+    console.log "wiki.local.put #{route}"
+    localStorage.setItem(route, JSON.stringify(data))
+    done()
+  delete: (route) ->
+    console.log "wiki.local.delete #{route}"
+    localStorage.removeItem route
 }
 
 siteAdapter.origin = {
@@ -92,6 +99,16 @@ siteAdapter.origin = {
       url: "/#{route}?adapted"
       success: (page) -> done null, page
       error: (xhr, type, msg) -> done {msg, xhr}, null
+  put: (route, data, done) ->
+    console.log "wiki.orgin.put #{route}"
+    $.ajax
+      type: 'PUT'
+      url: "/page/#{route}/action"
+      data:
+        'action': JSON.stringify(data)
+      success: () -> done null
+      error: (xhr, type, msg) -> done {xhr, type, msg}
+
 }
 
 siteAdapter.site = (site) ->
