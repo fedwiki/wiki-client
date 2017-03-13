@@ -34,13 +34,13 @@
     "test": "grunt mochaTest"
   },
   "devDependencies": {
-    "coffee-script": "^1.12.2",
+    "coffee-script": "^1.12.4",
     "coffeeify": "^2.1.0",
     "expect.js": "^0.3.1",
     "grunt": "^1.0.1",
     "grunt-browserify": "^5.0.0",
     "grunt-contrib-clean": "^1.0.0",
-    "grunt-contrib-uglify": "^2.0.0",
+    "grunt-contrib-uglify": "^2.2.0",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-git-authors": "^3.2.0",
     "grunt-mocha-test": "^0.13.2",
