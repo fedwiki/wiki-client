@@ -126,9 +126,9 @@ pushToServer = ($page, pagePutInfo, action) ->
   if action.type == 'fork'
     bundle.item = deepCopy pageObject.getRawPage()
 
-  wiki.origin.put pagePutInfo.slug, bundle, (error) ->
-    if error
-      action.error = {error.type, error.msg, response: error.xhr.responseText}
+  wiki.origin.put pagePutInfo.slug, bundle, (err) ->
+    if err
+      action.error = { type: err.type, msg: err.msg, response: err.xhr.responseText}
       pushToLocal $page, pagePutInfo, action
     else
       pageObject.apply action if pageObject?.apply
