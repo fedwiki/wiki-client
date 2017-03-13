@@ -18,7 +18,7 @@ emit = ($item, item) ->
     $item.append """
       <p>
         <img class='remote'
-          src='//#{site}/favicon.png'
+          src='#{wiki.site(site).flag()}'
           title='#{site}'
           data-site="#{site}"
           data-slug="#{slug}"

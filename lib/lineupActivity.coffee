@@ -26,7 +26,7 @@ row = (page) ->
     <tr><td align=right>
       #{sparks page.getRawPage().journal}
     <td>
-      <img class="remote" src="//#{remote}/favicon.png">
+      <img class="remote" src="#{wiki.site(remote).flag()}">
       #{title}
   """
 

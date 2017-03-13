@@ -137,7 +137,10 @@ handleHeaderClick = (e) ->
     $page = $(e.target).parents('.page:first')
     crumbs = lineup.crumbs $page.data('key'), location.host
     [target, ] = crumbs
-    newWindow = window.open "//#{crumbs.join '/'}", target
+    [prefix, ] = wiki.site(target).getURL('').split('/')
+    if prefix is ''
+      prefix = window.location.protocol
+    newWindow = window.open "#{prefix}//#{crumbs.join '/'}", target
     newWindow.focus()
 
 
@@ -147,7 +150,7 @@ emitHeader = ($header, $page, pageObject) ->
   $header.append """
     <h1 title="#{tooltip}">
       <a href="#{pageObject.siteLineup()}" target="#{remote}">
-        <img src="//#{remote}/favicon.png" height="32px" class="favicon">
+        <img src="#{wiki.site(remote).flag()}" height="32px" class="favicon">
       </a> #{resolve.escape pageObject.getTitle()}
     </h1>
   """
@@ -178,8 +181,8 @@ emitFooter = ($footer, pageObject) ->
   slug = pageObject.getSlug()
   $footer.append """
     <a id="license" href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a> .
-    <a class="show-page-source" href="/#{slug}.json?random=#{random.randomBytes(4)}" title="source">JSON</a> .
-    <a href= "//#{host}/#{slug}.html" target="#{host}">#{host} </a> .
+    <a class="show-page-source" href="#{wiki.site(host).getURL(slug)}.json?random=#{random.randomBytes(4)}" title="source">JSON</a> .
+    <a href= "#{wiki.site(host).getURL(slug)}.html" date-slug="#{slug}" target="#{host}">#{host} </a> .
     <a href= "#" class=search>search</a>
   """
 
@@ -214,7 +217,7 @@ emitTwins = ($page) ->
       flags = for {remoteSite, item}, i in bin
         break if i >= 8
         """<img class="remote"
-          src="http://#{remoteSite}/favicon.png"
+          src="#{wiki.site(remoteSite).flag()}"
           data-slug="#{slug}"
           data-site="#{remoteSite}"
           title="#{remoteSite}">
