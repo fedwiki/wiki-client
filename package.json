@@ -1,6 +1,9 @@
 {
   "name": "wiki-client",
   "version": "0.8.3",
+  "publishConfig": {
+    "tag": "next"
+  },
   "description": "Federated Wiki - Client-side Javascript",
   "keywords": [
     "wiki",
@@ -55,6 +58,6 @@
     "url": "https://github.com/fedwiki/wiki-client/issues"
   },
   "engines": {
-    "node": ">=4.x"
+    "node": ">=6.x"
   }
 }
