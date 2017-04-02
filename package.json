@@ -1,8 +1,8 @@
 {
   "name": "wiki-client",
-  "version": "0.9.0-1",
+  "version": "0.9.0-2",
   "publishConfig": {
-    "tag": "next"
+    "tag": "optional"
   },
   "description": "Federated Wiki - Client-side Javascript",
   "keywords": [
