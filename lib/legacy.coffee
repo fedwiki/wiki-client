@@ -219,7 +219,7 @@ $ ->
     .click ->
       $('.editEnable').toggle()
       $('.page').each refresh.cycle
-  $('.editEnable').toggle()
+  $('.editEnable').toggle() unless isAuthenticated
 
   target.bind()
 
