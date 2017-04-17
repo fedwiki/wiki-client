@@ -43,6 +43,10 @@ resolve.resolveLinks = (string, sanitize=escape) ->
     else
       match
 
+  internalWithPipe = (match, name, slug) ->
+    slug = asSlug if slug then slug else name # if someone enters something unsluggish as slug
+    stash """<a class="internal" href="/#{slug}.html" data-page-name="#{slug}" title="#{resolve.resolutionContext.join(' => ')}">#{escape name}</a>"""
+
   external = (match, href, protocol, rest) ->
     stash """<a class="external" target="_blank" href="#{href}" title="#{href}" rel="nofollow">#{escape rest} <img src="/images/external-link-ltr-icon.png"></a>"""
 
@@ -52,11 +56,12 @@ resolve.resolveLinks = (string, sanitize=escape) ->
   #   - remaining text is sanitized and/or escaped
   #   - unique markers are replaced with unstashed links
 
+
   string = string
     .replace /〖(\d+)〗/g, "〖 $1 〗"
-    .replace /\[\[([^\]]+)\]\]/gi, internal
+    .replace /\[\[([^\]|]+)\]\]/gi, internal
+    .replace /\[\[([^\]]+)(\|[^\]]+)\]\]/gi, internalWithPipe
     .replace /\[((http|https|ftp):.*?) (.*?)\]/gi, external
   sanitize string
     .replace /〖(\d+)〗/g, unstash
-
 
