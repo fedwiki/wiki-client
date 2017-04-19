@@ -108,7 +108,19 @@ siteAdapter.origin = {
         'action': JSON.stringify(data)
       success: () -> done null
       error: (xhr, type, msg) -> done {xhr, type, msg}
+}
 
+siteAdapter.recycler = {
+  flag: -> "/recycler/favicon.png"
+  getURL: (route) -> "/recycler/#{route}"
+  get: (route, done) ->
+    console.log "wiki.recycler.get #{route}"
+    $.ajax
+      type: 'GET'
+      dataType: 'json'
+      url: "/recycler/#{route}"
+      success: (page) -> done null, page
+      error: (xhr, type, msg) -> done {msg, xhr}, null
 }
 
 siteAdapter.site = (site) ->
