@@ -212,6 +212,15 @@ $ ->
     .click ->
       dialog.open "Lineup Activity", lineupActivity.show()
 
+  # $('.editEnable').is(':visible')
+  $("<span> wiki <span class=editEnable>✔︎</span> &nbsp; </span>")
+    .css({"cursor":"pointer"})
+    .appendTo('footer')
+    .click ->
+      $('.editEnable').toggle()
+      $('.page').each refresh.cycle
+  $('.editEnable').toggle() unless isAuthenticated
+
   target.bind()
 
 
