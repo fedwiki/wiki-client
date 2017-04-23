@@ -2,7 +2,7 @@
   "name": "wiki-client",
   "version": "0.9.0-2",
   "publishConfig": {
-    "tag": "optional"
+    "tag": "next"
   },
   "description": "Federated Wiki - Client-side Javascript",
   "keywords": [

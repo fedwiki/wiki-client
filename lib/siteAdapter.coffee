@@ -208,7 +208,7 @@ siteAdapter.site = (site) ->
       if sitePrefix[site]?
         if sitePrefix[site] is ""
           console.log "#{site} is unreachable"
-          done {"#{site} is unreachable"}, null
+          done {msg: "#{site} is unreachable", xhr: {status: 0}}, null
         else
           url = "#{sitePrefix[site]}/#{route}"
           $.ajax
@@ -221,7 +221,7 @@ siteAdapter.site = (site) ->
         findAdapter(site).prefix (prefix) ->
           if prefix is ""
             console.log "#{site} is unreachable"
-            done {"#{site} is unreachable"}, null
+            done {msg: "#{site} is unreachable", xhr: {status: 0}}, null
           else
             url = "#{prefix}/#{route}"
             $.ajax
