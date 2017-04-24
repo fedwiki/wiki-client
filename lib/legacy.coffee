@@ -218,7 +218,10 @@ $ ->
     .appendTo('footer')
     .click ->
       $('.editEnable').toggle()
-      $('.page').each refresh.cycle
+      $('.page').each ->
+        $page = $(this)
+        pageObject = lineup.atKey $page.data('key')
+        refresh.rebuildPage pageObject, $page.empty()
   $('.editEnable').toggle() unless isAuthenticated
 
   target.bind()
