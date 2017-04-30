@@ -205,15 +205,15 @@ $ ->
     $('.page').each (index, element) ->
       refresh.emitTwins $(element)
 
-  lineupActivity = require './lineupActivity'
-  $("<span class=menu> &nbsp; &equiv; &nbsp; </span>")
-    .css({"cursor":"pointer", "font-size": "120%"})
-    .appendTo('footer')
-    .click ->
-      dialog.open "Lineup Activity", lineupActivity.show()
+  # lineupActivity = require './lineupActivity'
+  # $("<span class=menu> &nbsp; &equiv; &nbsp; </span>")
+  #   .css({"cursor":"pointer", "font-size": "120%"})
+  #   .appendTo('footer')
+  #   .click ->
+  #     dialog.open "Lineup Activity", lineupActivity.show()
 
   # $('.editEnable').is(':visible')
-  $("<span> wiki <span class=editEnable>✔︎</span> &nbsp; </span>")
+  $("<span>&nbsp; wiki <span class=editEnable>✔︎</span> &nbsp; </span>")
     .css({"cursor":"pointer"})
     .appendTo('footer')
     .click ->
