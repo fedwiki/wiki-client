@@ -238,7 +238,7 @@ renderPageIntoPageElement = (pageObject, $page) ->
   $paper = $("<div class='paper' />")
   $page.append($paper)
   [$twins, $header, $story, $journal, $footer] = ['twins', 'header', 'story', 'journal', 'footer'].map (className) ->
-    $("<div />").addClass(className).appendTo($paper)
+    $("<div />").addClass(className).appendTo($paper) if className != 'journal' or $('.editEnable').is(':visible')
 
   emitHeader $header, $page, pageObject
   emitTimestamp $header, $page, pageObject
@@ -248,13 +248,14 @@ renderPageIntoPageElement = (pageObject, $page) ->
     $story.append $item
     plugin.do $item, item, done
 
-  pageObject.seqActions (each, done) ->
-    addToJournal $journal, each.separator if each.separator
-    addToJournal $journal, each.action
-    done()
+  if $('.editEnable').is(':visible')
+    pageObject.seqActions (each, done) ->
+      addToJournal $journal, each.separator if each.separator
+      addToJournal $journal, each.action
+      done()
 
   emitTwins $page
-  emitControls $journal
+  emitControls $journal if $('.editEnable').is(':visible')
   emitFooter $footer, pageObject
 
 
@@ -275,9 +276,10 @@ rebuildPage = (pageObject, $page) ->
   #STATE -- update url when adding new page, removing others
   state.setUrl()
 
-  initDragging $page
-  initMerging $page
-  initAddButton $page
+  if $('.editEnable').is(':visible')
+    initDragging $page 
+    initMerging $page
+    initAddButton $page
   $page
 
 buildPage = (pageObject, $page) ->

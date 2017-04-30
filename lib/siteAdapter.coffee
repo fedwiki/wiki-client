@@ -37,7 +37,7 @@ findAdapter = (site) ->
     if sitePrefix[site]?
       done sitePrefix[site]
 
-    testURL = "//#{site}/favicon.png?testing"
+    testURL = "//#{site}/favicon.png"
     this.test testURL, (worked) ->
       if worked
         sitePrefix[site] = "//#{site}"
@@ -45,7 +45,7 @@ findAdapter = (site) ->
       else
         switch location.protocol
           when 'http:'
-            testURL = "https://#{site}/favicon.png?testing"
+            testURL = "https://#{site}/favicon.png"
             this.test testURL, (worked) ->
               if worked
                 sitePrefix[site] = "https://#{site}"
@@ -55,7 +55,7 @@ findAdapter = (site) ->
                 sitePrefix[site] = ""
                 done ""
           when 'https:'
-            testURL = "/proxy/#{site}/favicon.png?testing"
+            testURL = "/proxy/#{site}/favicon.png"
             this.test testURL, (worked) ->
               if worked
                 sitePrefix[site] = "/proxy/#{site}"
@@ -71,7 +71,7 @@ findAdapter = (site) ->
             done ""
 
 siteAdapter.local = {
-  flag: -> "/favicon.png?adapted"
+  flag: -> "/favicon.png"
   getURL: (route) -> "/#{route}"
   get: (route, done) ->
     console.log "wiki.local.get #{route}"
@@ -89,14 +89,14 @@ siteAdapter.local = {
 }
 
 siteAdapter.origin = {
-  flag: -> "/favicon.png?adapted"
+  flag: -> "/favicon.png"
   getURL: (route) -> "/#{route}"
   get: (route, done) ->
     console.log "wiki.origin.get #{route}"
     $.ajax
       type: 'GET'
       dataType: 'json'
-      url: "/#{route}?adapted"
+      url: "/#{route}"
       success: (page) -> done null, page
       error: (xhr, type, msg) -> done {msg, xhr}, null
   put: (route, data, done) ->
@@ -148,7 +148,7 @@ siteAdapter.site = (site) ->
           tempFlags[site]
         else
           # we already know how to construct flag url
-          sitePrefix[site] + "/favicon.png?adapted"
+          sitePrefix[site] + "/favicon.png"
       else if tempFlags[site]?
         # we already have a temp. flag
         console.log "wiki.site(#{site}).flag - have temp. flag"
@@ -163,7 +163,7 @@ siteAdapter.site = (site) ->
             console.log "Prefix for #{site} is #{prefix}"
             # replace temp flags
             tempFlag = tempFlags[site]
-            realFlag = sitePrefix[site] + "/favicon.png?replaceTemp"
+            realFlag = sitePrefix[site] + "/favicon.png"
             # replace temporary flag where it is used as an image
             $('img[src="' + tempFlag + '"]').attr('src', realFlag)
             # replace temporary flag where its used as a background to fork event in journal
@@ -208,9 +208,9 @@ siteAdapter.site = (site) ->
       if sitePrefix[site]?
         if sitePrefix[site] is ""
           console.log "#{site} is unreachable"
-          done {"#{site} is unreachable"}, null
+          done {msg: "#{site} is unreachable", xhr: {status: 0}}, null
         else
-          url = "#{sitePrefix[site]}/#{route}?adapted"
+          url = "#{sitePrefix[site]}/#{route}"
           $.ajax
             type: 'GET'
             dataType: 'json'
@@ -221,9 +221,9 @@ siteAdapter.site = (site) ->
         findAdapter(site).prefix (prefix) ->
           if prefix is ""
             console.log "#{site} is unreachable"
-            done {"#{site} is unreachable"}, null
+            done {msg: "#{site} is unreachable", xhr: {status: 0}}, null
           else
-            url = "#{prefix}/#{route}?adapted"
+            url = "#{prefix}/#{route}"
             $.ajax
               type: 'GET'
               dataType: 'json'
