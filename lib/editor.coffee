@@ -27,6 +27,7 @@ escape = (string) ->
 
 textEditor = ($item, item, option={}) ->
   console.log 'textEditor', item.id, option
+  return unless $('.editEnable').is(':visible')
 
   keydownHandler = (e) ->
 

@@ -78,14 +78,15 @@ bind = ($item, item) ->
     syncEditAction()
 
   addReference = (data) ->
-    wiki.site(data.site).get "#{data-slug}.json", (remote) ->
-      item.type = 'reference'
-      item.site = data.site
-      item.slug = data.slug
-      item.title = remote.title || data.slug
-      item.text = synopsis remote
-      syncEditAction()
-      neighborhood.registerNeighbor item.site if item.site?
+    wiki.site(data.site).get "#{data.slug}.json", (err, remote) ->
+      if !err
+        item.type = 'reference'
+        item.site = data.site
+        item.slug = data.slug
+        item.title = remote.title || data.slug
+        item.text = synopsis remote
+        syncEditAction()
+        neighborhood.registerNeighbor item.site if item.site?
 
   addVideo = (video) ->
     item.type = 'video'

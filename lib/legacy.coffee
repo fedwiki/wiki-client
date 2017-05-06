@@ -205,12 +205,17 @@ $ ->
     $('.page').each (index, element) ->
       refresh.emitTwins $(element)
 
-  lineupActivity = require './lineupActivity'
-  $("<span class=menu> &nbsp; &equiv; &nbsp; </span>")
-    .css({"cursor":"pointer", "font-size": "120%"})
+  # $('.editEnable').is(':visible')
+  $("<span>&nbsp; wiki <span class=editEnable>✔︎</span> &nbsp; </span>")
+    .css({"cursor":"pointer"})
     .appendTo('footer')
     .click ->
-      dialog.open "Lineup Activity", lineupActivity.show()
+      $('.editEnable').toggle()
+      $('.page').each ->
+        $page = $(this)
+        pageObject = lineup.atKey $page.data('key')
+        refresh.rebuildPage pageObject, $page.empty()
+  $('.editEnable').toggle() unless isAuthenticated
 
   target.bind()
 
