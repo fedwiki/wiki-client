@@ -194,3 +194,12 @@ pageHandler.put = ($page, action) ->
     pushToLocal($page, pagePutInfo, action)
   else
     pushToServer($page, pagePutInfo, action)
+
+pageHandler.delete = (pageObject, $page, done) ->
+  console.log 'delete server-side'
+  more = ->
+    err = null
+    neighborhood.deleteFromSitemap pageObject unless err?
+    done err
+  setTimeout(more, 300) # simulate server turnaround
+
