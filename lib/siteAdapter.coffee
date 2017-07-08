@@ -108,6 +108,14 @@ siteAdapter.origin = {
         'action': JSON.stringify(data)
       success: () -> done null
       error: (xhr, type, msg) -> done {xhr, type, msg}
+  delete: (route, done) ->
+    console.log "wiki.origin.delete #{route}"
+    $.ajax
+      type: 'DELETE'
+      url: "/#{route}"
+      success: () -> done null
+      error: (xhr, type, msg) -> done {xhr, type, msg}
+
 
 }
 

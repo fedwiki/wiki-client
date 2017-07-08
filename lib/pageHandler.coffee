@@ -197,9 +197,9 @@ pageHandler.put = ($page, action) ->
 
 pageHandler.delete = (pageObject, $page, done) ->
   console.log 'delete server-side'
-  more = ->
-    err = null
-    neighborhood.deleteFromSitemap pageObject unless err?
-    done err
-  setTimeout(more, 300) # simulate server turnaround
-
+  wiki.origin.delete "#{pageObject.getSlug()}.json", (err) ->
+    more = ->
+      # err = null
+      neighborhood.deleteFromSitemap pageObject unless err?
+      done err
+    setTimeout(more, 300) # simulate server turnaround
