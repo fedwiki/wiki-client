@@ -32,6 +32,7 @@ textEditor = ($item, item, option={}) ->
   keydownHandler = (e) ->
 
     if (e.altKey || e.ctlKey || e.metaKey) and e.which == 83 #alt-s
+      e.preventDefault()
       $textarea.focusout()
       return false
 
