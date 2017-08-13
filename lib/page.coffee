@@ -50,10 +50,13 @@ newPage = (json, site) ->
     page.plugin?
 
   isRemote = ->
-    ! (site in [undefined, null, 'view', 'origin', 'local'])
+    ! (site in [undefined, null, 'view', 'origin', 'local', 'recycler'])
 
   isLocal = ->
     site == 'local'
+
+  isRecycler = ->
+    site == 'recycler'
 
   getRemoteSite = (host = null) ->
     if isRemote() then site else host
@@ -184,6 +187,6 @@ newPage = (json, site) ->
     isCreate = (action) -> action.type == 'create'
     page.journal.reverse().find(isCreate)
 
-  {getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, setTitle, getRevision, getDate, getTimestamp, getSynopsis, addItem, getItem, addParagraph, seqItems, seqActions, become, siteLineup, merge, apply, getCreate}
+  {getRawPage, getContext, isPlugin, isRemote, isLocal, isRecycler, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, setTitle, getRevision, getDate, getTimestamp, getSynopsis, addItem, getItem, addParagraph, seqItems, seqActions, become, siteLineup, merge, apply, getCreate}
 
 module.exports = {newPage, asSlug, asTitle, pageEmitter}

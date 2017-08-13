@@ -125,6 +125,7 @@ siteAdapter.recycler = {
 
 siteAdapter.site = (site) ->
   return siteAdapter.origin if !site or site is window.location.host
+  return siteAdapter.recycler if site is 'recycler'
 
   createTempFlag = (site) ->
     console.log "creating temp flags for #{site}"

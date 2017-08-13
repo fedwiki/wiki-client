@@ -145,7 +145,10 @@ handleHeaderClick = (e) ->
 
 
 emitHeader = ($header, $page, pageObject) ->
-  remote = pageObject.getRemoteSite location.host
+  if pageObject.isRecycler()
+    remote = 'recycler'
+  else
+    remote = pageObject.getRemoteSite location.host
   tooltip = pageObject.getRemoteSiteDetails location.host
   $header.append """
     <h1 title="#{tooltip}">
@@ -267,6 +270,7 @@ createMissingFlag = ($page, pageObject) ->
 
 rebuildPage = (pageObject, $page) ->
   $page.addClass('local') if pageObject.isLocal()
+  $page.addClass('recycler') if pageObject.isRecycler()
   $page.addClass('remote') if pageObject.isRemote()
   $page.addClass('plugin') if pageObject.isPlugin()
 
@@ -277,7 +281,7 @@ rebuildPage = (pageObject, $page) ->
   state.setUrl()
 
   if $('.editEnable').is(':visible')
-    initDragging $page 
+    initDragging $page
     initMerging $page
     initAddButton $page
   $page

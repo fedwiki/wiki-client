@@ -51,6 +51,7 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
   adapter = switch site
     when 'local' then wiki.local
     when 'origin' then wiki.origin
+    when 'recycler' then wiki.recycler
     when 'view' then localBeforeOrigin
     else wiki.site(site)
 
