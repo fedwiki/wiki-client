@@ -64,6 +64,17 @@ neighborhood.updateSitemap = (pageObject)->
     sitemap.push entry
   $('body').trigger 'new-neighbor-done', site
 
+neighborhood.deleteFromSitemap = (pageObject)->
+  site = location.host
+  return unless neighborInfo = neighborhood.sites[site]
+  return if neighborInfo.sitemapRequestInflight
+  slug = pageObject.getSlug()
+  sitemap = neighborInfo.sitemap
+  index = sitemap.findIndex (slot) -> slot.slug == slug
+  return unless index >= 0
+  sitemap.splice(index)
+  $('body').trigger 'delete-neighbor-done', site
+
 neighborhood.listNeighbors = ()->
   _.keys( neighborhood.sites )
 
