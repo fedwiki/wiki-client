@@ -290,7 +290,7 @@ p.readout {
 }
 
 .page.recycler > .paper {
-  box-shadow: inset 0px 0px 40px 0px rgba(107,142,35,.5)
+  box-shadow: inset 0px 0px 40px 0px rgba(220,0,0,.5)
 }
 
 .paper {
