@@ -155,13 +155,17 @@ $ ->
         pageHandler.delete pageObject, $page, (err) ->
           return if err?
           console.log 'server delete successful'
-          futurePage = refresh.newFuturePage(pageObject.getTitle(), pageObject.getCreate())
-          pageObject.become futurePage
-          # [slug, rev] = $page.attr('id').split('_rev')
-          # $page.attr('id',slug)
-          $page.attr 'id', futurePage.getSlug()
-          refresh.rebuildPage pageObject, $page
-          $page.addClass('ghost')
+          if pageObject.isRecycler()
+            # make recycler page into a ghost
+            $page.addClass('ghost')
+          else
+            futurePage = refresh.newFuturePage(pageObject.getTitle(), pageObject.getCreate())
+            pageObject.become futurePage
+            # [slug, rev] = $page.attr('id').split('_rev')
+            # $page.attr('id',slug)
+            $page.attr 'id', futurePage.getSlug()
+            refresh.rebuildPage pageObject, $page
+            $page.addClass('ghost')
 
     .delegate 'button.create', 'click', (e) ->
       getTemplate $(e.target).data('slug'), (template) ->

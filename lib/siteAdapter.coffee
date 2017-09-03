@@ -128,6 +128,13 @@ siteAdapter.recycler = {
       url: "/recycler/#{route}"
       success: (page) -> done null, page
       error: (xhr, type, msg) -> done {msg, xhr}, null
+  delete: (route, done) ->
+    console.log "wiki.recycler.delete #{route}"
+    $.ajax
+      type: 'DELETE'
+      url: "/recycler/#{route}"
+      success: () -> done null
+      error: (xhr, type, msg) -> done {xhr, type, msg}
 }
 
 siteAdapter.site = (site) ->
