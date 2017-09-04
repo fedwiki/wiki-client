@@ -108,11 +108,38 @@ siteAdapter.origin = {
         'action': JSON.stringify(data)
       success: () -> done null
       error: (xhr, type, msg) -> done {xhr, type, msg}
+  delete: (route, done) ->
+    console.log "wiki.origin.delete #{route}"
+    $.ajax
+      type: 'DELETE'
+      url: "/#{route}"
+      success: () -> done null
+      error: (xhr, type, msg) -> done {xhr, type, msg}
+}
 
+siteAdapter.recycler = {
+  flag: -> "/recycler/favicon.png"
+  getURL: (route) -> "/recycler/#{route}"
+  get: (route, done) ->
+    console.log "wiki.recycler.get #{route}"
+    $.ajax
+      type: 'GET'
+      dataType: 'json'
+      url: "/recycler/#{route}"
+      success: (page) -> done null, page
+      error: (xhr, type, msg) -> done {msg, xhr}, null
+  delete: (route, done) ->
+    console.log "wiki.recycler.delete #{route}"
+    $.ajax
+      type: 'DELETE'
+      url: "/recycler/#{route}"
+      success: () -> done null
+      error: (xhr, type, msg) -> done {xhr, type, msg}
 }
 
 siteAdapter.site = (site) ->
   return siteAdapter.origin if !site or site is window.location.host
+  return siteAdapter.recycler if site is 'recycler'
 
   createTempFlag = (site) ->
     console.log "creating temp flags for #{site}"

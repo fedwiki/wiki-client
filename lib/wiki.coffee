@@ -15,6 +15,7 @@ wiki = {}
 siteAdapter = require './siteAdapter'
 wiki.local = siteAdapter.local
 wiki.origin = siteAdapter.origin
+wiki.recycler = siteAdapter.recycler
 wiki.site = siteAdapter.site
 
 # known use: wiki.asSlug wiki-plugin-reduce/client/reduce.coffee:

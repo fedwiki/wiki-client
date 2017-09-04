@@ -51,6 +51,7 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
   adapter = switch site
     when 'local' then wiki.local
     when 'origin' then wiki.origin
+    when 'recycler' then wiki.recycler
     when 'view' then localBeforeOrigin
     else wiki.site(site)
 
@@ -194,3 +195,19 @@ pageHandler.put = ($page, action) ->
     pushToLocal($page, pagePutInfo, action)
   else
     pushToServer($page, pagePutInfo, action)
+
+pageHandler.delete = (pageObject, $page, done) ->
+  console.log 'delete server-side'
+  console.log 'pageObject:', pageObject
+  if pageObject.isRecycler()
+    wiki.recycler.delete "#{pageObject.getSlug()}.json", (err) ->
+      more = ->
+        done err
+      setTimeout(more, 300)
+  else
+    wiki.origin.delete "#{pageObject.getSlug()}.json", (err) ->
+      more = ->
+        # err = null
+        neighborhood.deleteFromSitemap pageObject unless err?
+        done err
+      setTimeout(more, 300) # simulate server turnaround

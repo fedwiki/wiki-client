@@ -145,7 +145,10 @@ handleHeaderClick = (e) ->
 
 
 emitHeader = ($header, $page, pageObject) ->
-  remote = pageObject.getRemoteSite location.host
+  if pageObject.isRecycler()
+    remote = 'recycler'
+  else
+    remote = pageObject.getRemoteSite location.host
   tooltip = pageObject.getRemoteSiteDetails location.host
   $header.append """
     <h1 title="#{tooltip}">
@@ -267,6 +270,7 @@ createMissingFlag = ($page, pageObject) ->
 
 rebuildPage = (pageObject, $page) ->
   $page.addClass('local') if pageObject.isLocal()
+  $page.addClass('recycler') if pageObject.isRecycler()
   $page.addClass('remote') if pageObject.isRemote()
   $page.addClass('plugin') if pageObject.isPlugin()
 
@@ -277,7 +281,7 @@ rebuildPage = (pageObject, $page) ->
   state.setUrl()
 
   if $('.editEnable').is(':visible')
-    initDragging $page 
+    initDragging $page
     initMerging $page
     initAddButton $page
   $page
@@ -285,6 +289,40 @@ rebuildPage = (pageObject, $page) ->
 buildPage = (pageObject, $page) ->
   $page.data('key', lineup.addPage(pageObject))
   rebuildPage(pageObject, $page)
+
+newFuturePage = (title, create) ->
+  slug = asSlug title
+  pageObject = newPage()
+  pageObject.setTitle(title)
+  hits = []
+  for site, info of neighborhood.sites
+    if info.sitemap?
+      result = _.find info.sitemap, (each) ->
+        each.slug == slug
+      if result?
+        hits.push
+          "type": "reference"
+          "site": site
+          "slug": slug
+          "title": result.title || slug
+          "text": result.synopsis || ''
+  if hits.length > 0
+    pageObject.addItem
+      'type': 'future'
+      'text': 'We could not find this page in the expected context.'
+      'title': title
+      'create': create
+    pageObject.addItem
+      'type': 'paragraph'
+      'text': "We did find the page in your current neighborhood."
+    pageObject.addItem hit for hit in hits
+  else
+     pageObject.addItem
+      'type': 'future'
+      'text': 'We could not find this page.'
+      'title': title
+      'create': create
+  pageObject
 
 cycle = ->
   $page = $(this)
@@ -296,44 +334,13 @@ cycle = ->
     site: $page.data('site')
   }
 
-  createGhostPage = ->
+  whenNotGotten = ->
     title = $("""a[href="/#{slug}.html"]:last""").text() or slug
     key = $("""a[href="/#{slug}.html"]:last""").parents('.page').data('key')
     create = lineup.atKey(key)?.getCreate()
-    #NEWPAGE future after failed pageHandler.get then buildPage
-    pageObject = newPage()
-    pageObject.setTitle(title)
-
-    hits = []
-    for site, info of neighborhood.sites
-      if info.sitemap?
-        result = _.find info.sitemap, (each) ->
-          each.slug == slug
-        if result?
-          hits.push
-            "type": "reference"
-            "site": site
-            "slug": slug
-            "title": result.title || slug
-            "text": result.synopsis || ''
-    if hits.length > 0
-      pageObject.addItem
-        'type': 'future'
-        'text': 'We could not find this page in the expected context.'
-        'title': title
-        'create': create
-      pageObject.addItem
-        'type': 'paragraph'
-        'text': "We did find the page in your current neighborhood."
-      pageObject.addItem hit for hit in hits
-    else
-       pageObject.addItem
-        'type': 'future'
-        'text': 'We could not find this page.'
-        'title': title
-        'create': create
-
+    pageObject = newFuturePage(title)
     buildPage( pageObject, $page ).addClass('ghost')
+
 
   whenGotten = (pageObject) ->
     buildPage( pageObject, $page )
@@ -342,7 +349,7 @@ cycle = ->
 
   pageHandler.get
     whenGotten: whenGotten
-    whenNotGotten: createGhostPage
+    whenNotGotten: whenNotGotten
     pageInformation: pageInformation
 
-module.exports = {cycle, emitTwins, buildPage, rebuildPage}
+module.exports = {cycle, emitTwins, buildPage, rebuildPage, newFuturePage}
