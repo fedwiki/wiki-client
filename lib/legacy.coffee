@@ -71,6 +71,21 @@ $ ->
         link.showResult resultPage
       reader.readAsText(file)
 
+  deletePage = (pageObject, $page) ->
+    console.log 'fork to delete'
+    pageHandler.delete pageObject, $page, (err) ->
+      return if err?
+      console.log 'server delete successful'
+      if pageObject.isRecycler()
+        # make recycler page into a ghost
+        $page.addClass('ghost')
+      else
+        futurePage = refresh.newFuturePage(pageObject.getTitle(), pageObject.getCreate())
+        pageObject.become futurePage
+        $page.attr 'id', futurePage.getSlug()
+        refresh.rebuildPage pageObject, $page
+        $page.addClass('ghost')
+
   getTemplate = (slug, done) ->
     return done(null) unless slug
     console.log 'getTemplate', slug
@@ -139,7 +154,9 @@ $ ->
       $page = $(e.target).parents('.page')
       return if $page.find('.future').length
       pageObject = lineup.atKey $page.data('key')
-      if pageObject.getRevision()
+      if $page.attr('id').match /_rev0$/
+        deletePage pageObject, $page
+      else
         action = {type: 'fork'}
         if $page.hasClass('local')
           return if pageHandler.useLocalStorage()
@@ -152,22 +169,6 @@ $ ->
           $page.find('.revision').remove()
         $page.removeClass 'ghost'
         pageHandler.put $page, action
-      else
-        console.log 'fork to delete'
-        pageHandler.delete pageObject, $page, (err) ->
-          return if err?
-          console.log 'server delete successful'
-          if pageObject.isRecycler()
-            # make recycler page into a ghost
-            $page.addClass('ghost')
-          else
-            futurePage = refresh.newFuturePage(pageObject.getTitle(), pageObject.getCreate())
-            pageObject.become futurePage
-            # [slug, rev] = $page.attr('id').split('_rev')
-            # $page.attr('id',slug)
-            $page.attr 'id', futurePage.getSlug()
-            refresh.rebuildPage pageObject, $page
-            $page.addClass('ghost')
 
     .delegate 'button.create', 'click', (e) ->
       getTemplate $(e.target).data('slug'), (template) ->
