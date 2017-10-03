@@ -14,4 +14,6 @@ module.exports = (page) ->
     synopsis ||= page.story? && "A page with #{page.story.length} items."
   else
     synopsis = 'A page with no story.'
-  return synopsis
+  # discard anything after the first line break, after trimming any at beginning
+  synopsis = synopsis.trim().split(/\r|\n/, 1)[0]
+  return synopsis.substring(0, 560)
