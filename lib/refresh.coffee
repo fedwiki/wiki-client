@@ -335,8 +335,9 @@ cycle = ->
   }
 
   whenNotGotten = ->
-    title = $("""a[href="/#{slug}.html"]:last""").text() or slug
-    key = $("""a[href="/#{slug}.html"]:last""").parents('.page').data('key')
+    link = $("""a.internal[href="/#{slug}.html"]:last""")
+    title = link.text() or slug
+    key = link.parents('.page').data('key')
     create = lineup.atKey(key)?.getCreate()
     pageObject = newFuturePage(title)
     buildPage( pageObject, $page ).addClass('ghost')
