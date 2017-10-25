@@ -27,6 +27,7 @@ escape = (string) ->
 
 textEditor = ($item, item, option={}) ->
   console.log 'textEditor', item.id, option
+  enterCount = 0 if item.type is 'markdown'
   return unless $('.editEnable').is(':visible')
 
   keydownHandler = (e) ->
@@ -43,13 +44,13 @@ textEditor = ($item, item, option={}) ->
       return false
 
     # provides automatic new paragraphs on enter and concatenation on backspace
-    if item.type is 'paragraph'
+    if item.type is 'paragraph' or 'markdown'
       sel = getSelectionPos($textarea) # position of caret or selected text coords
 
       if e.which is $.ui.keyCode.BACKSPACE and sel.start is 0 and sel.start is sel.end
         $previous = $item.prev()
         previous = itemz.getItem $previous
-        return false unless previous.type is 'paragraph'
+        return false unless previous.type is item.type
         caret = previous[option.field||'text'].length
         suffix = $textarea.val()
         $textarea.val('') # Need current text area to be empty. Item then gets deleted.
@@ -57,20 +58,27 @@ textEditor = ($item, item, option={}) ->
         return false
 
       if e.which is $.ui.keyCode.ENTER
+        # console.log "Type: #{item.type}, enterCount: #{enterCount}"
         return false unless sel
-        $page = $item.parents('.page')
-        text = $textarea.val()
-        prefix = text.substring 0, sel.start
-        suffix = text.substring(sel.end)
-        if prefix is ''
-          $textarea.val(suffix)
-          $textarea.focusout()
-          spawnEditor($page, $item.prev(), prefix, true)
-        else
-          $textarea.val(prefix)
-          $textarea.focusout()
-          spawnEditor($page, $item, suffix)
-        return false
+        if item.type is 'markdown'
+          enterCount++
+        # console.log "Type: #{item.type}, enterCount: #{enterCount}"
+        if item.type is 'paragraph' or (item.type is 'markdown' and enterCount is 2)
+          $page = $item.parents('.page')
+          text = $textarea.val()
+          prefix = text.substring 0, sel.start
+          suffix = text.substring(sel.end)
+          if prefix is ''
+            $textarea.val(suffix)
+            $textarea.focusout()
+            spawnEditor($page, $item.prev(), item.type, prefix)
+          else
+            $textarea.val(prefix)
+            $textarea.focusout()
+            spawnEditor($page, $item, item.type, suffix)
+          return false
+      else
+        enterCount = 0 if item.type is 'markdown'
 
   focusoutHandler = ->
     $item.removeClass 'textEditing'
@@ -107,12 +115,12 @@ textEditor = ($item, item, option={}) ->
   else
     $textarea.focus()
 
-spawnEditor = ($page, $before, text) ->
+spawnEditor = ($page, $before, type, text) ->
   item =
-    type: 'paragraph'
+    type: type
     id: random.itemId()
     text: text
-  $item = $ """<div class="item paragraph" data-id=#{item.id}></div>"""
+  $item = $ """<div class="item #{item.type}" data-id=#{item.id}></div>"""
   $item
     .data('item', item)
     .data('pageElement', $page)
