@@ -44,7 +44,7 @@ textEditor = ($item, item, option={}) ->
       return false
 
     # provides automatic new paragraphs on enter and concatenation on backspace
-    if item.type is 'paragraph' or 'markdown'
+    if item.type is 'paragraph' or item.type is 'markdown'
       sel = getSelectionPos($textarea) # position of caret or selected text coords
 
       if e.which is $.ui.keyCode.BACKSPACE and sel.start is 0 and sel.start is sel.end
