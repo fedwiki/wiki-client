@@ -32,15 +32,21 @@ textEditor = ($item, item, option={}) ->
 
   keydownHandler = (e) ->
 
-    if (e.altKey || e.ctlKey || e.metaKey) and e.which == 83 #alt-s
+    if (e.altKey || e.ctlKey || e.metaKey) and e.which == 83 #alt-s for save
       e.preventDefault()
       $textarea.focusout()
       return false
 
-    if (e.altKey || e.ctlKey || e.metaKey) and e.which == 73 #alt-i
+    if (e.altKey || e.ctlKey || e.metaKey) and e.which == 73 #alt-i for information
       e.preventDefault()
       page = $(e.target).parents('.page') unless e.shiftKey
       link.doInternalLink "about #{item.type} plugin", page
+      return false
+
+    if (e.altKey || e.ctlKey || e.metaKey) and e.which == 77 #alt-m for menu
+      e.preventDefault()
+      $item.removeClass(item.type).addClass(item.type = 'factory')
+      $textarea.focusout()
       return false
 
     # provides automatic new paragraphs on enter and concatenation on backspace
