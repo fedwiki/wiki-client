@@ -32,19 +32,25 @@ textEditor = ($item, item, option={}) ->
 
   keydownHandler = (e) ->
 
-    if (e.altKey || e.ctlKey || e.metaKey) and e.which == 83 #alt-s
+    if (e.altKey || e.ctlKey || e.metaKey) and e.which == 83 #alt-s for save
       e.preventDefault()
       $textarea.focusout()
       return false
 
-    if (e.altKey || e.ctlKey || e.metaKey) and e.which == 73 #alt-i
+    if (e.altKey || e.ctlKey || e.metaKey) and e.which == 73 #alt-i for information
       e.preventDefault()
       page = $(e.target).parents('.page') unless e.shiftKey
       link.doInternalLink "about #{item.type} plugin", page
       return false
 
+    if (e.altKey || e.ctlKey || e.metaKey) and e.which == 77 #alt-m for menu
+      e.preventDefault()
+      $item.removeClass(item.type).addClass(item.type = 'factory')
+      $textarea.focusout()
+      return false
+
     # provides automatic new paragraphs on enter and concatenation on backspace
-    if item.type is 'paragraph' or 'markdown'
+    if item.type is 'paragraph' or item.type is 'markdown'
       sel = getSelectionPos($textarea) # position of caret or selected text coords
 
       if e.which is $.ui.keyCode.BACKSPACE and sel.start is 0 and sel.start is sel.end
