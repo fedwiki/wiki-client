@@ -31,6 +31,7 @@
     "test": "grunt mochaTest"
   },
   "devDependencies": {
+    "async": "^2.6.0",
     "coffee-script": "^1.12.4",
     "coffeeify": "^2.1.0",
     "expect.js": "^0.3.1",

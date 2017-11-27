@@ -1,6 +1,8 @@
 # The siteAdapter handles fetching resources from sites, including origin
 # and local browser storage.
 
+queue = require 'async/queue'
+
 module.exports = siteAdapter = {}
 
 # we save the site prefix once we have determined it...
@@ -11,64 +13,77 @@ sitePrefix = {}
 # we know how to get a site's flag
 tempFlags = {}
 
-findAdapter = (site) ->
-  test: (url, done) ->
-    this.inuse = true
-    this.callback = done
-    _that = this
-    this.img = new Image()
-    this.img.onload = () ->
-      _that.inuse = false
-      _that.callback(true)
-    this.img.onerror = (e) ->
-      if _that.inuse
-        _that.inuse = false
-        _that.callback(false)
-    this.start = new Date().getTime()
-    this.img.src = url
-    this.timer =setTimeout( () ->
-      if _that.inuse
-        _that.inuse = false
-        _that.callback(false)
-    , 1500)
+#
+fetchTimeoutMS = 1500
+findQueueWorkers = 4
 
-  prefix: (done) ->
-    console.log "findPrefix for #{site}"
-    if sitePrefix[site]?
-      done sitePrefix[site]
+###
+testWikiSite = (url, good, bad) ->
+  img = new Image()
+  img.onload = good
+  img.onerror = bad
+  img.src = url
+###
 
-    testURL = "//#{site}/favicon.png"
-    this.test testURL, (worked) ->
-      if worked
-        sitePrefix[site] = "//#{site}"
-        done "//#{site}"
+testWikiSite = (url, good, bad) ->
+  fetchTimeout = new Promise( (resolve, reject) ->
+    id = setTimeout( () ->
+      clearTimeout id
+      reject()
+    , fetchTimeoutMS)
+  )
+
+  fetchURL = new Promise( (resolve, reject) ->
+    $.ajax
+      type: 'GET'
+      url: url
+      success: () -> resolve()
+      error: () -> reject()
+  )
+
+  testRace = Promise.race([
+    fetchTimeout
+    fetchURL
+    ])
+  .then () -> good()
+  .catch () -> bad()
+
+
+
+
+findAdapterQ = queue( (task, done) ->
+  site = task.site
+  if sitePrefix[site]?
+    done sitePrefix[site]
+
+  testURL = "//#{site}/favicon.png"
+  testWikiSite testURL, (->
+    sitePrefix[site] = "//#{site}"
+    done "//#{site}"
+  ), ->
+    switch location.protocol
+      when 'http:'
+        testURL = "https://#{site}/favicon.png"
+        testWikiSite testURL, (->
+          sitePrefix[site] = "https://#{site}"
+          done "https://#{site}"
+        ), ->
+          sitePrefix[site] = ""
+          done ""
+      when 'https:'
+        testURL = "/proxy/#{site}/favicon.png"
+        testWikiSite testURL, (->
+          sitePrefix[site] = "/proxy/#{site}"
+          done "/proxy/#{site}"
+        ), ->
+          sitePrefix[site] = ""
+          done ""
       else
-        switch location.protocol
-          when 'http:'
-            testURL = "https://#{site}/favicon.png"
-            this.test testURL, (worked) ->
-              if worked
-                sitePrefix[site] = "https://#{site}"
-                done "https://#{site}"
-              else
-                # site is not http or https, so could be using something else, or down...
-                sitePrefix[site] = ""
-                done ""
-          when 'https:'
-            testURL = "/proxy/#{site}/favicon.png"
-            this.test testURL, (worked) ->
-              if worked
-                sitePrefix[site] = "/proxy/#{site}"
-                done "/proxy/#{site}"
-              else
-                # site is not http or https, so could be using something else, or down...
-                sitePrefix[site] = ""
-                done ""
-          else
-            # if we are here we have a different the origin on a different protocol
-            # maybe we should try https and http, but that's for later...
-            sitePrefix[site] = ""
-            done ""
+        sitePrefix[site] = ""
+        done ""
+, findQueueWorkers) # start with just 1 process working on the queue
+
+
 
 siteAdapter.local = {
   flag: -> "/favicon.png"
@@ -142,7 +157,7 @@ siteAdapter.site = (site) ->
   return siteAdapter.recycler if site is 'recycler'
 
   createTempFlag = (site) ->
-    console.log "creating temp flags for #{site}"
+    console.log "creating temp flag for #{site}"
     myCanvas = document.createElement('canvas')
     myCanvas.width = 32
     myCanvas.height = 32
@@ -178,12 +193,12 @@ siteAdapter.site = (site) ->
           sitePrefix[site] + "/favicon.png"
       else if tempFlags[site]?
         # we already have a temp. flag
-        console.log "wiki.site(#{site}).flag - have temp. flag"
+        console.log "wiki.site(#{site}).flag - already has temp. flag"
         tempFlags[site]
       else
         # we don't know the url to the real flag, or have a temp flag
 
-        findAdapter(site).prefix (prefix) ->
+        findAdapterQ.push {site: site}, (prefix) ->
           if prefix is ""
             console.log "Prefix for #{site} is undetermined..."
           else
@@ -216,7 +231,7 @@ siteAdapter.site = (site) ->
           "#{thisPrefix}/#{route}"
       else
         # don't yet know how to construct links for site, so find how and fixup
-        findAdapter(site).prefix (prefix) ->
+        findAdapterQ.push {site: site}, (prefix) ->
           if prefix is ""
             console.log "#{site} is unreachable"
           else
@@ -243,9 +258,10 @@ siteAdapter.site = (site) ->
             dataType: 'json'
             url: url
             success: (data) -> done null, data
-            error: (xhr, type, msg) -> done {msg, xhr}, null
+            error: (xhr, type, msg) ->
+              done {msg, xhr}, null
       else
-        findAdapter(site).prefix (prefix) ->
+        findAdapterQ.push {site: site}, (prefix) ->
           if prefix is ""
             console.log "#{site} is unreachable"
             done {msg: "#{site} is unreachable", xhr: {status: 0}}, null
