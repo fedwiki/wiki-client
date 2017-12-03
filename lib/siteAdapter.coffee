@@ -2,6 +2,7 @@
 # and local browser storage.
 
 queue = require 'async/queue'
+localForage = require 'localforage'
 
 module.exports = siteAdapter = {}
 
@@ -13,17 +14,10 @@ sitePrefix = {}
 # we know how to get a site's flag
 tempFlags = {}
 
-#
+# some settings
 fetchTimeoutMS = 1500
 findQueueWorkers = 4
 
-###
-testWikiSite = (url, good, bad) ->
-  img = new Image()
-  img.onload = good
-  img.onerror = bad
-  img.src = url
-###
 
 testWikiSite = (url, good, bad) ->
   fetchTimeout = new Promise( (resolve, reject) ->
@@ -82,6 +76,27 @@ findAdapterQ = queue( (task, done) ->
         sitePrefix[site] = ""
         done ""
 , findQueueWorkers) # start with just 1 process working on the queue
+
+findAdapter = (site, done) ->
+  localForage.getItem(site).then (value) ->
+    console.log "findAdapter: ", site, value
+    if !value?
+      console.log "findAdapter - getItem null "
+      findAdapterQ.push {site: site}, (prefix) ->
+        localForage.setItem(site, prefix).then (value) ->
+          console.log "findAdapter set: ", site, prefix, value
+          done prefix
+        .catch (err) ->
+          console.log "findAdapter setItem error: ", site, err
+          sitePrefix[site] = ""
+          done ""
+    else
+      sitePrefix[site] = value
+      done value
+  .catch (err) ->
+    console.log "findAdapter error: ", site, err
+    sitePrefix[site] = ""
+    done ""
 
 
 
@@ -198,7 +213,8 @@ siteAdapter.site = (site) ->
       else
         # we don't know the url to the real flag, or have a temp flag
 
-        findAdapterQ.push {site: site}, (prefix) ->
+#        findAdapterQ.push {site: site}, (prefix) ->
+        findAdapter site, (prefix) ->
           if prefix is ""
             console.log "Prefix for #{site} is undetermined..."
           else
@@ -231,7 +247,8 @@ siteAdapter.site = (site) ->
           "#{thisPrefix}/#{route}"
       else
         # don't yet know how to construct links for site, so find how and fixup
-        findAdapterQ.push {site: site}, (prefix) ->
+        #findAdapterQ.push {site: site}, (prefix) ->
+        findAdapter site, (prefix) ->
           if prefix is ""
             console.log "#{site} is unreachable"
           else
@@ -261,7 +278,8 @@ siteAdapter.site = (site) ->
             error: (xhr, type, msg) ->
               done {msg, xhr}, null
       else
-        findAdapterQ.push {site: site}, (prefix) ->
+        #findAdapterQ.push {site: site}, (prefix) ->
+        findAdapter site, (prefix) ->
           if prefix is ""
             console.log "#{site} is unreachable"
             done {msg: "#{site} is unreachable", xhr: {status: 0}}, null
