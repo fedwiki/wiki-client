@@ -118,9 +118,15 @@ $ ->
       finishClick e, name
 
     .delegate 'img.remote', 'click', (e) ->
-      name = $(e.target).data('slug')
-      pageHandler.context = [$(e.target).data('site')]
-      finishClick e, name
+      # expand to handle click on temporary flag
+      if $(e.target).attr('src').startsWith('data:image/png')
+        e.preventDefault()
+        site = $(e.target).data('site')
+        wiki.site(site).refresh()
+      else
+        name = $(e.target).data('slug')
+        pageHandler.context = [$(e.target).data('site')]
+        finishClick e, name
 
     .delegate '.revision', 'dblclick', (e) ->
       e.preventDefault()

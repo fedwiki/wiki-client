@@ -15,8 +15,8 @@ sitePrefix = {}
 tempFlags = {}
 
 # some settings
-fetchTimeoutMS = 1500
-findQueueWorkers = 4
+fetchTimeoutMS = 3000
+findQueueWorkers = 8
 
 
 testWikiSite = (url, good, bad) ->
@@ -81,10 +81,8 @@ findAdapter = (site, done) ->
   localForage.getItem(site).then (value) ->
     console.log "findAdapter: ", site, value
     if !value?
-      console.log "findAdapter - getItem null "
       findAdapterQ.push {site: site}, (prefix) ->
         localForage.setItem(site, prefix).then (value) ->
-          console.log "findAdapter set: ", site, prefix, value
           done prefix
         .catch (err) ->
           console.log "findAdapter setItem error: ", site, err
@@ -291,6 +289,38 @@ siteAdapter.site = (site) ->
               url: url
               success: (data) -> done null, data
               error: (xhr, type, msg) -> done {msg, xhr}, null
+
+    refresh: () ->
+      # Refresh is used to redetermine the sitePrefix prefix, and update the
+      # stored value.
+      if !tempFlags[site]?
+        console.log "Site #{site} does not have temp flag - not refreshing"
+        return
+
+      console.log "Refreshing #{site}"
+
+      sitePrefix[site] = null
+      localForage.removeItem(site).then () ->
+        findAdapterQ.push {site: site}, (prefix) ->
+          localForage.setItem(site, prefix).then (value) ->
+            if prefix is ""
+              console.log "Prefix for #{site} is undetermined..."
+            else
+              console.log "Prefix for #{site} is #{prefix}"
+              # replace temp flags
+              tempFlag = tempFlags[site]
+              realFlag = sitePrefix[site] + "/favicon.png"
+              # replace temporary flag where it is used as an image
+              $('img[src="' + tempFlag + '"]').attr('src', realFlag)
+              # replace temporary flag where its used as a background to fork event in journal
+              $('a[target="' + site + '"]').attr('style', 'background-image: url(' + realFlag + ')')
+          .catch (err) ->
+            console.log "findAdapter setItem error: ", site, err
+            sitePrefix[site] = ""
+
+      .catch (err) ->
+        console.log 'refresh error ', site, err
+        # same as if delete worked?
 
 
   }
