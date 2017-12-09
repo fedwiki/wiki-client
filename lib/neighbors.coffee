@@ -35,6 +35,11 @@ bind = ->
       totalPages += pageCount
       $('.searchbox .pages').text "#{totalPages} pages"
     .delegate '.neighbor img', 'click', (e) ->
-      link.doInternalLink 'welcome-visitors', null, @.title.split("\n")[0]
+      # add handling refreshing neighbor that has failed
+      if $(e.target).parent().hasClass('fail')
+        site = $(e.target).attr('title')
+        wiki.site(site).refresh()
+      else
+        link.doInternalLink 'welcome-visitors', null, @.title.split("\n")[0]
 
 module.exports = {inject, bind}

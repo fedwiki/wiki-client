@@ -224,6 +224,7 @@ siteAdapter.site = (site) ->
             $('img[src="' + tempFlag + '"]').attr('src', realFlag)
             # replace temporary flag where its used as a background to fork event in journal
             $('a[target="' + site + '"]').attr('style', 'background-image: url(' + realFlag + ')')
+            tempFlags[site] = null
 
 
         # create a temp flag, save it for reuse, and return it
@@ -293,11 +294,22 @@ siteAdapter.site = (site) ->
     refresh: () ->
       # Refresh is used to redetermine the sitePrefix prefix, and update the
       # stored value.
-      if !tempFlags[site]?
-        console.log "Site #{site} does not have temp flag - not refreshing"
-        return
-
+      
       console.log "Refreshing #{site}"
+
+      if !tempFlags[site]?
+        # refreshing route for a site that we know the route for...
+        # currently performed when clicking on a neighbor that we
+        # can't retrieve a sitemap for.
+
+        # replace flag with temp flags
+        tempFlag = createTempFlag(site)
+        tempFlags[site] = tempFlag
+        realFlag = sitePrefix[site] + "/favicon.png"
+        # replace flag with temporary flag where it is used as an image
+        $('img[src="' + realFlag + '"]').attr('src', tempFlag)
+        # replace temporary flag where its used as a background to fork event in journal
+        $('a[target="' + site + '"]').attr('style', 'background-image: url(' + tempFlag + ')')
 
       sitePrefix[site] = null
       localForage.removeItem(site).then () ->
