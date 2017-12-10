@@ -24,8 +24,8 @@ createPage = (name, loc) ->
   $page.data('site', site) if site
   $page
 
-showPage = (name, loc) ->
-  createPage(name, loc).appendTo('.main').each refresh.cycle
+showPage = (name, loc, main='.main') ->
+  createPage(name, loc).appendTo(main).each refresh.cycle
 
 doInternalLink = (name, $page, site=null) ->
   name = asSlug(name)

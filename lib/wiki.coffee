@@ -52,6 +52,7 @@ link = require('./link')
 wiki.createPage = link.createPage ##
 wiki.doInternalLink = link.doInternalLink
 wiki.showResult = link.showResult
+wiki.showPage = link.showPage
 
 # known use: wiki.getScript  wiki-plugin-bars/client/bars.coffee:
 # known use: wiki.getScript  wiki-plugin-code/client/code.coffee:
