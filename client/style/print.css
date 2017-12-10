@@ -9,7 +9,7 @@ body {
 .main {
 	width: auto;
 	border: 0;
-	margin: 0 5%;
+	margin: 10% 20%;
 	padding: 0;
 	float: none !important;
 }
@@ -19,7 +19,7 @@ body {
 }
 
 .story {
-	text-align: justify;
+	text-align: left;
 }
 
 p {
