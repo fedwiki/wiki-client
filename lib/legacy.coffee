@@ -122,7 +122,8 @@ $ ->
       if $(e.target).attr('src').startsWith('data:image/png')
         e.preventDefault()
         site = $(e.target).data('site')
-        wiki.site(site).refresh()
+        wiki.site(site).refresh () ->
+          # empty function...
       else
         name = $(e.target).data('slug')
         pageHandler.context = [$(e.target).data('site')]

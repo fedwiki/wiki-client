@@ -30,6 +30,8 @@ populateSiteInfoFor = (site,neighborInfo)->
         $('body').trigger 'new-neighbor-done', site
       else
         transition site, 'fetch', 'fail'
+        wiki.site(site).refresh () ->
+          # empty function
 
   now = Date.now()
   if now > nextAvailableFetch
@@ -39,6 +41,11 @@ populateSiteInfoFor = (site,neighborInfo)->
     setTimeout fetchMap, nextAvailableFetch - now
     nextAvailableFetch += nextFetchInterval
 
+neighborhood.retryNeighbor = (site)->
+  console.log 'retrying neighbor'
+  neighborInfo = {}
+  neighborhood.sites[site] = neighborInfo
+  populateSiteInfoFor(site, neighborInfo)
 
 neighborhood.registerNeighbor = (site)->
   return if neighborhood.sites[site]?

@@ -4,6 +4,8 @@
 # cause them to animate as an indication of work in progress.
 
 link = require './link'
+wiki = require './wiki'
+neighborhood = require './neighborhood'
 
 sites = null
 totalPages = 0
@@ -37,8 +39,11 @@ bind = ->
     .delegate '.neighbor img', 'click', (e) ->
       # add handling refreshing neighbor that has failed
       if $(e.target).parent().hasClass('fail')
+        $(e.target).parent().removeClass('fail').addClass('wait')
         site = $(e.target).attr('title')
-        wiki.site(site).refresh()
+        wiki.site(site).refresh () ->
+          console.log 'about to retry neighbor'
+          neighborhood.retryNeighbor(site)
       else
         link.doInternalLink 'welcome-visitors', null, @.title.split("\n")[0]
 

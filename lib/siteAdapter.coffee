@@ -291,10 +291,10 @@ siteAdapter.site = (site) ->
               success: (data) -> done null, data
               error: (xhr, type, msg) -> done {msg, xhr}, null
 
-    refresh: () ->
+    refresh: (done) ->
       # Refresh is used to redetermine the sitePrefix prefix, and update the
       # stored value.
-      
+
       console.log "Refreshing #{site}"
 
       if !tempFlags[site]?
@@ -316,9 +316,9 @@ siteAdapter.site = (site) ->
         findAdapterQ.push {site: site}, (prefix) ->
           localForage.setItem(site, prefix).then (value) ->
             if prefix is ""
-              console.log "Prefix for #{site} is undetermined..."
+              console.log "Refreshed prefix for #{site} is undetermined..."
             else
-              console.log "Prefix for #{site} is #{prefix}"
+              console.log "Refreshed prefix for #{site} is #{prefix}"
               # replace temp flags
               tempFlag = tempFlags[site]
               realFlag = sitePrefix[site] + "/favicon.png"
@@ -326,12 +326,15 @@ siteAdapter.site = (site) ->
               $('img[src="' + tempFlag + '"]').attr('src', realFlag)
               # replace temporary flag where its used as a background to fork event in journal
               $('a[target="' + site + '"]').attr('style', 'background-image: url(' + realFlag + ')')
+            done()
           .catch (err) ->
             console.log "findAdapter setItem error: ", site, err
             sitePrefix[site] = ""
+            done()
 
       .catch (err) ->
         console.log 'refresh error ', site, err
+        done()
         # same as if delete worked?
 
 
