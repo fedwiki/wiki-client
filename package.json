@@ -25,12 +25,14 @@
     }
   ],
   "dependencies": {
+    "localforage": "^1.5.5",
     "underscore": "^1.8.3"
   },
   "scripts": {
     "test": "grunt mochaTest"
   },
   "devDependencies": {
+    "async": "^2.6.0",
     "coffee-script": "^1.12.4",
     "coffeeify": "^2.1.0",
     "expect.js": "^0.3.1",
