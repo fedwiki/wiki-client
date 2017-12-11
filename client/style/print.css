@@ -34,16 +34,17 @@ img.remote {
 }
 
 A:link, A:visited {
-	background: white;
-	color: black;
-	text-decoration: underline;
-	font-weight: 110%;
+	background: transparent;
+	color: #111;
+	text-decoration: none;
+	font-weight: 600;
 }
 
 .story a:link:after,
 .story a:visited:after {
 	content: " (" attr(href) ") ";
 	font-size: 90%;
+	font-weight: 500;
 }
 
 .journal {
@@ -51,8 +52,8 @@ A:link, A:visited {
 }
 
 .footer {
+	font-size: 10pt;
 	padding-top: 24pt;
-	text-align: center;
 	float: bottom;
 	string-set: Footer self;
 }
