@@ -173,6 +173,7 @@ pageHandler.put = ($page, action) ->
   delete action.site if action.site == 'origin'
 
   # update dom when forking
+  $page.removeClass('plugin')
   if forkFrom
     # pull remote site closer to us
     $page.find('h1').prop('title',location.host)
