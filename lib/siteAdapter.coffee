@@ -109,6 +109,7 @@ findAdapter = (site, done) ->
 siteAdapter.local = {
   flag: -> "/favicon.png"
   getURL: (route) -> "/#{route}"
+  getDirectURL: (route) -> "/#{route}"
   get: (route, done) ->
     console.log "wiki.local.get #{route}"
     if page = localStorage.getItem(route.replace(/\.json$/,''))
@@ -127,6 +128,7 @@ siteAdapter.local = {
 siteAdapter.origin = {
   flag: -> "/favicon.png"
   getURL: (route) -> "/#{route}"
+  getDirectURL: (route) -> "/#{route}"
   get: (route, done) ->
     console.log "wiki.origin.get #{route}"
     $.ajax
@@ -156,6 +158,7 @@ siteAdapter.origin = {
 siteAdapter.recycler = {
   flag: -> "/recycler/favicon.png"
   getURL: (route) -> "/recycler/#{route}"
+  getDirectURL: (route) -> "/recycler/#{route}"
   get: (route, done) ->
     console.log "wiki.recycler.get #{route}"
     $.ajax
@@ -250,6 +253,34 @@ siteAdapter.site = (site) ->
       else
         # don't yet know how to construct links for site, so find how and fixup
         #findAdapterQ.push {site: site}, (prefix) ->
+        findAdapter site, (prefix) ->
+          if prefix is ""
+            console.log "#{site} is unreachable"
+          else
+            console.log "Prefix for #{site} is #{prefix}, about to fixup links"
+            # add href to journal fork
+            $('a[target="' + site + '"]').each( () ->
+              if /proxy/.test(prefix)
+                thisSite = prefix.substring(7)
+                thisPrefix = "http://#{thisSite}"
+              else
+                thisPrefix = prefix
+              $(this).attr('href', "#{thisPrefix}/#{$(this).data("slug")}.html") )
+        ""
+
+    getDirectURL: (route) ->
+      if sitePrefix[site]?
+        if sitePrefix[site] is ""
+          console.log "#{site} is unreachable, can't link to #{route}"
+          ""
+        else
+          if /proxy/.test(sitePrefix[site])
+            thisSite = sitePrefix[site].substring(7)
+            thisPrefix = "http://#{thisSite}"
+          else
+            thisPrefix = sitePrefix[site]
+          "#{thisPrefix}/#{route}"
+      else
         findAdapter site, (prefix) ->
           if prefix is ""
             console.log "#{site} is unreachable"
