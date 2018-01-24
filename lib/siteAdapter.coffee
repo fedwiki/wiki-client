@@ -18,6 +18,14 @@ tempFlags = {}
 fetchTimeoutMS = 3000
 findQueueWorkers = 8
 
+console.log "siteAdapter: loading data"
+localForage.iterate (value, key, iterationNumber) ->
+  sitePrefix[key] = value
+.then () ->
+  console.log "siteAdapter: data loaded"
+.catch (err) ->
+  console.log "siteAdapter: error loading data ", err
+
 
 testWikiSite = (url, good, bad) ->
   fetchTimeout = new Promise( (resolve, reject) ->
