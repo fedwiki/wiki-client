@@ -246,12 +246,7 @@ siteAdapter.site = (site) ->
           console.log "#{site} is unreachable, can't link to #{route}"
           ""
         else
-          if /proxy/.test(sitePrefix[site])
-            thisSite = sitePrefix[site].substring(7)
-            thisPrefix = "http://#{thisSite}"
-          else
-            thisPrefix = sitePrefix[site]
-          "#{thisPrefix}/#{route}"
+          "#{sitePrefix[site]}/#{route}"
       else
         # don't yet know how to construct links for site, so find how and fixup
         #findAdapterQ.push {site: site}, (prefix) ->
