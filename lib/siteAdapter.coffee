@@ -211,13 +211,15 @@ siteAdapter.site = (site) ->
     flag: ->
       if sitePrefix[site]?
         if sitePrefix[site] is ""
-          tempFlags[site]
+          if tempFlags[site]?
+            tempFlags[site]
+          else
+            tempFlags[site] = createTempFlag(site)
         else
           # we already know how to construct flag url
           sitePrefix[site] + "/favicon.png"
       else if tempFlags[site]?
         # we already have a temp. flag
-        console.log "wiki.site(#{site}).flag - already has temp. flag"
         tempFlags[site]
       else
         # we don't know the url to the real flag, or have a temp flag
