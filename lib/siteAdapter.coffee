@@ -21,6 +21,7 @@ findQueueWorkers = 8
 console.log "siteAdapter: loading data"
 localForage.iterate (value, key, iterationNumber) ->
   sitePrefix[key] = value
+  return
 .then () ->
   console.log "siteAdapter: data loaded"
 .catch (err) ->
