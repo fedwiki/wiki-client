@@ -159,7 +159,7 @@ newPage = (json, site) ->
       "view/welcome-visitors/view/#{slug}"
     if isRemote()
       # "//#{site}/#{path}"
-      wiki.site(site).getURL(path)
+      wiki.site(site).getDirectURL(path)
     else
       "/#{path}"
 

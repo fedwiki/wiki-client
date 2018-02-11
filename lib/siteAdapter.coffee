@@ -18,6 +18,15 @@ tempFlags = {}
 fetchTimeoutMS = 3000
 findQueueWorkers = 8
 
+console.log "siteAdapter: loading data"
+localForage.iterate (value, key, iterationNumber) ->
+  sitePrefix[key] = value
+  return
+.then () ->
+  console.log "siteAdapter: data loaded"
+.catch (err) ->
+  console.log "siteAdapter: error loading data ", err
+
 
 testWikiSite = (url, good, bad) ->
   fetchTimeout = new Promise( (resolve, reject) ->
@@ -101,6 +110,7 @@ findAdapter = (site, done) ->
 siteAdapter.local = {
   flag: -> "/favicon.png"
   getURL: (route) -> "/#{route}"
+  getDirectURL: (route) -> "/#{route}"
   get: (route, done) ->
     console.log "wiki.local.get #{route}"
     if page = localStorage.getItem(route.replace(/\.json$/,''))
@@ -119,6 +129,7 @@ siteAdapter.local = {
 siteAdapter.origin = {
   flag: -> "/favicon.png"
   getURL: (route) -> "/#{route}"
+  getDirectURL: (route) -> "/#{route}"
   get: (route, done) ->
     console.log "wiki.origin.get #{route}"
     $.ajax
@@ -148,6 +159,7 @@ siteAdapter.origin = {
 siteAdapter.recycler = {
   flag: -> "/recycler/favicon.png"
   getURL: (route) -> "/recycler/#{route}"
+  getDirectURL: (route) -> "/recycler/#{route}"
   get: (route, done) ->
     console.log "wiki.recycler.get #{route}"
     $.ajax
@@ -200,13 +212,15 @@ siteAdapter.site = (site) ->
     flag: ->
       if sitePrefix[site]?
         if sitePrefix[site] is ""
-          tempFlags[site]
+          if tempFlags[site]?
+            tempFlags[site]
+          else
+            tempFlags[site] = createTempFlag(site)
         else
           # we already know how to construct flag url
           sitePrefix[site] + "/favicon.png"
       else if tempFlags[site]?
         # we already have a temp. flag
-        console.log "wiki.site(#{site}).flag - already has temp. flag"
         tempFlags[site]
       else
         # we don't know the url to the real flag, or have a temp flag
@@ -238,6 +252,31 @@ siteAdapter.site = (site) ->
           console.log "#{site} is unreachable, can't link to #{route}"
           ""
         else
+          "#{sitePrefix[site]}/#{route}"
+      else
+        # don't yet know how to construct links for site, so find how and fixup
+        #findAdapterQ.push {site: site}, (prefix) ->
+        findAdapter site, (prefix) ->
+          if prefix is ""
+            console.log "#{site} is unreachable"
+          else
+            console.log "Prefix for #{site} is #{prefix}, about to fixup links"
+            # add href to journal fork
+            $('a[target="' + site + '"]').each( () ->
+              if /proxy/.test(prefix)
+                thisSite = prefix.substring(7)
+                thisPrefix = "http://#{thisSite}"
+              else
+                thisPrefix = prefix
+              $(this).attr('href', "#{thisPrefix}/#{$(this).data("slug")}.html") )
+        ""
+
+    getDirectURL: (route) ->
+      if sitePrefix[site]?
+        if sitePrefix[site] is ""
+          console.log "#{site} is unreachable, can't link to #{route}"
+          ""
+        else
           if /proxy/.test(sitePrefix[site])
             thisSite = sitePrefix[site].substring(7)
             thisPrefix = "http://#{thisSite}"
@@ -245,8 +284,6 @@ siteAdapter.site = (site) ->
             thisPrefix = sitePrefix[site]
           "#{thisPrefix}/#{route}"
       else
-        # don't yet know how to construct links for site, so find how and fixup
-        #findAdapterQ.push {site: site}, (prefix) ->
         findAdapter site, (prefix) ->
           if prefix is ""
             console.log "#{site} is unreachable"

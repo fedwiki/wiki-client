@@ -5,6 +5,8 @@ wiki = {}
 wiki.site = (site) -> {
   getURL: (route) ->
     "//#{site}/#{route}"
+  getDirectURL: (route) ->
+    "//#{site}/#{route}"
 }
 global.wiki = wiki
 
