@@ -1,4 +1,4 @@
-# The licence module explains federated wiki licence terms
+# The license module explains federated wiki license terms
 # including the proper attribution of collaborators.
 
 resolve = require './resolve'
@@ -31,7 +31,6 @@ authors = (page, site) ->
     unless action.type is 'fork' or done[site]?
       list.push """<a href="//#{site}">#{site}</a>"""
       done[site] = true
-  console.log 'list',list
   return "" unless list.length > 0
   """
     <p>
