@@ -180,16 +180,22 @@ pageHandler.put = ($page, action) ->
     $page.find('h1 img').attr('src', '/favicon.png')
     $page.find('h1 a').attr('href', "/view/welcome-visitors/view/#{pagePutInfo.slug}").attr('target',location.host)
     $page.data('site', null)
-    $page.removeClass('remote')
+    if forkFrom is 'recycler'
+      $page.removeClass('recycler')
+    else
+      $page.removeClass('remote')
     #STATE -- update url when site changes
     state.setUrl()
     if action.type != 'fork'
-      # bundle implicit fork with next action
-      action.fork = forkFrom
-      addToJournal $page.find('.journal'),
-        type: 'fork'
-        site: forkFrom
-        date: action.date
+      # make the implicit fork, rather than bundling with next action
+      implicit = {}
+      implicit.date = action.date
+      implicit.site = forkFrom unless forkFrom is 'recycler' or null
+      implicit.type = 'fork'
+      await pushToServer($page, pagePutInfo, implicit)
+      .then () -> console.log "Implicit fork performed"
+      action.date = (new Date()).getTime()
+      console.log "next..."
 
   # store as appropriate
   if pageHandler.useLocalStorage() or pagePutInfo.site == 'local'
