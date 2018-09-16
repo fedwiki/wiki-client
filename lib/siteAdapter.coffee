@@ -310,6 +310,7 @@ siteAdapter.site = (site) ->
             type: 'GET'
             dataType: 'json'
             url: url
+            xhrFields: { withCredentials: true }
             success: (data) -> done null, data
             error: (xhr, type, msg) ->
               done {msg, xhr}, null
@@ -325,6 +326,7 @@ siteAdapter.site = (site) ->
               type: 'GET'
               dataType: 'json'
               url: url
+              xhrFields: { withCredentials: true }
               success: (data) -> done null, data
               error: (xhr, type, msg) -> done {msg, xhr}, null
 
