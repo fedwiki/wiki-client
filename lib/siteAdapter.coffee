@@ -6,8 +6,10 @@ localForage = require 'localforage'
 
 module.exports = siteAdapter = {}
 
-# we save the site prefix once we have determined it...
+# we save the site prefix once we have determined it,
 sitePrefix = {}
+# and if the CORS request requires credentials...
+credentialsNeeded = {}
 
 # when asked for a site's flag, if we don't know the current prefix we create
 # a temporary greyscale flag. We save them here, so we can replace them when
@@ -19,7 +21,8 @@ fetchTimeoutMS = 3000
 findQueueWorkers = 8
 
 console.log "siteAdapter: loading data"
-localForage.iterate (value, key, iterationNumber) ->
+routeStore = localForage.createInstance { name: "routes" }
+routeStore.iterate (value, key, iterationNumber) ->
   sitePrefix[key] = value
   return
 .then () ->
@@ -27,6 +30,14 @@ localForage.iterate (value, key, iterationNumber) ->
 .catch (err) ->
   console.log "siteAdapter: error loading data ", err
 
+withCredsStore = localForage.createInstance {name: "withCredentials" }
+withCredsStore.iterate (value, key, iterationNumber) ->
+  credentialsNeeded[key] = value
+  return
+.then () ->
+  console.log "siteAdapter: withCredentials data loaded"
+.catch (err) ->
+  console.log "siteAdapter: error loading withCredentials data ", err
 
 testWikiSite = (url, good, bad) ->
   fetchTimeout = new Promise( (resolve, reject) ->
@@ -87,11 +98,11 @@ findAdapterQ = queue( (task, done) ->
 , findQueueWorkers) # start with just 1 process working on the queue
 
 findAdapter = (site, done) ->
-  localForage.getItem(site).then (value) ->
+  routeStore.getItem(site).then (value) ->
     console.log "findAdapter: ", site, value
     if !value?
       findAdapterQ.push {site: site}, (prefix) ->
-        localForage.setItem(site, prefix).then (value) ->
+        routeStore.setItem(site, prefix).then (value) ->
           done prefix
         .catch (err) ->
           console.log "findAdapter setItem error: ", site, err
@@ -300,20 +311,35 @@ siteAdapter.site = (site) ->
         ""
 
     get: (route, done) ->
+      getContent = (route, done) ->
+        url = "#{sitePrefix[site]}/#{route}"
+        useCredentials = credentialsNeeded[site] || false
+
+        $.ajax
+          type: 'GET'
+          dataType: 'json'
+          url: url
+          xhrFields: { withCredentials: useCredentials }
+          success: (data) ->
+            if data.title is 'Login Required' and !url.includes('login-required') and credentialsNeeded[site] isnt true
+              credentialsNeeded[site] = true
+              getContent route, (err, page) ->
+                if !err
+                  withCredsStore.setItem(site, true)
+                  done err, page
+                else
+                  credentialsNeeded[site] = false
+                  done err, page
+            done null, data
+          error: (xhr, type, msg) ->
+            done {msg, xhr}, null
+
       if sitePrefix[site]?
         if sitePrefix[site] is ""
           console.log "#{site} is unreachable"
           done {msg: "#{site} is unreachable", xhr: {status: 0}}, null
         else
-          url = "#{sitePrefix[site]}/#{route}"
-          $.ajax
-            type: 'GET'
-            dataType: 'json'
-            url: url
-            xhrFields: { withCredentials: true }
-            success: (data) -> done null, data
-            error: (xhr, type, msg) ->
-              done {msg, xhr}, null
+          getContent route, done
       else
         #findAdapterQ.push {site: site}, (prefix) ->
         findAdapter site, (prefix) ->
@@ -321,14 +347,7 @@ siteAdapter.site = (site) ->
             console.log "#{site} is unreachable"
             done {msg: "#{site} is unreachable", xhr: {status: 0}}, null
           else
-            url = "#{prefix}/#{route}"
-            $.ajax
-              type: 'GET'
-              dataType: 'json'
-              url: url
-              xhrFields: { withCredentials: true }
-              success: (data) -> done null, data
-              error: (xhr, type, msg) -> done {msg, xhr}, null
+            getContent route, done
 
     refresh: (done) ->
       # Refresh is used to redetermine the sitePrefix prefix, and update the
@@ -351,9 +370,9 @@ siteAdapter.site = (site) ->
         $('a[target="' + site + '"]').attr('style', 'background-image: url(' + tempFlag + ')')
 
       sitePrefix[site] = null
-      localForage.removeItem(site).then () ->
+      routeStore.removeItem(site).then () ->
         findAdapterQ.push {site: site}, (prefix) ->
-          localForage.setItem(site, prefix).then (value) ->
+          routeStore.setItem(site, prefix).then (value) ->
             if prefix is ""
               console.log "Refreshed prefix for #{site} is undetermined..."
             else
