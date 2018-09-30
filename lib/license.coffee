@@ -30,7 +30,8 @@ authors = (page, site) ->
     site = action.site if action.site?
     unless action.type is 'fork' or done[site]?
       siteURL = wiki.site(site).getDirectURL("")
-      list.push """<a href="#{siteURL}" target="_blank">#{site}</a>"""
+      siteFlag = wiki.site(site).flag()
+      list.push """<a href="#{siteURL}" target="_blank"><img class="remote" title="#{site}" src="#{siteFlag}"> #{site}</a>"""
       done[site] = true
   return "" unless list.length > 0
   """
