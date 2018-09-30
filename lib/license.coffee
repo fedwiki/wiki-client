@@ -28,10 +28,10 @@ authors = (page, site) ->
   list = []
   for action in page.journal.slice(0).reverse()
     site = action.site if action.site?
-      unless action.type is 'fork' or done[site]?
-        siteURL = wiki.site(site).getDirectURL("")
-        list.push """<a href="#{siteURL}" target="_blank">#{site}</a>"""
-        done[site] = true
+    unless action.type is 'fork' or done[site]?
+      siteURL = wiki.site(site).getDirectURL("")
+      list.push """<a href="#{siteURL}" target="_blank">#{site}</a>"""
+      done[site] = true
   return "" unless list.length > 0
   """
     <p>
