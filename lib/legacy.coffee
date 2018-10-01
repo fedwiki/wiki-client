@@ -12,6 +12,7 @@ drop = require './drop'
 dialog = require './dialog'
 link = require './link'
 target = require './target'
+license = require './license'
 
 asSlug = require('./page').asSlug
 newPage = require('./page').newPage
@@ -101,6 +102,12 @@ $ ->
     return false
 
   $('.main')
+    .delegate '.show-page-license', 'click', (e) ->
+      e.preventDefault()
+      $page = $(this).parents('.page')
+      title = $page.find('h1').text().trim()
+      dialog.open "License for #{title}", license.info($page)
+
     .delegate '.show-page-source', 'click', (e) ->
       e.preventDefault()
       $page = $(this).parents('.page')
