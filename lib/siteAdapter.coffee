@@ -330,7 +330,8 @@ siteAdapter.site = (site) ->
                 else
                   credentialsNeeded[site] = false
                   done err, page
-            done null, data
+            else
+              done null, data
           error: (xhr, type, msg) ->
             done {msg, xhr}, null
 
