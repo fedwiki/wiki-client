@@ -26,27 +26,29 @@
   ],
   "dependencies": {
     "async": "^2.6.0",
-    "localforage": "^1.5.5",
+    "localforage": "^1.7.3",
     "underscore": "^1.8.3"
   },
   "scripts": {
     "test": "grunt mochaTest"
   },
   "devDependencies": {
-    "coffee-script": "^1.12.4",
-    "coffeeify": "^2.1.0",
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.2.3",
+    "coffeeify": "^3.0.1",
+    "coffeescript": "^2.3.2",
     "expect.js": "^0.3.1",
     "grunt": "^1.0.1",
+    "grunt-babel": "^8.0.0",
     "grunt-browserify": "^5.2.0",
-    "grunt-contrib-clean": "^1.0.0",
-    "grunt-contrib-uglify": "^3.0.1",
+    "grunt-contrib-clean": "^2.0.0",
+    "grunt-contrib-uglify": "^4.0.0",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-git-authors": "^3.2.0",
     "grunt-mocha-test": "^0.13.2",
-    "grunt-nsp": "^2.3.1",
     "grunt-retire": "^1.0.3",
-    "mocha": "^3.1.2",
-    "sinon": "^3.2.1"
+    "mocha": "^5.2.0",
+    "sinon": "^7.2.2"
   },
   "license": "MIT",
   "repository": {

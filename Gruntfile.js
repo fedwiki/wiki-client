@@ -1,12 +1,12 @@
 module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-browserify');
+  grunt.loadNpmTasks('grunt-babel');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-git-authors');
   grunt.loadNpmTasks('grunt-retire');
-  grunt.loadNpmTasks('grunt-nsp');
 
   // N.B. The development build includes paths in the mapfile, at the browserify step, that are not accessable
   //      from the browser.
@@ -50,10 +50,6 @@ module.exports = function (grunt) {
       options: {}
     },
 
-    nsp: {
-      package: grunt.file.readJSON('package.json')
-    },
-
     // tidy-up before we start the build
     clean: ['build/*', 'client/client.js', 'client/client.map', 'client/client.*.js', 'client/client.*.map', 'client/test/testclient.js'],
 
@@ -61,7 +57,7 @@ module.exports = function (grunt) {
       // build the client that we will include in the package
       packageClient: {
         src: ['./client.coffee'],
-        dest: 'client/client.max.js',
+        dest: 'build/client.js',
         options: {
           transform: ['coffeeify'],
           browserifyOptions: {
@@ -80,6 +76,18 @@ module.exports = function (grunt) {
           browserifyOptions: {
             extensions: ".coffee"
           }
+        }
+      }
+    },
+
+    babel: {
+      options: {
+        sourceMap: true,
+        presets: ['@babel/preset-env']
+      },
+      dist: {
+        files: {
+          'client/client.max.js': 'build/client.js'
         }
       }
     },
@@ -108,7 +116,7 @@ module.exports = function (grunt) {
       test: {
         options: {
           reporter: 'spec',
-          require: 'coffee-script/register'
+          require: 'coffeescript/register'
         },
         src: [
           'test/util.coffee',
@@ -132,11 +140,11 @@ module.exports = function (grunt) {
   });
 
   // build without sourcemaps
-  grunt.registerTask('build', ['clean', 'mochaTest', 'browserify:packageClient', 'browserify:testClient', 'uglify:packageClient']);
+  grunt.registerTask('build', ['clean', 'mochaTest', 'browserify:packageClient', 'browserify:testClient', 'babel', 'uglify:packageClient']);
 
   // check for out-of-date libraries and known vulnerabilities
 
-  grunt.registerTask('check', ['nsp', 'retire']);
+  grunt.registerTask('check', ['retire']);
 
 
   // the default is to do the production build.
