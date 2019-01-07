@@ -213,6 +213,10 @@ $ ->
       resultPage.addItem
         type: 'search'
         text: "SEARCH LINKS #{pageObject.getSlug()}"
+      resultPage.addParagraph "Find pages with titles similar to this title."
+      resultPage.addItem
+        type: 'search'
+        text: "SEARCH SLUGS #{pageObject.getSlug()}"
       resultPage.addParagraph "Find pages neighboring  this site."
       resultPage.addItem
         type: 'search'
