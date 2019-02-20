@@ -51,7 +51,6 @@ emit = ($item, item) ->
     showMenu()
   else
     wiki.origin.get 'system/factories.json', (error, data) ->
-      console.log 'factory', data
       window.catalog = data
       showMenu()
 
@@ -91,6 +90,11 @@ bind = ($item, item) ->
   addVideo = (video) ->
     item.type = 'video'
     item.text = "#{video.text}\n(double-click to edit caption)\n"
+    syncEditAction()
+
+  addWebImage = (url) ->
+    item.type = 'image'
+    item.text = "downloaded [#{url.replace(/^https?/,'')} source]"
     syncEditAction()
 
   readFile = (file) ->
@@ -139,6 +143,7 @@ bind = ($item, item) ->
     page: addReference
     file: readFile
     video: addVideo
+    image: addWebImage
     punt: punt
 
 # from http://www.bennadel.com/blog/1504-Ask-Ben-Parsing-CSV-Strings-With-Javascript-Exec-Regular-Expression-Command.htm
