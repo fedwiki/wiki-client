@@ -243,6 +243,23 @@ $ ->
     $('.page').each (index, element) ->
       refresh.emitTwins $(element)
 
+  $("<span>&nbsp; ☰ </span>")
+    .css({"cursor":"pointer"})
+    .appendTo('footer')
+    .click ->
+      resultPage = newPage()
+      resultPage.setTitle "Selected Plugin Pages"
+      resultPage.addParagraph """
+        Installed plugins offer these utility pages:
+      """
+      if window.catalog 
+        for info in window.catalog
+          if info.pages
+            for title in info.pages
+              resultPage.addParagraph "[[#{title}]]"
+
+      link.showResult resultPage
+
   # $('.editEnable').is(':visible')
   $("<span>&nbsp; wiki <span class=editEnable>✔︎</span> &nbsp; </span>")
     .css({"cursor":"pointer"})
@@ -255,8 +272,10 @@ $ ->
         refresh.rebuildPage pageObject, $page.empty()
   $('.editEnable').toggle() unless isAuthenticated
 
-  target.bind()
+  wiki.origin.get 'system/factories.json', (error, data) ->
+    window.catalog = data
 
+  target.bind()
 
   $ ->
     state.first()
