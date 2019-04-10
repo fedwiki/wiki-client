@@ -275,7 +275,7 @@ p.readout {
   box-shadow: 2px 1px 4px rgba(0, 0, 0, 0.2); }
   .page.active {
     box-shadow: 2px 1px 24px rgba(0, 0, 0, 0.4);
-    z-index: 10; }
+    z-index: 10; outline: none; }
 
 .page.plugin > .paper {
   box-shadow: inset 0px 0px 40px 0px rgba(0,220,0,.5);
