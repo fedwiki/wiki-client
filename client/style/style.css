@@ -272,7 +272,8 @@ p.readout {
   background-color: white;
   height: 100%;
   overflow: auto;
-  box-shadow: 2px 1px 4px rgba(0, 0, 0, 0.2); }
+  box-shadow: 2px 1px 4px rgba(0, 0, 0, 0.2);
+  outline: none; }
   .page.active {
     box-shadow: 2px 1px 24px rgba(0, 0, 0, 0.4);
     z-index: 10; }

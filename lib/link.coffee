@@ -12,7 +12,7 @@ createPage = (name, loc) ->
   site = loc if loc and loc isnt 'view'
   title = asTitle(name)
   $page = $ """
-    <div class="page" id="#{name}">
+    <div class="page" id="#{name}" tabindex="-1">
       <div class="paper">
         <div class="twins"> <p> </p> </div>
         <div class="header">
