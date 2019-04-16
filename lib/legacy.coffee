@@ -33,7 +33,7 @@ $ ->
     direction = switch event.which
       when LEFTARROW then -1
       when RIGHTARROW then +1
-    if direction && not (event.target.tagName is "TEXTAREA")
+    if direction && not $(event.target).is(":input")
       pages = $('.page')
       newIndex = pages.index($('.active')) + direction
       if 0 <= newIndex < pages.length
@@ -266,7 +266,7 @@ $ ->
       resultPage.addParagraph """
         Installed plugins offer these utility pages:
       """
-      return unless window.catalog 
+      return unless window.catalog
 
       titles = []
       for info in window.catalog
