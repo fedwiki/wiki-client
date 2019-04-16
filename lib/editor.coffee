@@ -111,7 +111,6 @@ textEditor = ($item, item, option={}) ->
   $textarea = $("<textarea>#{escape original}#{escape option.suffix ? ''}</textarea>")
     .focusout focusoutHandler
     .bind 'keydown', keydownHandler
-    .click (e) -> e.stopPropagation()
   $item.html $textarea
   if option.caret
     setCaretPosition $textarea, option.caret
