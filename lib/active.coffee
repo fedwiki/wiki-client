@@ -22,15 +22,22 @@ scrollTo = ($page) ->
   width = $page.outerWidth(true)
   contentWidth = $(".page").outerWidth(true) * $(".page").length
 
+  # determine target position to scroll to...
   if target < minX
-    active.scrollContainer.animate scrollLeft: target
+    scrollTarget = target
   else if target + width > maxX
-    active.scrollContainer.animate scrollLeft: target - (bodyWidth - width)
+    scrollTarget = target - (bodyWidth - width)
   else if maxX > $(".pages").outerWidth()
-    active.scrollContainer.animate scrollLeft: Math.min(target, contentWidth - bodyWidth)
+    scrollTarget = Math.min(target, contentWidth - bodyWidth)
+  # scroll to target and set focus once animation is complete
+  active.scrollContainer.animate({
+    scrollLeft: scrollTarget
+    }, () ->
+      # only set focus if focus is not already within the page to get focus
+      $page.focus() unless $.contains $page[0], document.activeElement )
+
 
 active.set = ($page) ->
   $page = $($page)
   $(".active").removeClass("active")
   scrollTo $page.addClass("active")
-  $page.focus()
