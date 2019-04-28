@@ -37,7 +37,8 @@ scrollTo = ($page) ->
       $page.focus() unless $.contains $page[0], document.activeElement )
 
 
-active.set = ($page) ->
+active.set = ($page, noScroll) ->
   $page = $($page)
   $(".active").removeClass("active")
-  scrollTo $page.addClass("active")
+  $page.addClass("active")
+  scrollTo $page unless noScroll

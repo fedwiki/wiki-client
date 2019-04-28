@@ -104,7 +104,14 @@ $ ->
     return false
 
   $('.main')
-    .sortable().on('sortupdate', state.setUrl)
+    .sortable({axis: 'x'})
+      .on 'sortstart', (e, ui) ->
+        noScroll = true
+        active.set ui.item, noScroll
+      .on 'sortstop', () ->
+        state.setUrl()
+        active.set $('.active')
+
     .delegate '.show-page-license', 'click', (e) ->
       e.preventDefault()
       $page = $(this).parents('.page')
