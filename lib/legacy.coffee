@@ -104,6 +104,7 @@ $ ->
     return false
 
   $('.main')
+    .sortable().on('sortupdate', state.setUrl)
     .delegate '.show-page-license', 'click', (e) ->
       e.preventDefault()
       $page = $(this).parents('.page')
