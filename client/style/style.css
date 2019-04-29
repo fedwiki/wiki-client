@@ -102,6 +102,9 @@ header {
 .header > h1 {
   cursor: grab; }
 
+.ui-sortable-helper .header > h1 {
+  cursor: grabbing; }
+
 footer {
   bottom: 0; }
 
