@@ -99,7 +99,7 @@ img.remote,
 header {
   top: 0; }
 
-.header > h1 {
+.header span {
   cursor: grab; }
 
 footer {
