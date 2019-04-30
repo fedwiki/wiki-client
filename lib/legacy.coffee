@@ -104,13 +104,21 @@ $ ->
     return false
 
   $('.main')
-    .sortable({axis: 'x', handle: '.header span', cursor: 'grabbing'})
+    .sortable({handle: '.header span', cursor: 'grabbing'})
       .on 'sortstart', (e, ui) ->
         noScroll = true
         active.set ui.item, noScroll
-      .on 'sortstop', () ->
+      .on 'sortstop', (e, ui) ->
+        if ui.position.top < 0
+          $pages = $('.page')
+          return if $pages.length == 1
+          index = $pages.index($('.active'))
+          index = index - 1 if $pages.length - 1 == index
+          ui.item.remove()
+          active.set($('.page')[index])
+        else
+          active.set $('.active')
         state.setUrl()
-        active.set $('.active')
 
     .delegate '.show-page-license', 'click', (e) ->
       e.preventDefault()
