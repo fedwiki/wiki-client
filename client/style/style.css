@@ -117,6 +117,14 @@ footer {
   opacity: 1;
 }
 
+.header > h1 {
+  display: table; }
+
+.header > h1 > span {
+  width: 100%;
+  display: table-cell;
+  padding-left: 5px; }
+
 .story {
   padding-bottom: 5px; }
 
