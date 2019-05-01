@@ -109,7 +109,7 @@ $ ->
         noScroll = true
         active.set ui.item, noScroll
       .on 'sortstop', (e, ui) ->
-        if ui.position.top < 0
+        if e.pageY < 0
           $pages = $('.page')
           return if $pages.length == 1
           index = $pages.index($('.active'))
