@@ -28,6 +28,10 @@ body {
   line-height: 1.3;
   color: #333333; }
 
+/* Better align sortable items. */
+.ui-sortable-helper > p {
+  margin: 0px; }
+
 .main {
   top: 0;
   left: 0;

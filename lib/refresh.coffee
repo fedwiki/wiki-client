@@ -62,6 +62,11 @@ handleDragging = (evt, ui) ->
   moveFromPage = not moveWithinPage and equals($thisPage, $sourcePage)
   moveToPage = not moveWithinPage and equals($thisPage, $destinationPage)
 
+  # If making a copy, update the temp clone so it becomes a true copy.
+  if ui.item.hasClass('copy')
+    $('.shadow-copy').removeClass('shadow-copy')
+      .data(ui.item.data()).attr({'data-id': ui.item.attr('data-id')})
+
   if moveFromPage
     if $sourcePage.hasClass('ghost') or
       $sourcePage.attr('id') == $destinationPage.attr('id') or
@@ -85,13 +90,45 @@ handleDragging = (evt, ui) ->
   action.id = item.id
   pageHandler.put $thisPage, action
 
+changeMouseCursor = (e, ui) ->
+  if e.shiftKey and ui.item.hasClass('copy-capable')
+    $('body').css('cursor', 'copy')
+    $('.shadow-copy').show()
+    ui.item.addClass('copy')
+  else
+    $('body').css('cursor', 'move')
+    $('.shadow-copy').hide()
+    ui.item.removeClass('copy')
+
 initDragging = ($page) ->
+  origCursor = $('body').css('cursor')
   options =
     connectWith: '.page .story'
     placeholder: 'item-placeholder'
     forcePlaceholderSize: true
   $story = $page.find('.story')
-  $story.sortable(options).on('sortupdate', handleDragging)
+  $story.sortable(options)
+    .on 'sortupdate', handleDragging
+    .on 'sort', changeMouseCursor
+    .on 'sortstart', (e, ui) ->
+      # Create a copy that we control since sortable removes theirs too early.
+      # Insert after the placeholder to prevent adding history when item not moved.
+      # Clear out the styling they add. Updates to jquery ui can affect this.
+      ui.item.clone().insertAfter(ui.placeholder).hide().addClass("shadow-copy")
+        .css(
+          width: ''
+          height: ''
+          position: ''
+          zIndex: ''
+        ).removeAttr('data-id')
+    .on 'sortover', (e, ui) ->
+      if ui.sender
+        ui.item.addClass('copy-capable')
+      else
+        ui.item.removeClass('copy-capable')
+    .on 'sortstop', (e, ui) ->
+      $('body').css('cursor', origCursor)
+      $('.shadow-copy').remove()
 
 getPageObject = ($journal) ->
   $page = $($journal).parents('.page:first')
