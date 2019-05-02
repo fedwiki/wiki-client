@@ -18,6 +18,12 @@ addPage = (pageObject) ->
   keyByIndex.push key
   return key
 
+changePageIndex = (key, newIndex) ->
+  oldIndex = keyByIndex.indexOf key
+  page = keyByIndex[oldIndex]
+  keyByIndex.splice(oldIndex, 1)
+  keyByIndex.splice(newIndex, 0, page)
+
 removeKey = (key) ->
   return null unless key in keyByIndex
   keyByIndex = keyByIndex.filter (each) -> key != each
@@ -86,4 +92,4 @@ crumbs = (key, location) ->
   result
 
 
-module.exports = {addPage, removeKey, removeAllAfterKey, atKey, titleAtKey, bestTitle, debugKeys, debugReset, crumbs, debugSelfCheck}
+module.exports = {addPage, changePageIndex, removeKey, removeAllAfterKey, atKey, titleAtKey, bestTitle, debugKeys, debugReset, crumbs, debugSelfCheck}

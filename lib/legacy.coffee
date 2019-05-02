@@ -120,16 +120,19 @@ $ ->
               .animate({opacity: 1.0}, 300)
 
       .on 'sortstop', (evt, ui) ->
+        $pages = $('.page')
+        index = $pages.index($('.active'))
         if ui.item.hasClass('pending-remove')
-          $pages = $('.page')
           return if $pages.length == 1
-          index = $pages.index($('.active'))
           index = index - 1 if $pages.length - 1 == index
+          lineup.removeKey(ui.item.data('key'))
           ui.item.remove()
           active.set($('.page')[index])
         else
+          lineup.changePageIndex(ui.item.data('key'), index)
           active.set $('.active')
         state.setUrl()
+        state.debugStates()
 
     .delegate '.show-page-license', 'click', (e) ->
       e.preventDefault()
