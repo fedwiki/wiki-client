@@ -105,11 +105,22 @@ $ ->
 
   $('.main')
     .sortable({handle: '.header span', cursor: 'grabbing'})
-      .on 'sortstart', (e, ui) ->
+      .on 'sortstart', (evt, ui) ->
         noScroll = true
         active.set ui.item, noScroll
-      .on 'sortstop', (e, ui) ->
-        if e.pageY < 0
+      .on 'sort', (evt, ui) ->
+        $page = ui.item
+        if evt.pageY < 0
+          if not $page.hasClass('pending-remove')
+            $page.addClass('pending-remove')
+              .animate({opacity: 0.2}, 300)
+        else
+          if $page.hasClass('pending-remove')
+            $page.removeClass('pending-remove')
+              .animate({opacity: 1.0}, 300)
+
+      .on 'sortstop', (evt, ui) ->
+        if ui.item.hasClass('pending-remove')
           $pages = $('.page')
           return if $pages.length == 1
           index = $pages.index($('.active'))
