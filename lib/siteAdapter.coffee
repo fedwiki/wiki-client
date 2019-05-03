@@ -127,9 +127,14 @@ siteAdapter.local = {
 
     console.log "wiki.local.get #{route}"
     if page = localStorage.getItem(route.replace(/\.json$/,''))
-      done null, JSON.parse page
+      parsedPage = JSON.parse page
+      done null, parsedPage
+      Promise.resolve(parsedPage)
     else
-      done {msg: "no page named '#{route}' in browser local storage"}
+      errMsg = {msg: "no page named '#{route}' in browser local storage"}
+      done errMsg, null
+      console.log("tried to local fetch a page that isn't local")
+      Promise.reject(errMsg)
   put: (route, data, done) ->
     console.log "wiki.local.put #{route}"
     localStorage.setItem(route, JSON.stringify(data))
@@ -344,7 +349,9 @@ siteAdapter.site = (site) ->
       if sitePrefix[site]?
         if sitePrefix[site] is ""
           console.log "#{site} is unreachable"
-          done {msg: "#{site} is unreachable", xhr: {status: 0}}, null
+          errMsg = {msg: "#{site} is unreachable", xhr: {status: 0}}
+          done errMsg, null
+          Promise.reject(errMsg)
         else
           getContent route, done
       else
@@ -352,7 +359,9 @@ siteAdapter.site = (site) ->
         findAdapter site, (prefix) ->
           if prefix is ""
             console.log "#{site} is unreachable"
-            done {msg: "#{site} is unreachable", xhr: {status: 0}}, null
+            errMsg = {msg: "#{site} is unreachable", xhr: {status: 0}}
+            done errMsg, null
+            Promise.reject(errMsg)
           else
             getContent route, done
 
