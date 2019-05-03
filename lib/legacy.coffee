@@ -110,7 +110,8 @@ $ ->
         active.set ui.item, noScroll
       .on 'sort', (evt, ui) ->
         $page = ui.item
-        if evt.pageY < 0
+        # Only mark for removal if there's more than one page (+placeholder) left
+        if evt.pageY < 0 and $(".page").length > 2
           if not $page.hasClass('pending-remove')
             $page.addClass('pending-remove')
               .animate({opacity: 0.2}, 300)

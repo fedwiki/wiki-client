@@ -20,9 +20,8 @@ addPage = (pageObject) ->
 
 changePageIndex = (key, newIndex) ->
   oldIndex = keyByIndex.indexOf key
-  page = keyByIndex[oldIndex]
   keyByIndex.splice(oldIndex, 1)
-  keyByIndex.splice(newIndex, 0, page)
+  keyByIndex.splice(newIndex, 0, key)
 
 removeKey = (key) ->
   return null unless key in keyByIndex
