@@ -122,7 +122,9 @@ siteAdapter.local = {
   flag: -> "/favicon.png"
   getURL: (route) -> "/#{route}"
   getDirectURL: (route) -> "/#{route}"
-  get: (route, done) ->
+  get: (route, callback) ->
+    done = (err, value) -> if (callback) then callback(err, value)
+
     console.log "wiki.local.get #{route}"
     if page = localStorage.getItem(route.replace(/\.json$/,''))
       done null, JSON.parse page
@@ -141,7 +143,8 @@ siteAdapter.origin = {
   flag: -> "/favicon.png"
   getURL: (route) -> "/#{route}"
   getDirectURL: (route) -> "/#{route}"
-  get: (route, done) ->
+  get: (route, callback) ->
+    done = (err, value) -> if (callback) then callback(err, value)
     console.log "wiki.origin.get #{route}"
     $.ajax
       type: 'GET'
@@ -171,7 +174,8 @@ siteAdapter.recycler = {
   flag: -> "/recycler/favicon.png"
   getURL: (route) -> "/recycler/#{route}"
   getDirectURL: (route) -> "/recycler/#{route}"
-  get: (route, done) ->
+  get: (route, callback) ->
+    done = (err, value) -> if (callback) then callback(err, value)
     console.log "wiki.recycler.get #{route}"
     $.ajax
       type: 'GET'
@@ -310,7 +314,9 @@ siteAdapter.site = (site) ->
               $(this).attr('href', "#{thisPrefix}/#{$(this).data("slug")}.html") )
         ""
 
-    get: (route, done) ->
+    get: (route, callback) ->
+      done = (err, value) -> if (callback) then callback(err, value)
+
       getContent = (route, done) ->
         url = "#{sitePrefix[site]}/#{route}"
         useCredentials = credentialsNeeded[site] || false
