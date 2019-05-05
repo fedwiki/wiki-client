@@ -112,13 +112,9 @@ $ ->
         $page = ui.item
         # Only mark for removal if there's more than one page (+placeholder) left
         if evt.pageY < 0 and $(".page").length > 2
-          if not $page.hasClass('pending-remove')
-            $page.addClass('pending-remove')
-              .animate({opacity: 0.2}, 300)
+          $page.addClass('pending-remove')
         else
-          if $page.hasClass('pending-remove')
-            $page.removeClass('pending-remove')
-              .animate({opacity: 1.0}, 300)
+          $page.removeClass('pending-remove')
 
       .on 'sortstop', (evt, ui) ->
         $pages = $('.page')

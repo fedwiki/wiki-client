@@ -244,8 +244,8 @@ renderPageIntoPageElement = (pageObject, $page) ->
   $page.append($paper)
   [$pagehandle, $twins, $header, $story, $journal, $footer] = ['page-handle', 'twins', 'header', 'story', 'journal', 'footer'].map (className) ->
     $("<div />").addClass(className).appendTo($paper) if className != 'journal' or $('.editEnable').is(':visible')
-  $pagehandle.on('mouseenter', () => $page.css('opacity', 0.8))
-  $pagehandle.on('mouseleave', () => $page.css('opacity', 1))
+  $pagehandle.on('mouseenter', () => $page.addClass('page-draggable'))
+  $pagehandle.on('mouseleave', () => $page.removeClass('page-draggable'))
 
   emitHeader $header, $page, pageObject
   emitTimestamp $header, $page, pageObject

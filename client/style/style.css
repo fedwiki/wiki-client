@@ -313,6 +313,19 @@ p.readout {
   top: 0px;
 }
 
+div.page-draggable.page {
+  box-shadow: 2px 1px 24px rgba(255, 250, 153, 0.4);
+  transition-property: box-shadow;
+  transition-duration: 300ms;
+}
+
+/* make more specific than ghost style. */
+div.pending-remove.page {
+  opacity: 0.2;
+  transition-property: opacity;
+  transition-duration: 300ms;
+}
+
 .twins span {
   z-index: 2;
   position: relative;
