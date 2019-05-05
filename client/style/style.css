@@ -99,7 +99,7 @@ img.remote,
 header {
   top: 0; }
 
-.header span {
+.page-handle {
   cursor: grab; }
 
 footer {
@@ -116,14 +116,6 @@ footer {
 .footer:hover {
   opacity: 1;
 }
-
-.header > h1 {
-  display: table; }
-
-.header > h1 > span {
-  width: 100%;
-  display: table-cell;
-  padding-left: 5px; }
 
 .story {
   padding-bottom: 5px; }
@@ -309,6 +301,26 @@ p.readout {
   /*width: 430px;*/
   padding: 30px;
   min-height: 100%;
+  z-index: 0;
+  position: relative;
+}
+
+.page-handle {
+  z-index: 1;
+  width: 100%;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+
+.twins span {
+  z-index: 2;
+  position: relative;
+}
+
+.header span {
+  z-index: 2;
+  position: relative;
 }
 
 .factory,

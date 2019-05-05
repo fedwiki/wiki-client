@@ -152,9 +152,11 @@ emitHeader = ($header, $page, pageObject) ->
   tooltip = pageObject.getRemoteSiteDetails location.host
   $header.append """
     <h1 title="#{tooltip}">
-      <a href="#{pageObject.siteLineup()}" target="#{remote}">
-        <img src="#{wiki.site(remote).flag()}" height="32px" class="favicon"></a>
-      <span>#{resolve.escape pageObject.getTitle()}</span>
+      <span>
+        <a href="#{pageObject.siteLineup()}" target="#{remote}">
+          <img src="#{wiki.site(remote).flag()}" height="32px" class="favicon"></a>
+        #{resolve.escape pageObject.getTitle()}
+      </span>
     </h1>
   """
   $header.find('a').on 'click', handleHeaderClick
@@ -226,7 +228,7 @@ emitTwins = ($page) ->
           title="#{remoteSite}">
         """
       twins.push "#{flags.join '&nbsp;'} #{legend}"
-    $page.find('.twins').html """<p>#{twins.join ", "}</p>""" if twins
+    $page.find('.twins').html """<p><span>#{twins.join ", "}</span></p>""" if twins
 
 renderPageIntoPageElement = (pageObject, $page) ->
   $page.data("data", pageObject.getRawPage())
@@ -240,8 +242,10 @@ renderPageIntoPageElement = (pageObject, $page) ->
   $page.empty()
   $paper = $("<div class='paper' />")
   $page.append($paper)
-  [$twins, $header, $story, $journal, $footer] = ['twins', 'header', 'story', 'journal', 'footer'].map (className) ->
+  [$pagehandle, $twins, $header, $story, $journal, $footer] = ['page-handle', 'twins', 'header', 'story', 'journal', 'footer'].map (className) ->
     $("<div />").addClass(className).appendTo($paper) if className != 'journal' or $('.editEnable').is(':visible')
+  $pagehandle.on('mouseenter', () => $page.css('opacity', 0.8))
+  $pagehandle.on('mouseleave', () => $page.css('opacity', 1))
 
   emitHeader $header, $page, pageObject
   emitTimestamp $header, $page, pageObject
@@ -260,6 +264,7 @@ renderPageIntoPageElement = (pageObject, $page) ->
   emitTwins $page
   emitControls $journal if $('.editEnable').is(':visible')
   emitFooter $footer, pageObject
+  $pagehandle.css({height: "#{$story.position().top-5}px"})
 
 
 createMissingFlag = ($page, pageObject) ->

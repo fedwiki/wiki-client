@@ -104,7 +104,7 @@ $ ->
     return false
 
   $('.main')
-    .sortable({handle: '.header span', cursor: 'grabbing'})
+    .sortable({handle: '.page-handle', cursor: 'grabbing'})
       .on 'sortstart', (evt, ui) ->
         noScroll = true
         active.set ui.item, noScroll
