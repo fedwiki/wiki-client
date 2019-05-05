@@ -106,9 +106,11 @@ $ ->
   $('.main')
     .sortable({handle: '.page-handle', cursor: 'grabbing'})
       .on 'sortstart', (evt, ui) ->
+        return if not ui.item.hasClass('.page')
         noScroll = true
         active.set ui.item, noScroll
       .on 'sort', (evt, ui) ->
+        return if not ui.item.hasClass('.page')
         $page = ui.item
         # Only mark for removal if there's more than one page (+placeholder) left
         if evt.pageY < 0 and $(".page").length > 2
@@ -117,6 +119,7 @@ $ ->
           $page.removeClass('pending-remove')
 
       .on 'sortstop', (evt, ui) ->
+        return if not ui.item.hasClass('.page')
         $pages = $('.page')
         index = $pages.index($('.active'))
         if ui.item.hasClass('pending-remove')
