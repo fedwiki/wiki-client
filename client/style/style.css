@@ -301,6 +301,9 @@ p.readout {
   /*width: 430px;*/
   padding: 30px;
   min-height: 100%;
+}
+
+.handle-parent {
   z-index: 0;
   position: relative;
 }

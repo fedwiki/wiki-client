@@ -242,8 +242,9 @@ renderPageIntoPageElement = (pageObject, $page) ->
   $page.empty()
   $paper = $("<div class='paper' />")
   $page.append($paper)
-  [$pagehandle, $twins, $header, $story, $journal, $footer] = ['page-handle', 'twins', 'header', 'story', 'journal', 'footer'].map (className) ->
-    $("<div />").addClass(className).appendTo($paper) if className != 'journal' or $('.editEnable').is(':visible')
+  [$handleParent, $twins, $header, $story, $journal, $footer] = ['handle-parent', 'twins', 'header', 'story', 'journal', 'footer'].map (className) ->
+    $('<div />').addClass(className).appendTo($paper) if className != 'journal' or $('.editEnable').is(':visible')
+  $pagehandle = $('<div />').addClass('page-handle').appendTo($handleParent)
   $pagehandle.on('mouseenter', () => $page.addClass('page-draggable'))
   $pagehandle.on('mouseleave', () => $page.removeClass('page-draggable'))
 
