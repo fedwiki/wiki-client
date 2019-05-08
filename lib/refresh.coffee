@@ -265,7 +265,9 @@ renderPageIntoPageElement = (pageObject, $page) ->
   emitTwins $page
   emitControls $journal if $('.editEnable').is(':visible')
   emitFooter $footer, pageObject
-  $pagehandle.css({height: "#{$story.position().top-5}px"})
+  $pagehandle.css({
+    height: "#{$story.position().top-$handleParent.position().top-5}px"
+  })
 
 
 createMissingFlag = ($page, pageObject) ->
