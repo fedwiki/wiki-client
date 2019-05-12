@@ -24,6 +24,42 @@ describe 'pageHandler.get', ->
     journal: []
   }
 
+  beforeEach () ->
+    wiki = {}
+    wiki.local = {
+      get: (route, done) ->
+        done {msg: "no page named '#{route}' in browser local storage"}
+    }
+    wiki.origin = {
+      get: (route, done) ->
+        $.ajax
+          type: 'GET'
+          dataType: 'json'
+          url: "/#{route}"
+          success: (page) -> done null, page
+          error: (xhr, type, msg) -> done {msg, xhr}, null
+      put: (route, data, done) ->
+        $.ajax
+          type: 'PUT'
+          url: "/page/#{route}/action"
+          data:
+            'action': JSON.stringify(data)
+          success: () -> done null
+          error: (xhr, type, msg) -> done {xhr, type, msg}
+    }
+    wiki.site = (site) -> {
+      get: (route, done) ->
+        url = "//#{site}/#{route}"
+        $.ajax
+          type: 'GET'
+          dataType: 'json'
+          url: url
+          success: (data) -> done null, data
+          error: (xhr, type, msg) ->
+            done {msg, xhr}, null
+    }
+    global.wiki = wiki
+
   describe 'ajax fails', ->
 
     before ->
@@ -70,7 +106,7 @@ describe 'pageHandler.get', ->
       expect(whenGotten.calledOnce).to.be.true
       expect(jQuery.ajax.calledOnce).to.be.true
       expect(jQuery.ajax.args[0][0]).to.have.property('type', 'GET')
-      expect(jQuery.ajax.args[0][0].url).to.match(///^//siteName/slugName\.json\?random=[a-z0-9]{8}$///)
+      expect(jQuery.ajax.args[0][0].url).to.match(///^//siteName/slugName\.json///)
 
     after ->
       jQuery.ajax.restore()
@@ -86,10 +122,10 @@ describe 'pageHandler.get', ->
         whenGotten: sinon.stub()
         whenNotGotten: sinon.stub()
 
-      expect(jQuery.ajax.args[0][0].url).to.match(///^/slugName\.json\?random=[a-z0-9]{8}$///)
-      expect(jQuery.ajax.args[1][0].url).to.match(///^//example.com/slugName\.json\?random=[a-z0-9]{8}$///)
-      expect(jQuery.ajax.args[2][0].url).to.match(///^//asdf.test/slugName\.json\?random=[a-z0-9]{8}$///)
-      expect(jQuery.ajax.args[3][0].url).to.match(///^//foo.bar/slugName\.json\?random=[a-z0-9]{8}$///)
+      expect(jQuery.ajax.args[0][0].url).to.match(///^/slugName\.json///)
+      expect(jQuery.ajax.args[1][0].url).to.match(///^//example.com/slugName\.json///)
+      expect(jQuery.ajax.args[2][0].url).to.match(///^//asdf.test/slugName\.json///)
+      expect(jQuery.ajax.args[3][0].url).to.match(///^//foo.bar/slugName\.json///)
 
     after ->
       jQuery.ajax.restore()
