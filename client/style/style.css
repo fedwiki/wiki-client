@@ -99,6 +99,9 @@ img.remote,
 header {
   top: 0; }
 
+.page-handle {
+  cursor: grab; }
+
 footer {
   bottom: 0; }
 
@@ -298,6 +301,42 @@ p.readout {
   /*width: 430px;*/
   padding: 30px;
   min-height: 100%;
+}
+
+.handle-parent {
+  z-index: 0;
+  position: relative;
+}
+
+.page-handle {
+  z-index: 1;
+  width: 100%;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+
+div.page-draggable.page {
+  box-shadow: 2px 1px 24px rgba(255, 250, 153, 0.4);
+  transition-property: box-shadow;
+  transition-duration: 300ms;
+}
+
+/* make more specific than ghost style. */
+div.pending-remove.page {
+  opacity: 0.2;
+  transition-property: opacity;
+  transition-duration: 300ms;
+}
+
+.twins span {
+  z-index: 2;
+  position: relative;
+}
+
+.header span {
+  z-index: 2;
+  position: relative;
 }
 
 .factory,
