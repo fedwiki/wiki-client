@@ -46,7 +46,7 @@ describe 'neighborhood', ->
       expect( searchResult.finds ).to.eql( expectedResult )
 
 
-    it 'searches both the slug and the title'
+    it.skip 'searches both the slug and the title'
 
   describe 'more than one neighbor', ->
     before ->
@@ -83,4 +83,4 @@ describe 'neighborhood', ->
       searchResult = neighborhood.search( "some search query" )
       expect( searchResult.finds ).to.be.empty()
 
-    it 'should re-populate the neighbor'
+    it.skip 'should re-populate the neighbor'

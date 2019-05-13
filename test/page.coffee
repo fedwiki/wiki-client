@@ -1,16 +1,19 @@
 newPage = require('../lib/page').newPage
 expect = require 'expect.js'
 
-wiki = {}
-wiki.site = (site) -> {
-  getURL: (route) ->
-    "//#{site}/#{route}"
-  getDirectURL: (route) ->
-    "//#{site}/#{route}"
-}
-global.wiki = wiki
 
 describe 'page', ->
+
+
+  before () ->
+    wiki = {}
+    wiki.site = (site) -> {
+      getURL: (route) ->
+        "//#{site}/#{route}"
+      getDirectURL: (route) ->
+        "//#{site}/#{route}"
+    }
+    global.wiki = wiki
 
   describe 'newly created', ->
 
