@@ -32,6 +32,11 @@ textEditor = ($item, item, option={}) ->
 
   keydownHandler = (e) ->
 
+    if e.which == 27 #esc for save
+      e.preventDefault()
+      $textarea.focusout()
+      return false
+
     if (e.altKey || e.ctlKey || e.metaKey) and e.which == 83 #alt-s for save
       e.preventDefault()
       $textarea.focusout()
