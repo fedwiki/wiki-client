@@ -37,18 +37,18 @@ textEditor = ($item, item, option={}) ->
       $textarea.focusout()
       return false
 
-    if (e.altKey || e.ctlKey || e.metaKey) and e.which == 83 #alt-s for save
+    if (e.ctlKey || e.metaKey) and e.which == 83 #ctrl-s for save
       e.preventDefault()
       $textarea.focusout()
       return false
 
-    if (e.altKey || e.ctlKey || e.metaKey) and e.which == 73 #alt-i for information
+    if (e.ctlKey || e.metaKey) and e.which == 73 #ctrl-i for information
       e.preventDefault()
       page = $(e.target).parents('.page') unless e.shiftKey
       link.doInternalLink "about #{item.type} plugin", page
       return false
 
-    if (e.altKey || e.ctlKey || e.metaKey) and e.which == 77 #alt-m for menu
+    if (e.ctlKey || e.metaKey) and e.which == 77 #ctrl-m for menu
       e.preventDefault()
       $item.removeClass(item.type).addClass(item.type = 'factory')
       $textarea.focusout()
