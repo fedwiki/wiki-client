@@ -122,7 +122,7 @@ initDragging = ($page) ->
           zIndex: ''
         ).removeAttr('data-id')
     .on 'sortover', (e, ui) ->
-      if ui.sender
+      if ui.sender and ui.sender[0] != e.target
         ui.item.addClass('copy-capable')
       else
         ui.item.removeClass('copy-capable')
