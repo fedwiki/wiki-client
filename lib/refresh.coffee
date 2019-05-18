@@ -40,6 +40,8 @@ aliasItem = ($page, $item, oldItem) ->
     item.alias ||= item.id
     item.id = random.itemId()
     $item.attr 'data-id', item.id
+    $item.data('id', item.id)
+    $item.data('item').id = item.id
   else if item.alias?
     unless pageObject.getItem(item.alias)?
       item.id = item.alias
@@ -49,28 +51,36 @@ aliasItem = ($page, $item, oldItem) ->
 
 handleDragging = (evt, ui) ->
   $item = ui.item
+  $item.removeClass('copy-only copy-capable')
 
   item = getItem($item)
   $thisPage = $(this).parents('.page:first')
   $sourcePage = $item.data('pageElement')
+  sourceIsGhost = $sourcePage.hasClass('ghost')
   sourceSite = $sourcePage.data('site')
 
   $destinationPage = $item.parents('.page:first')
+  destinationIsGhost = $destinationPage.hasClass('ghost')
   equals = (a, b) -> a and b and a.get(0) == b.get(0)
 
   moveWithinPage = not $sourcePage or equals($sourcePage, $destinationPage)
   moveFromPage = not moveWithinPage and equals($thisPage, $sourcePage)
   moveToPage = not moveWithinPage and equals($thisPage, $destinationPage)
 
-  # If making a copy, update the temp clone so it becomes a true copy.
-  if ui.item.hasClass('copy')
-    $('.shadow-copy').removeClass('shadow-copy')
-      .data(ui.item.data()).attr({'data-id': ui.item.attr('data-id')})
+  if destinationIsGhost
+    $(evt.target).sortable('cancel')
+    $('.shadow-copy').remove()
+    return
 
   if moveFromPage
-    if $sourcePage.hasClass('ghost') or
-      $sourcePage.attr('id') == $destinationPage.attr('id') or
-        evt.shiftKey
+    # If making a copy, update the temp clone so it becomes a true copy.
+    if ui.item.hasClass('copy')
+      $('.shadow-copy').removeClass('shadow-copy')
+        .data(ui.item.data()).attr({'data-id': ui.item.attr('data-id')})
+      return
+
+    if sourceIsGhost or
+      $sourcePage.attr('id') == $destinationPage.attr('id')
           # stem the damage, better ideas here:
           # http://stackoverflow.com/questions/3916089/jquery-ui-sortables-connect-lists-copy-items
           return
@@ -91,7 +101,13 @@ handleDragging = (evt, ui) ->
   pageHandler.put $thisPage, action
 
 changeMouseCursor = (e, ui) ->
-  if e.shiftKey and ui.item.hasClass('copy-capable')
+  destinationIsGhost = ui.placeholder.parents('.page:first').hasClass('ghost')
+  if destinationIsGhost
+    $('body').css('cursor', 'no-drop')
+    $('.shadow-copy').hide()
+    ui.item.removeClass('copy')
+  else if ui.item.hasClass('copy-only') or \
+    (e.shiftKey and ui.item.hasClass('copy-capable'))
     $('body').css('cursor', 'copy')
     $('.shadow-copy').show()
     ui.item.addClass('copy')
@@ -122,7 +138,10 @@ initDragging = ($page) ->
           zIndex: ''
         ).removeAttr('data-id')
     .on 'sortover', (e, ui) ->
-      if ui.sender and ui.sender[0] != e.target
+      sourceIsGhost = ui.item.data('pageElement').hasClass('ghost')
+      if sourceIsGhost
+        ui.item.addClass('copy-only')
+      else if ui.sender and ui.sender[0] != e.target
         ui.item.addClass('copy-capable')
       else
         ui.item.removeClass('copy-capable')
