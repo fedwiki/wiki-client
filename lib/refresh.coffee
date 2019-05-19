@@ -49,9 +49,10 @@ aliasItem = ($page, $item, oldItem) ->
       $item.attr 'data-id', item.id
   item
 
-handleDragging = (evt, ui) ->
+equals = (a, b) -> a and b and a.get(0) == b.get(0)
+
+handleDrop = (evt, ui) ->
   $item = ui.item
-  $item.removeClass('copy-only copy-capable')
 
   item = getItem($item)
   $thisPage = $(this).parents('.page:first')
@@ -61,29 +62,20 @@ handleDragging = (evt, ui) ->
 
   $destinationPage = $item.parents('.page:first')
   destinationIsGhost = $destinationPage.hasClass('ghost')
-  equals = (a, b) -> a and b and a.get(0) == b.get(0)
 
-  moveWithinPage = not $sourcePage or equals($sourcePage, $destinationPage)
+  moveWithinPage = equals($sourcePage, $destinationPage)
   moveFromPage = not moveWithinPage and equals($thisPage, $sourcePage)
   moveToPage = not moveWithinPage and equals($thisPage, $destinationPage)
+  moveBetweenDuplicatePages = moveFromPage and \
+    $sourcePage.attr('id') == $destinationPage.attr('id')
 
-  if destinationIsGhost
+  if destinationIsGhost or moveBetweenDuplicatePages
     $(evt.target).sortable('cancel')
-    $('.shadow-copy').remove()
     return
 
-  if moveFromPage
-    # If making a copy, update the temp clone so it becomes a true copy.
-    if ui.item.hasClass('copy')
-      $('.shadow-copy').removeClass('shadow-copy')
-        .data(ui.item.data()).attr({'data-id': ui.item.attr('data-id')})
-      return
-
-    if sourceIsGhost or
-      $sourcePage.attr('id') == $destinationPage.attr('id')
-          # stem the damage, better ideas here:
-          # http://stackoverflow.com/questions/3916089/jquery-ui-sortables-connect-lists-copy-items
-          return
+  if moveFromPage and $item.hasClass('copy')
+    # Don't record a remove if we are copying
+    return
 
   action = if moveWithinPage
     order = $(this).children().map((_, value) -> $(value).attr('data-id')).get()
@@ -92,6 +84,10 @@ handleDragging = (evt, ui) ->
     console.log 'drag from', $sourcePage.find('h1').text()
     {type: 'remove'}
   else if moveToPage
+    # If making a copy, update the temp clone so it becomes a true copy.
+    if $item.hasClass('copy')
+      $('.shadow-copy').removeClass('shadow-copy')
+        .data($item.data()).attr({'data-id': $item.attr('data-id')})
     $item.data 'pageElement', $thisPage
     $before = $item.prev('.item')
     before = getItem($before)
@@ -101,13 +97,17 @@ handleDragging = (evt, ui) ->
   pageHandler.put $thisPage, action
 
 changeMouseCursor = (e, ui) ->
-  destinationIsGhost = ui.placeholder.parents('.page:first').hasClass('ghost')
-  if destinationIsGhost
+  $sourcePage = ui.item.data('pageElement')
+  sourceIsGhost = $sourcePage.hasClass('ghost')
+  $destinationPage = ui.placeholder.parents('.page:first')
+  destinationIsGhost = $destinationPage.hasClass('ghost')
+  moveAcrossPages = not equals($sourcePage, $destinationPage)
+  if destinationIsGhost or \
+      (moveAcrossPages and $sourcePage.attr('id') == $destinationPage.attr('id'))
     $('body').css('cursor', 'no-drop')
     $('.shadow-copy').hide()
     ui.item.removeClass('copy')
-  else if ui.item.hasClass('copy-only') or \
-    (e.shiftKey and ui.item.hasClass('copy-capable'))
+  else if sourceIsGhost or (e.shiftKey and moveAcrossPages)
     $('body').css('cursor', 'copy')
     $('.shadow-copy').show()
     ui.item.addClass('copy')
@@ -124,7 +124,7 @@ initDragging = ($page) ->
     forcePlaceholderSize: true
   $story = $page.find('.story')
   $story.sortable(options)
-    .on 'sortupdate', handleDragging
+    .on 'sortupdate', handleDrop
     .on 'sort', changeMouseCursor
     .on 'sortstart', (e, ui) ->
       # Create a copy that we control since sortable removes theirs too early.
@@ -137,17 +137,10 @@ initDragging = ($page) ->
           position: ''
           zIndex: ''
         ).removeAttr('data-id')
-    .on 'sortover', (e, ui) ->
-      sourceIsGhost = ui.item.data('pageElement').hasClass('ghost')
-      if sourceIsGhost
-        ui.item.addClass('copy-only')
-      else if ui.sender and ui.sender[0] != e.target
-        ui.item.addClass('copy-capable')
-      else
-        ui.item.removeClass('copy-capable')
     .on 'sortstop', (e, ui) ->
       $('body').css('cursor', origCursor)
       $('.shadow-copy').remove()
+      $('.copy').removeClass('copy')
 
 getPageObject = ($journal) ->
   $page = $($journal).parents('.page:first')
