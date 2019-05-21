@@ -114,6 +114,7 @@ initDragging = ($page) ->
     connectWith: '.page .story'
     placeholder: 'item-placeholder'
     forcePlaceholderSize: true
+    delay: 150
   $story = $page.find('.story')
   $story.sortable(options)
     .on 'sortstart', (e, ui) ->
