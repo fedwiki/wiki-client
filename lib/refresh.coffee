@@ -133,9 +133,9 @@ initDragging = ($page) ->
           zIndex: ''
         ).removeAttr('data-id')
     .on 'sort', changeMouseCursor
-    .on 'sortstop', (e, ui) -> handleDrop(e, ui, originalOrder)
     .on 'sortstop', (e, ui) ->
       $('body').css('cursor', origCursor)
+      handleDrop(e, ui, originalOrder)
       $('.shadow-copy').remove()
 
 getPageObject = ($journal) ->
