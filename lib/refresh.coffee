@@ -53,7 +53,7 @@ equals = (a, b) -> a and b and a.get(0) == b.get(0)
 getStoryItemOrder = ($story) ->
   $story.children().map((_, value) -> $(value).attr('data-id')).get()
 
-handleDrop = (evt, ui) ->
+handleDrop = (evt, ui, originalOrder) ->
   $item = ui.item
 
   item = getItem($item)
@@ -72,8 +72,8 @@ handleDrop = (evt, ui) ->
     return
 
   if moveWithinPage
-    order = getStoryItemOrder($(this))
-    if not _.isEqual(order, $(this).data('order'))
+    order = getStoryItemOrder($item.parents('.story:first'))
+    if not _.isEqual(order, originalOrder)
       pageHandler.put $destinationPage, {id: item.id, type: 'move', order: order}
     return
   copying = sourceIsGhost or evt.shiftKey
@@ -118,15 +118,14 @@ initDragging = ($page) ->
     forcePlaceholderSize: true
     delay: 150
   $story = $page.find('.story')
+  originalOrder = null
   $story.sortable(options)
     .on 'sortstart', (e, ui) ->
-      $item = ui.item
-      $story = $item.parents '.story:first'
-      $story.data 'order', getStoryItemOrder($story)
+      originalOrder = getStoryItemOrder($story)
       # Create a copy that we control since sortable removes theirs too early.
       # Insert after the placeholder to prevent adding history when item not moved.
       # Clear out the styling they add. Updates to jquery ui can affect this.
-      $item.clone().insertAfter(ui.placeholder).hide().addClass("shadow-copy")
+      ui.item.clone().insertAfter(ui.placeholder).hide().addClass("shadow-copy")
         .css(
           width: ''
           height: ''
@@ -134,11 +133,10 @@ initDragging = ($page) ->
           zIndex: ''
         ).removeAttr('data-id')
     .on 'sort', changeMouseCursor
-    .on 'sortstop', handleDrop
+    .on 'sortstop', (e, ui) -> handleDrop(e, ui, originalOrder)
     .on 'sortstop', (e, ui) ->
       $('body').css('cursor', origCursor)
       $('.shadow-copy').remove()
-      ui.item.parents('.story:first').removeData('order')
 
 getPageObject = ($journal) ->
   $page = $($journal).parents('.page:first')
