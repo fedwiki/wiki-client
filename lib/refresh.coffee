@@ -50,6 +50,8 @@ aliasItem = ($page, $item, oldItem) ->
   item
 
 equals = (a, b) -> a and b and a.get(0) == b.get(0)
+getStoryItemOrder = ($story) ->
+  $story.children().map((_, value) -> $(value).attr('data-id')).get()
 
 handleDrop = (evt, ui) ->
   $item = ui.item
@@ -70,8 +72,9 @@ handleDrop = (evt, ui) ->
     return
 
   if moveWithinPage
-    order = $(this).children().map((_, value) -> $(value).attr('data-id')).get()
-    pageHandler.put $destinationPage, {id: item.id, type: 'move', order: order}
+    order = getStoryItemOrder($(this))
+    if not _.isEqual(order, $(this).data('order'))
+      pageHandler.put $destinationPage, {id: item.id, type: 'move', order: order}
     return
   copying = sourceIsGhost or evt.shiftKey
   if copying
@@ -79,7 +82,6 @@ handleDrop = (evt, ui) ->
     $('.shadow-copy').removeClass('shadow-copy')
       .data($item.data()).attr({'data-id': $item.attr('data-id')})
   else
-    console.log 'drag from', $sourcePage.find('h1').text()
     pageHandler.put $sourcePage, {id: item.id, type: 'remove'}
   # Either way, record the add to the new page
   $item.data 'pageElement', $destinationPage
@@ -118,10 +120,13 @@ initDragging = ($page) ->
   $story = $page.find('.story')
   $story.sortable(options)
     .on 'sortstart', (e, ui) ->
+      $item = ui.item
+      $story = $item.parents '.story:first'
+      $story.data 'order', getStoryItemOrder($story)
       # Create a copy that we control since sortable removes theirs too early.
       # Insert after the placeholder to prevent adding history when item not moved.
       # Clear out the styling they add. Updates to jquery ui can affect this.
-      ui.item.clone().insertAfter(ui.placeholder).hide().addClass("shadow-copy")
+      $item.clone().insertAfter(ui.placeholder).hide().addClass("shadow-copy")
         .css(
           width: ''
           height: ''
@@ -133,6 +138,7 @@ initDragging = ($page) ->
     .on 'sortstop', (e, ui) ->
       $('body').css('cursor', origCursor)
       $('.shadow-copy').remove()
+      ui.item.parents('.story:first').removeData('order')
 
 getPageObject = ($journal) ->
   $page = $($journal).parents('.page:first')
