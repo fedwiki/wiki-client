@@ -119,9 +119,15 @@ initDragging = ($page) ->
     delay: 150
   $story = $page.find('.story')
   originalOrder = null
+  dragCancelled = null
+  cancelDrag = (e) ->
+    dragCancelled = true
+    $story.sortable('cancel') if e.which == 27
   $story.sortable(options)
     .on 'sortstart', (e, ui) ->
       originalOrder = getStoryItemOrder($story)
+      dragCancelled = false
+      $('body').on('keydown', cancelDrag)
       # Create a copy that we control since sortable removes theirs too early.
       # Insert after the placeholder to prevent adding history when item not moved.
       # Clear out the styling they add. Updates to jquery ui can affect this.
@@ -134,8 +140,8 @@ initDragging = ($page) ->
         ).removeAttr('data-id')
     .on 'sort', changeMouseCursor
     .on 'sortstop', (e, ui) ->
-      $('body').css('cursor', origCursor)
-      handleDrop(e, ui, originalOrder)
+      $('body').css('cursor', origCursor).off('keydown', cancelDrag)
+      handleDrop(e, ui, originalOrder) unless dragCancelled
       $('.shadow-copy').remove()
 
 getPageObject = ($journal) ->
