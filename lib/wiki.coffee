@@ -171,5 +171,7 @@ wiki.security = require './security'
 
 wiki.createSynopsis = require('./synopsis') ##
 
+# known uses: (none yet)
+wiki.lineup = require './lineup'
 
 module.exports = wiki
