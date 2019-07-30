@@ -35,7 +35,7 @@ getScript = plugin.getScript = (url, callback = () ->) ->
         scripts.push url
         callback()
       .fail (_jqXHR, _textStatus, err) ->
-        console.log('Failed to load plugin:', url, err)
+        console.log('getScript: Failed to load:', url, err)
         callback()
 
 plugin.get = plugin.getPlugin = (name, callback) ->
