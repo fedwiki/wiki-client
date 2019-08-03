@@ -37,11 +37,15 @@ emit = ($item, item) ->
           <li><a class="menu" href="#" title="#{info.title}">#{info.name}</a></li>
         """
     menu.find('a.menu').click (evt)->
-      $item.removeClass('factory').addClass(item.type=evt.target.text.toLowerCase())
+      type = evt.target.text.toLowerCase()
+      $item.removeClass('factory').addClass(item.type=type)
       $item.unbind()
       evt.preventDefault()
       active.set $item.parents(".page")
-      editor.textEditor $item, item
+      wiki.getPlugin(type, (plugin) ->
+        editor = plugin?.editor || editor.textEditor
+        editor $item, item
+      )
 
   showPrompt = ->
     $item.append "<p>#{resolve.resolveLinks(item.prompt, escape)}</b>"
