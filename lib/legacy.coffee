@@ -17,8 +17,17 @@ license = require './license'
 asSlug = require('./page').asSlug
 newPage = require('./page').newPage
 
+preLoadCustomEditors = (catalog) ->
+  catalog
+    .filter((entry) -> entry.customEditor)
+    .forEach((entry) ->
+      console.log("#{entry.name} Plugin declares a custom editor, so pre-loading the plugin")
+      wiki.getPlugin(entry.name.toLowerCase(), () ->)
+    )
+
 wiki.origin.get 'system/factories.json', (error, data) ->
   window.catalog = data
+  preLoadCustomEditors data
 
 $ ->
   dialog.emit()

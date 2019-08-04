@@ -37,15 +37,17 @@ emit = ($item, item) ->
           <li><a class="menu" href="#" title="#{info.title}">#{info.name}</a></li>
         """
     menu.find('a.menu').click (evt)->
-      type = evt.target.text.toLowerCase()
-      $item.removeClass('factory').addClass(item.type=type)
+      pluginName = evt.target.text
+      pluginType = pluginName.toLowerCase()
+      $item.removeClass('factory').addClass(item.type=pluginType)
       $item.unbind()
       evt.preventDefault()
       active.set $item.parents(".page")
-      wiki.getPlugin(type, (plugin) ->
-        editor = plugin?.editor || editor.textEditor
-        editor $item, item
-      )
+      catalogEntry = window.catalog.find((entry) -> pluginName is entry.name)
+      if catalogEntry.customEditor
+        window.plugins[pluginType].editor $item, item
+      else
+        editor.textEditor $item, item
 
   showPrompt = ->
     $item.append "<p>#{resolve.resolveLinks(item.prompt, escape)}</b>"
