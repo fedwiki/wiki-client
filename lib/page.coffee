@@ -121,10 +121,12 @@ newPage = (json, site) ->
     return null
 
   seqItems = (each) ->
-    emitItem = (i) ->
-      return if i >= page.story.length
-      each page.story[i]||{text:'null'}, -> emitItem i+1
-    emitItem 0
+    promise = new Promise (resolve, _reject) ->
+      emitItem = (i) ->
+        return resolve() if i >= page.story.length
+        each page.story[i]||{text:'null'}, -> emitItem i+1
+      emitItem 0
+    return promise
 
   addParagraph = (text) ->
     type = "paragraph"

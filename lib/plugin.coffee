@@ -26,7 +26,6 @@ loadScript = (url, options) ->
 scripts = []
 loadingScripts = {}
 getScript = plugin.getScript = (url, callback = () ->) ->
-  # console.log "URL :", url, "\nCallback :", callback
   if url in scripts
     callback()
   else
@@ -38,22 +37,76 @@ getScript = plugin.getScript = (url, callback = () ->) ->
         console.log('getScript: Failed to load:', url, err)
         callback()
 
+# Consumes is a map
+pluginsThatConsume = (capability) ->
+  Object.keys(window.plugins)
+    .filter (plugin) -> window.plugins[plugin].consumes
+    .filter (plugin) -> Object.keys(window.plugins[plugin].consumes).indexOf(capability) != -1
+
+bind = (name, pluginBind) ->
+  fn = ($item, item, oldIndex) ->
+    index = $('.item').index($item)
+    notifIndex = oldIndex
+    notifIndex = index if not oldIndex or index < oldIndex
+    consumes = window.plugins[name].consumes
+    waitFor = Promise.resolve()
+    # Wait for all items in the lineup that produce what we consume
+    # before calling our bind method.
+    if consumes
+      deps = []
+      Object.keys(consumes).forEach (consuming) ->
+        producers = $(".item:lt(#{index})").filter(consuming)
+        console.log(name, "consumes", consuming)
+        console.log(producers, "produce", consuming)
+        if not producers or producers.length == 0
+          console.log 'warn: no items in lineup that produces', consuming
+        console.log("there are #{producers.length} instances of #{consuming}")
+        deps.concat(producers.map (_i, el) -> el.promise)
+      waitFor = Promise.all(deps)
+    waitFor
+      .then pluginBind($item, item)
+      # After we bind, notify everyone that depends on us to reload
+      .then ->
+        produces = $item[0].className.split(" ")
+          .filter (c) -> c.indexOf("-source") != -1
+          .map (c) -> "." + c
+        return if produces.length == 0
+        produces.forEach (producer) ->
+          tonotify = pluginsThatConsume(producer)
+          console.log(producer, "is consumed by", tonotify)
+          tonotify.forEach (name) ->
+            instances = $(".item:gt(#{notifIndex-1})").filter("." + name)
+            console.log("there are #{instances.length} instances of #{name} beyond index #{notifIndex-1}")
+            instances.each (_i, consumer) ->
+              $consumer = $(consumer)
+              plugin.do $consumer.empty(), $consumer.data("item")
+      .catch (e) ->
+        console.log 'plugin emit: unexpected error', e
+  return fn
+
 plugin.get = plugin.getPlugin = (name, callback) ->
   return loadingScripts[name].then(callback) if loadingScripts[name]
   loadingScripts[name] = new Promise (resolve, _reject) ->
     return resolve(window.plugins[name]) if window.plugins[name]
     getScript "/plugins/#{name}/#{name}.js", () ->
       p = window.plugins[name]
-      return resolve(p) if p
+      if p
+        p.bind = bind(name, p.bind)
+        return resolve(p)
       getScript "/plugins/#{name}.js", () ->
         p = window.plugins[name]
+        p.bind = bind(name, p.bind) if p
         return resolve(p)
   loadingScripts[name].then (plugin) ->
     delete loadingScripts[name]
     return callback(plugin)
   return loadingScripts[name]
 
-plugin.do = plugin.doPlugin = (div, item, done=->) ->
+
+plugin.do = plugin.doPlugin = (div, item, done=->, originalIndex) ->
+  plugin.emit div, item, {done, originalIndex, bind: true}
+
+plugin.emit = (div, item, {done=->, originalIndex, bind=false}) ->
   error = (ex, script) ->
     div.append """
       <div class="error">
@@ -86,11 +139,11 @@ plugin.do = plugin.doPlugin = (div, item, done=->) ->
       $('.retry').on 'click', ->
         if script.emit.length > 2
           script.emit div, item, ->
-            script.bind div, item
+            script.bind div, item, originalIndex if bind
             done()
         else
           script.emit div, item
-          script.bind div, item
+          script.bind div, item, originalIndex if bind
           done()
 
   div.data 'pageElement', div.parents(".page")
@@ -100,11 +153,11 @@ plugin.do = plugin.doPlugin = (div, item, done=->) ->
       throw TypeError("Can't find plugin for '#{item.type}'") unless script?
       if script.emit.length > 2
         script.emit div, item, ->
-          script.bind div, item
+          script.bind div, item, originalIndex if bind
           done()
       else
         script.emit div, item
-        script.bind div, item
+        script.bind div, item, originalIndex if bind
         done()
     catch err
       console.log 'plugin error', err
