@@ -17,8 +17,23 @@ license = require './license'
 asSlug = require('./page').asSlug
 newPage = require('./page').newPage
 
+preLoadEditors = (catalog) ->
+  catalog
+    .filter((entry) -> entry.editor)
+    .forEach((entry) ->
+      console.log("#{entry.name} Plugin declares an editor, so pre-loading the plugin")
+      wiki.getPlugin(entry.name.toLowerCase(), (plugin) ->
+          if ! plugin.editor or typeof plugin.editor != 'function'
+            console.log("""#{entry.name} Plugin ERROR.
+              Cannot find `editor` function in plugin. Set `"editor": false` in factory.json or
+              Correct the plugin to include all three of `{emit, bind, editor}`
+              """)
+        )
+    )
+
 wiki.origin.get 'system/factories.json', (error, data) ->
   window.catalog = data
+  preLoadEditors data
 
 $ ->
   dialog.emit()

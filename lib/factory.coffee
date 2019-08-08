@@ -37,11 +37,21 @@ emit = ($item, item) ->
           <li><a class="menu" href="#" title="#{info.title}">#{info.name}</a></li>
         """
     menu.find('a.menu').click (evt)->
-      $item.removeClass('factory').addClass(item.type=evt.target.text.toLowerCase())
+      pluginName = evt.target.text
+      pluginType = pluginName.toLowerCase()
+      $item.removeClass('factory').addClass(item.type=pluginType)
       $item.unbind()
       evt.preventDefault()
       active.set $item.parents(".page")
-      editor.textEditor $item, item
+      catalogEntry = window.catalog.find((entry) -> pluginName is entry.name)
+      if catalogEntry.editor
+        try
+          window.plugins[pluginType].editor $item, item
+        catch error
+          console.log("#{pluginName} Plugin editor failed: #{error}. Falling back to textEditor")
+          editor.textEditor($item, item)
+      else
+        editor.textEditor $item, item
 
   showPrompt = ->
     $item.append "<p>#{resolve.resolveLinks(item.prompt, escape)}</b>"
