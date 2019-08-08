@@ -44,8 +44,12 @@ emit = ($item, item) ->
       evt.preventDefault()
       active.set $item.parents(".page")
       catalogEntry = window.catalog.find((entry) -> pluginName is entry.name)
-      if catalogEntry.customEditor
-        window.plugins[pluginType].editor $item, item
+      if catalogEntry.editor
+        try
+          window.plugins[pluginType].editor $item, item
+        catch error
+          console.log("#{pluginName} Plugin editor failed: #{error}. Falling back to textEditor")
+          editor.textEditor($item, item)
       else
         editor.textEditor $item, item
 
