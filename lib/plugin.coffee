@@ -16,6 +16,7 @@ escape = (s) ->
 # see example in http://api.jquery.com/jQuery.getScript/
 
 loadScript = (url, options) ->
+  console.log("loading url:", url)
   options = $.extend(options or {},
     dataType: "script"
     cache: true
@@ -61,10 +62,19 @@ bind = (name, pluginBind) ->
         if not producers or producers.length == 0
           console.log 'warn: no items in lineup that produces', consuming
         console.log("there are #{producers.length} instances of #{consuming}")
-        deps.concat(producers.map (_i, el) -> el.promise)
+        producers.each (_i, el) ->
+          console.log("promise: ", el, el.promise)
+          deps.push(el.promise)
+      console.log("waiting for:", deps)
       waitFor = Promise.all(deps)
     waitFor
-      .then pluginBind($item, item)
+      .then ->
+        console.log("getting promise for", name)
+        bindPromise = pluginBind($item, item)
+        if not bindPromise or typeof(bindPromise.then) == 'function'
+          bindPromise = Promise.resolve(bindPromise)
+        $item[0].promise = bindPromise
+        console.log("promise bound for", name)
       # After we bind, notify everyone that depends on us to reload
       .then ->
         produces = $item[0].className.split(" ")

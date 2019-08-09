@@ -325,5 +325,9 @@ $ ->
 
   $ ->
     state.first()
-    $('.page').each refresh.cycle
+    promise = Promise.resolve()
+    $('.page').each ->
+      $page = $(this)
+      promise = promise.then ->
+        refresh.cycle $page
     active.set($('.page').last())

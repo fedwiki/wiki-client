@@ -311,6 +311,8 @@ renderPageIntoPageElement = (pageObject, $page) ->
     plugin.emit $item, item, {done}
   .then ->
     $page.find('.item').each (_i, itemElem) ->
+      console.log(itemElem)
+    $page.find('.item').each (_i, itemElem) ->
       $item = $(itemElem)
       item = $item.data('item')
       try
@@ -396,33 +398,35 @@ newFuturePage = (title, create) ->
       'create': create
   pageObject
 
-cycle = ->
-  $page = $(this)
+cycle = ($page) ->
+  return new Promise (resolve, _reject) ->
 
-  [slug, rev] = $page.attr('id').split('_rev')
-  pageInformation = {
-    slug: slug
-    rev: rev
-    site: $page.data('site')
-  }
+    [slug, rev] = $page.attr('id').split('_rev')
+    pageInformation = {
+      slug: slug
+      rev: rev
+      site: $page.data('site')
+    }
 
-  whenNotGotten = ->
-    link = $("""a.internal[href="/#{slug}.html"]:last""")
-    title = link.text() or slug
-    key = link.parents('.page').data('key')
-    create = lineup.atKey(key)?.getCreate()
-    pageObject = newFuturePage(title)
-    buildPage( pageObject, $page ).addClass('ghost')
+    whenNotGotten = ->
+      link = $("""a.internal[href="/#{slug}.html"]:last""")
+      title = link.text() or slug
+      key = link.parents('.page').data('key')
+      create = lineup.atKey(key)?.getCreate()
+      pageObject = newFuturePage(title)
+      buildPage( pageObject, $page ).addClass('ghost')
+      resolve()
 
 
-  whenGotten = (pageObject) ->
-    buildPage( pageObject, $page )
-    for site in pageObject.getNeighbors(location.host)
-      neighborhood.registerNeighbor site
+    whenGotten = (pageObject) ->
+      buildPage( pageObject, $page )
+      for site in pageObject.getNeighbors(location.host)
+        neighborhood.registerNeighbor site
+      resolve()
 
-  pageHandler.get
-    whenGotten: whenGotten
-    whenNotGotten: whenNotGotten
-    pageInformation: pageInformation
+    pageHandler.get
+      whenGotten: whenGotten
+      whenNotGotten: whenNotGotten
+      pageInformation: pageInformation
 
 module.exports = {cycle, emitTwins, buildPage, rebuildPage, newFuturePage}
