@@ -305,7 +305,7 @@ renderPageIntoPageElement = (pageObject, $page) ->
   emitHeader $header, $page, pageObject
   emitTimestamp $header, $page, pageObject
 
-  pageObject.seqItems (item, done) ->
+  pagePromise = pageObject.seqItems (item, done) ->
     $item = $ """<div class="item #{item.type}" data-id="#{item.id}">"""
     $story.append $item
     plugin.emit $item, item, {done}
@@ -334,6 +334,7 @@ renderPageIntoPageElement = (pageObject, $page) ->
   $pagehandle.css({
     height: "#{$story.position().top-$handleParent.position().top-5}px"
   })
+  return pagePromise
 
 
 createMissingFlag = ($page, pageObject) ->
@@ -348,7 +349,7 @@ rebuildPage = (pageObject, $page) ->
   $page.addClass('remote') if pageObject.isRemote()
   $page.addClass('plugin') if pageObject.isPlugin()
 
-  renderPageIntoPageElement pageObject, $page
+  pagePromise = renderPageIntoPageElement pageObject, $page
   createMissingFlag $page, pageObject
 
   #STATE -- update url when adding new page, removing others
@@ -358,7 +359,7 @@ rebuildPage = (pageObject, $page) ->
     initDragging $page
     initMerging $page
     initAddButton $page
-  $page
+  pagePromise
 
 buildPage = (pageObject, $page) ->
   $page.data('key', lineup.addPage(pageObject))
@@ -415,14 +416,14 @@ cycle = ($page) ->
       create = lineup.atKey(key)?.getCreate()
       pageObject = newFuturePage(title)
       buildPage( pageObject, $page ).addClass('ghost')
-      resolve()
+        .then(resolve)
 
 
     whenGotten = (pageObject) ->
-      buildPage( pageObject, $page )
+      pagePromise = buildPage( pageObject, $page )
       for site in pageObject.getNeighbors(location.host)
         neighborhood.registerNeighbor site
-      resolve()
+      pagePromise.then(resolve)
 
     pageHandler.get
       whenGotten: whenGotten
