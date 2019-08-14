@@ -13,6 +13,7 @@ dialog = require './dialog'
 link = require './link'
 target = require './target'
 license = require './license'
+plugin = require './plugin'
 
 asSlug = require('./page').asSlug
 newPage = require('./page').newPage
@@ -120,17 +121,29 @@ $ ->
 
       .on 'sortstop', (evt, ui) ->
         return if not ui.item.hasClass('page')
+        $page = ui.item
         $pages = $('.page')
         index = $pages.index($('.active'))
-        if ui.item.hasClass('pending-remove')
+        firstItemIndex = $(".item").index($page.find(".item")[0])
+        if $page.hasClass('pending-remove')
           return if $pages.length == 1
+          affectedPlugins = $page.find(".item").map (_i, e) ->
+            $item = $(e)
+            name = $item.data("item").type
+            return {name, produces: plugin.produces($item)}
           index = index - 1 if $pages.length - 1 == index
-          lineup.removeKey(ui.item.data('key'))
-          ui.item.remove()
+          lineup.removeKey($page.data('key'))
+          $page.remove()
           active.set($('.page')[index])
+          affectedPlugins.map (_i, {name, produces}) ->
+            plugin.notifyConsumers(name, produces, firstItemIndex)
         else
-          lineup.changePageIndex(ui.item.data('key'), index)
+          lineup.changePageIndex($page.data('key'), index)
           active.set $('.active')
+          $page.find(".item").each (_i, e) ->
+            $item = $(e)
+            item = $item.data("item")
+            plugin.do $item.empty(), item, (->), firstItemIndex
         state.setUrl()
         state.debugStates()
 

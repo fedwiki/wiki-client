@@ -44,6 +44,24 @@ pluginsThatConsume = (capability) ->
     .filter (plugin) -> window.plugins[plugin].consumes
     .filter (plugin) -> Object.keys(window.plugins[plugin].consumes).indexOf(capability) != -1
 
+plugin.produces = ($item) ->
+  produces = $item[0].className.split(" ")
+    .filter (c) -> c.indexOf("-source") != -1
+    .map (c) -> "." + c
+  return produces
+
+plugin.notifyConsumers = (name, produces, notifIndex) ->
+  return if produces.length == 0
+  produces.forEach (producer) ->
+    tonotify = pluginsThatConsume(producer)
+    console.log(producer, "is consumed by", tonotify)
+    tonotify.forEach (name) ->
+      instances = $(".item:gt(#{notifIndex-1})").filter("." + name)
+      console.log("there are #{instances.length} instances of #{name} beyond index #{notifIndex-1}")
+      instances.each (_i, consumer) ->
+        $consumer = $(consumer)
+        plugin.do $consumer.empty(), $consumer.data("item")
+
 bind = (name, pluginBind) ->
   fn = ($item, item, oldIndex) ->
     index = $('.item').index($item)
@@ -77,19 +95,8 @@ bind = (name, pluginBind) ->
         console.log("promise bound for", name)
       # After we bind, notify everyone that depends on us to reload
       .then ->
-        produces = $item[0].className.split(" ")
-          .filter (c) -> c.indexOf("-source") != -1
-          .map (c) -> "." + c
-        return if produces.length == 0
-        produces.forEach (producer) ->
-          tonotify = pluginsThatConsume(producer)
-          console.log(producer, "is consumed by", tonotify)
-          tonotify.forEach (name) ->
-            instances = $(".item:gt(#{notifIndex-1})").filter("." + name)
-            console.log("there are #{instances.length} instances of #{name} beyond index #{notifIndex-1}")
-            instances.each (_i, consumer) ->
-              $consumer = $(consumer)
-              plugin.do $consumer.empty(), $consumer.data("item")
+        produces = plugin.produces($item)
+        plugin.notifyConsumers(name, produces, notifIndex)
       .catch (e) ->
         console.log 'plugin emit: unexpected error', e
   return fn
