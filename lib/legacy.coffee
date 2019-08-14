@@ -104,12 +104,14 @@ $ ->
     link.doInternalLink name, page, $(e.target).data('site')
     return false
 
+  originalFirstItemIndex = null
   $('.main')
     .sortable({handle: '.page-handle', cursor: 'grabbing'})
       .on 'sortstart', (evt, ui) ->
         return if not ui.item.hasClass('page')
         noScroll = true
         active.set ui.item, noScroll
+        originalFirstItemIndex = $(".item").index(ui.item.find(".item")[0])
       .on 'sort', (evt, ui) ->
         return if not ui.item.hasClass('page')
         $page = ui.item
@@ -125,6 +127,8 @@ $ ->
         $pages = $('.page')
         index = $pages.index($('.active'))
         firstItemIndex = $(".item").index($page.find(".item")[0])
+        if originalFirstItemIndex < firstItemIndex
+          firstItemIndex = originalFirstItemIndex
         if $page.hasClass('pending-remove')
           return if $pages.length == 1
           affectedPlugins = $page.find(".item").map (_i, e) ->
