@@ -210,7 +210,8 @@ $ ->
         lineup.removeAllAfterKey(key) unless e.shiftKey
         link.createPage("#{slug}_rev#{rev}", $page.data('site'))
           .appendTo($('.main'))
-          .each refresh.cycle
+          .each (_i, e) ->
+            refresh.cycle $(e)
         active.set($('.page').last())
 
     .delegate '.fork-page', 'click', (e) ->

@@ -321,6 +321,8 @@ renderPageIntoPageElement = (pageObject, $page) ->
         [$item_, item_, itemElem_] = enclosed
         plugin.getPlugin item_.type, (plugin) ->
           plugin.bind $item_, item_
+  .then ->
+    return $page
 
   if $('.editEnable').is(':visible')
     pageObject.seqActions (each, done) ->
@@ -415,7 +417,9 @@ cycle = ($page) ->
       key = link.parents('.page').data('key')
       create = lineup.atKey(key)?.getCreate()
       pageObject = newFuturePage(title)
-      buildPage( pageObject, $page ).addClass('ghost')
+      buildPage( pageObject, $page )
+        .then ($page) ->
+          $page.addClass('ghost')
         .then(resolve)
 
 
