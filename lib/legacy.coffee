@@ -343,9 +343,11 @@ $ ->
 
   $ ->
     state.first()
-    promise = Promise.resolve()
+    bindp = Promise.resolve()
+    emitp = Promise.resolve()
+    emitps = []
     $('.page').each ->
       $page = $(this)
-      promise = promise.then ->
-        refresh.cycle $page
+      [emitp, bindp] = refresh.cycle $page, Promise.all(emitps), bindp
+      emitps.push(emitp)
     active.set($('.page').last())

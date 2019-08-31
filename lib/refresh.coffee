@@ -286,7 +286,7 @@ emitTwins = ($page) ->
       twins.push "#{flags.join '&nbsp;'} #{legend}"
     $page.find('.twins').html """<p><span>#{twins.join ", "}</span></p>""" if twins
 
-renderPageIntoPageElement = (pageObject, $page) ->
+renderPageIntoPageElement = (pageObject, $page, lineupEmitp, lineupBindp) ->
   $page.data("data", pageObject.getRawPage())
   $page.data("site", pageObject.getRemoteSite()) if pageObject.isRemote()
 
@@ -305,11 +305,13 @@ renderPageIntoPageElement = (pageObject, $page) ->
   emitHeader $header, $page, pageObject
   emitTimestamp $header, $page, pageObject
 
-  pagePromise = pageObject.seqItems (item, done) ->
+  emitp = pageObject.seqItems (item, done) ->
     $item = $ """<div class="item #{item.type}" data-id="#{item.id}">"""
     $story.append $item
     plugin.emit $item, item, {done}
   .then ->
+    return $page
+  bindp = Promise.all(lineupEmitp.push(emitp)).then ->
     $page.find('.item').each (_i, itemElem) ->
       console.log(itemElem)
     $page.find('.item').each (_i, itemElem) ->
@@ -336,7 +338,7 @@ renderPageIntoPageElement = (pageObject, $page) ->
   $pagehandle.css({
     height: "#{$story.position().top-$handleParent.position().top-5}px"
   })
-  return pagePromise
+  return [emitp, bindp]
 
 
 createMissingFlag = ($page, pageObject) ->
@@ -345,13 +347,13 @@ createMissingFlag = ($page, pageObject) ->
       plugin.get 'favicon', (favicon) ->
         favicon.create())
 
-rebuildPage = (pageObject, $page) ->
+rebuildPage = (pageObject, $page, lineupEmitp, lineupBindp) ->
   $page.addClass('local') if pageObject.isLocal()
   $page.addClass('recycler') if pageObject.isRecycler()
   $page.addClass('remote') if pageObject.isRemote()
   $page.addClass('plugin') if pageObject.isPlugin()
 
-  pagePromise = renderPageIntoPageElement pageObject, $page
+  pagePromise = renderPageIntoPageElement pageObject, $page, lineupEmitp, lineupBindp
   createMissingFlag $page, pageObject
 
   #STATE -- update url when adding new page, removing others
@@ -363,9 +365,9 @@ rebuildPage = (pageObject, $page) ->
     initAddButton $page
   pagePromise
 
-buildPage = (pageObject, $page) ->
+buildPage = (pageObject, $page, lineupEmitp, lineupBindp) ->
   $page.data('key', lineup.addPage(pageObject))
-  rebuildPage(pageObject, $page)
+  rebuildPage(pageObject, $page, lineupEmitp, lineupBindp)
 
 newFuturePage = (title, create) ->
   slug = asSlug title
