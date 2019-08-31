@@ -311,7 +311,7 @@ renderPageIntoPageElement = (pageObject, $page, lineupEmitp, lineupBindp) ->
     plugin.emit $item, item, {done}
   .then ->
     return $page
-  bindp = Promise.all(lineupEmitp.push(emitp)).then ->
+  bindp = Promise.all([lineupEmitp, emitp]).then ->
     $page.find('.item').each (_i, itemElem) ->
       console.log(itemElem)
     $page.find('.item').each (_i, itemElem) ->
@@ -353,7 +353,7 @@ rebuildPage = (pageObject, $page, lineupEmitp, lineupBindp) ->
   $page.addClass('remote') if pageObject.isRemote()
   $page.addClass('plugin') if pageObject.isPlugin()
 
-  pagePromise = renderPageIntoPageElement pageObject, $page, lineupEmitp, lineupBindp
+  promises = renderPageIntoPageElement pageObject, $page, lineupEmitp, lineupBindp
   createMissingFlag $page, pageObject
 
   #STATE -- update url when adding new page, removing others
@@ -363,7 +363,7 @@ rebuildPage = (pageObject, $page, lineupEmitp, lineupBindp) ->
     initDragging $page
     initMerging $page
     initAddButton $page
-  pagePromise
+  promises
 
 buildPage = (pageObject, $page, lineupEmitp, lineupBindp) ->
   $page.data('key', lineup.addPage(pageObject))
@@ -403,37 +403,34 @@ newFuturePage = (title, create) ->
       'create': create
   pageObject
 
-cycle = ($page) ->
-  return new Promise (resolve, _reject) ->
+cycle = ($page, emitp, bindp) ->
+  [slug, rev] = $page.attr('id').split('_rev')
+  pageInformation = {
+    slug: slug
+    rev: rev
+    site: $page.data('site')
+  }
 
-    [slug, rev] = $page.attr('id').split('_rev')
-    pageInformation = {
-      slug: slug
-      rev: rev
-      site: $page.data('site')
-    }
+  whenNotGotten = ->
+    link = $("""a.internal[href="/#{slug}.html"]:last""")
+    title = link.text() or slug
+    key = link.parents('.page').data('key')
+    create = lineup.atKey(key)?.getCreate()
+    pageObject = newFuturePage(title)
+    [emitp, bindp] = buildPage( pageObject, $page, emitp, bindp )
+    emitp
+      .then ($page) ->
+        $page.addClass('ghost')
 
-    whenNotGotten = ->
-      link = $("""a.internal[href="/#{slug}.html"]:last""")
-      title = link.text() or slug
-      key = link.parents('.page').data('key')
-      create = lineup.atKey(key)?.getCreate()
-      pageObject = newFuturePage(title)
-      buildPage( pageObject, $page )
-        .then ($page) ->
-          $page.addClass('ghost')
-        .then(resolve)
+  whenGotten = (pageObject) ->
+    [emitp, bindp] = buildPage( pageObject, $page, emitp, bindp )
+    for site in pageObject.getNeighbors(location.host)
+      neighborhood.registerNeighbor site
 
-
-    whenGotten = (pageObject) ->
-      pagePromise = buildPage( pageObject, $page )
-      for site in pageObject.getNeighbors(location.host)
-        neighborhood.registerNeighbor site
-      pagePromise.then(resolve)
-
-    pageHandler.get
-      whenGotten: whenGotten
-      whenNotGotten: whenNotGotten
-      pageInformation: pageInformation
+  pageHandler.get
+    whenGotten: whenGotten
+    whenNotGotten: whenNotGotten
+    pageInformation: pageInformation
+  return [emitp, bindp]
 
 module.exports = {cycle, emitTwins, buildPage, rebuildPage, newFuturePage}
