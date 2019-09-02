@@ -9,7 +9,7 @@ module.exports = resolve = {}
 resolve.resolutionContext = []
 
 resolve.escape = escape = (string) ->
-  string
+  (string||'')
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
@@ -52,7 +52,7 @@ resolve.resolveLinks = (string, sanitize=escape) ->
   #   - remaining text is sanitized and/or escaped
   #   - unique markers are replaced with unstashed links
 
-  string = string
+  string = (string||'')
     .replace /〖(\d+)〗/g, "〖 $1 〗"
     .replace /\[\[([^\]]+)\]\]/gi, internal
     .replace /\[((http|https|ftp):.*?) (.*?)\]/gi, external
