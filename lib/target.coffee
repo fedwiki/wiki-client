@@ -7,6 +7,7 @@
 targeting = false
 item = null
 action = null
+consuming = null
 
 
 
@@ -35,6 +36,20 @@ stopTargeting = (e) ->
   unless targeting
     $('.item, .action').removeClass 'target'
 
+pageFor = (pageKey) ->
+  $page = $('.page').filter((_i, page) => $(page).data('key') == pageKey)
+  return null if $page.length == 0
+  console.log('warning: more than one page found for', key, $page) if $page.length > 1
+  return $page
+
+itemFor = (pageItem) ->
+  [pageKey, item] = pageItem.split('/')
+  $page = pageFor(pageKey)
+  return null if !$page
+  $item = $page.find(".item[data-id=#{item}]")
+  return null if $item.length == 0
+  console.log('warning: more than one item found for', pageItem, $item) if $item.length > 1
+  return $item
 
 enterItem = (e) ->
   item = ($item = $(this)).attr('data-id')
@@ -43,10 +58,15 @@ enterItem = (e) ->
     key = ($page = $(this).parents('.page:first')).data('key')
     place = $item.offset().top
     $('.page').trigger('align-item', {key, id:item, place})
+  consuming = $item[0].consuming
+  if consuming
+    consuming.forEach (i) -> itemFor(i).addClass('consuming')
+
 
 leaveItem = (e) ->
   if targeting
     $('.item, .action').removeClass('target')
+  $('.item').removeClass('consuming')
   item = null
 
 
