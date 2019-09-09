@@ -233,9 +233,17 @@ footer {
 .button:active {
   box-shadow: inset 0 0 7px #3d3c43; }
 
+.output-item {
+  background-color:#eee;
+  padding:15px;
+  margin-block-start:1em;
+  margin-block-end:1em; }
 
 .target {
   background-color: #ffffcc !important; }
+
+.consuming {
+  outline: solid 2px orange !important; }
 
 .report p,
 .factory p,
