@@ -42,7 +42,7 @@ getScript = plugin.getScript = (url, callback = () ->) ->
 pluginsThatConsume = (capability) ->
   Object.keys(window.plugins)
     .filter (plugin) -> window.plugins[plugin].consumes
-    .filter (plugin) -> Object.keys(window.plugins[plugin].consumes).indexOf(capability) != -1
+    .filter (plugin) -> window.plugins[plugin].consumes.indexOf(capability) != -1
 
 plugin.produces = ($item) ->
   produces = $item[0].className.split(" ")
@@ -73,7 +73,7 @@ bind = (name, pluginBind) ->
     # before calling our bind method.
     if consumes
       deps = []
-      Object.keys(consumes).forEach (consuming) ->
+      consumes.forEach (consuming) ->
         producers = $(".item:lt(#{index})").filter(consuming)
         console.log(name, "consumes", consuming)
         console.log(producers, "produce", consuming)
