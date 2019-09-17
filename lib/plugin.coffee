@@ -1,5 +1,6 @@
 # The plugin module manages the dynamic retrieval of plugin
 # javascript including additional scripts that may be requested.
+forward = require './forward'
 
 module.exports = plugin = {}
 
@@ -93,6 +94,10 @@ bind = (name, pluginBind) ->
           bindPromise = Promise.resolve(bindPromise)
         $item[0].promise = bindPromise
         console.log("promise bound for", name)
+      .then ->
+        if window.plugins[name].processServerEvent
+          console.log 'listening for server events', $item, item
+          forward.init $item, item, window.plugins[name].processServerEvent
       # After we bind, notify everyone that depends on us to reload
       .then ->
         produces = plugin.produces($item)
