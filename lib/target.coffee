@@ -8,7 +8,7 @@ targeting = false
 item = null
 itemElem = null
 action = null
-consuming = null
+consumed = null
 
 
 
@@ -30,9 +30,9 @@ startTargeting = (e) ->
     if id = item || action
       $("[data-id=#{id}]").addClass('target')
     if itemElem
-      consuming = itemElem.consuming
-      if consuming
-        consuming.forEach (i) -> itemFor(i).addClass('consuming')
+      consumed = itemElem.consuming
+      if consumed
+        consumed.forEach (i) -> itemFor(i).addClass('consumed')
 
 
 
@@ -40,7 +40,7 @@ stopTargeting = (e) ->
   targeting = e.shiftKey
   unless targeting
     $('.item, .action').removeClass 'target'
-    $('.item').removeClass 'consuming'
+    $('.item').removeClass 'consumed'
 
 pageFor = (pageKey) ->
   $page = $('.page').filter((_i, page) => $(page).data('key') == pageKey)
