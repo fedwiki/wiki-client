@@ -39,7 +39,7 @@ getScript = plugin.getScript = (url, callback = () ->) ->
         console.log('getScript: Failed to load:', url, err)
         callback()
 
-# Consumes is a map
+# Consumes is a list
 pluginsThatConsume = (capability) ->
   Object.keys(window.plugins)
     .filter (plugin) -> window.plugins[plugin].consumes
