@@ -96,6 +96,10 @@ textEditor = ($item, item, option={}) ->
     $textarea.unbind()
     $page = $item.parents('.page:first')
     if item[option.field||'text'] = $textarea.val()
+      # Remove output and source styling as type may have changed.
+      $item.removeClass("output-item")
+      $item.removeClass (_index, className) ->
+        return (className.match(/\S+-source/) || []).join " "
       plugin.do $item.empty(), item
       if option.after
         return if item[option.field||'text'] == ''

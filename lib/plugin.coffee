@@ -100,6 +100,7 @@ bind = (name, pluginBind) ->
           forward.init $item, item, window.plugins[name].processServerEvent
       # After we bind, notify everyone that depends on us to reload
       .then ->
+        console.log('notifying consumers')
         produces = plugin.produces($item)
         plugin.notifyConsumers(name, produces, notifIndex)
       .catch (e) ->

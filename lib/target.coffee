@@ -65,15 +65,15 @@ enterItem = (e) ->
     key = ($page = $(this).parents('.page:first')).data('key')
     place = $item.offset().top
     $('.page').trigger('align-item', {key, id:item, place})
-    consuming = itemElem.consuming
-    if consuming
-      consuming.forEach (i) -> itemFor(i).addClass('consuming')
+    consumed = itemElem.consuming
+    if consumed
+      consumed.forEach (i) -> itemFor(i).addClass('consumed')
 
 
 leaveItem = (e) ->
   if targeting
     $('.item, .action').removeClass('target')
-    $('.item').removeClass('consuming')
+    $('.item').removeClass('consumed')
   item = null
   itemElem = null
 
