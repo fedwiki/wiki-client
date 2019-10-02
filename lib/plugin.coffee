@@ -107,6 +107,10 @@ bind = (name, pluginBind) ->
         console.log 'plugin emit: unexpected error', e
   return fn
 
+plugin.wrap = (name, p) ->
+  p.bind = bind(name, p.bind)
+  return p
+
 plugin.get = plugin.getPlugin = (name, callback) ->
   return loadingScripts[name].then(callback) if loadingScripts[name]
   loadingScripts[name] = new Promise (resolve, _reject) ->
@@ -114,11 +118,11 @@ plugin.get = plugin.getPlugin = (name, callback) ->
     getScript "/plugins/#{name}/#{name}.js", () ->
       p = window.plugins[name]
       if p
-        p.bind = bind(name, p.bind)
+        plugin.wrap(name, p)
         return resolve(p)
       getScript "/plugins/#{name}.js", () ->
         p = window.plugins[name]
-        p.bind = bind(name, p.bind) if p
+        plugin.wrap(name, p) if p
         return resolve(p)
   loadingScripts[name].then (plugin) ->
     delete loadingScripts[name]
