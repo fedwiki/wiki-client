@@ -102,7 +102,22 @@ bind = (name, pluginBind) ->
       .then ->
         console.log('notifying consumers')
         produces = plugin.produces($item)
+        if $item[0].sources
+          # notify consumers of previous sources, if needed
+          notifyPrevious = false
+          for source in $item[0].sources
+            if source not in produces
+              console.log("plugin no longer produces #{source}")
+              notifyPrevious = true
+          plugin.notifyConsumers(name, $item[0].sources, notifIndex) if notifyPrevious
         plugin.notifyConsumers(name, produces, notifIndex)
+      .then ->
+        # Save off current list of sources so we can detect removal later
+        $item[0].sources = $item[0]
+          .className
+          .split " "
+          .map (c) -> '.' + c
+          .filter (c) -> c.match(/.*-source/)
       .catch (e) ->
         console.log 'plugin emit: unexpected error', e
   return fn
