@@ -343,11 +343,13 @@ $ ->
 
   $ ->
     state.first()
-    bindp = Promise.resolve()
-    emitp = Promise.resolve()
-    emitps = []
-    $('.page').each ->
-      $page = $(this)
-      [emitp, bindp] = refresh.cycle $page, Promise.all(emitps), bindp
-      emitps.push(emitp)
-    active.set($('.page').last())
+    pages = $('.page').toArray()
+    renderNextPage = (pages) ->
+      if pages.length == 0
+        active.set($('.page').last())
+        return
+      $page = $(pages.shift())
+      refresh.cycle($page).then ([emitp, bindp]) ->
+        Promise.all([emitp, bindp]).then ->
+          renderNextPage(pages)
+    renderNextPage(pages)

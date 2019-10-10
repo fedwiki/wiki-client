@@ -286,7 +286,7 @@ emitTwins = ($page) ->
       twins.push "#{flags.join '&nbsp;'} #{legend}"
     $page.find('.twins').html """<p><span>#{twins.join ", "}</span></p>""" if twins
 
-renderPageIntoPageElement = (pageObject, $page, lineupEmitp, lineupBindp) ->
+renderPageIntoPageElement = (pageObject, $page) ->
   $page.data("data", pageObject.getRawPage())
   $page.data("site", pageObject.getRemoteSite()) if pageObject.isRemote()
 
@@ -306,25 +306,28 @@ renderPageIntoPageElement = (pageObject, $page, lineupEmitp, lineupBindp) ->
   emitTimestamp $header, $page, pageObject
 
   emitp = pageObject.seqItems (item, done) ->
-    $item = $ """<div class="item #{item.type}" data-id="#{item.id}">"""
-    $story.append $item
-    plugin.emit $item, item, {done}
+      $item = $ """<div class="item #{item.type}" data-id="#{item.id}">"""
+      $story.append $item
+      plugin.emit $item, item, {done}
   .then ->
     return $page
-  bindp = Promise.all([lineupEmitp, emitp]).then ->
+  bindp = emitp.then ->
     $page.find('.item').each (_i, itemElem) ->
       console.log(itemElem)
-    $page.find('.item').each (_i, itemElem) ->
+    promise = Promise.resolve()
+    items = $page.find('.item').toArray()
+    bindNextItem = (items) ->
+      return promise if items.length == 0
+      itemElem = items.shift()
       $item = $(itemElem)
       item = $item.data('item')
-      try
-        throw [$item, item, itemElem]
-      catch enclosed
-        [$item_, item_, itemElem_] = enclosed
-        plugin.getPlugin item_.type, (plugin) ->
-          plugin.bind $item_, item_
-  .then ->
-    return $page
+      promise = promise.then ->
+        return new Promise (resolve, reject) ->
+          plugin.getPlugin item.type, (plugin) ->
+            plugin.bind $item, item
+            resolve()
+      bindNextItem(items)
+    bindNextItem(items)
 
   if $('.editEnable').is(':visible')
     pageObject.seqActions (each, done) ->
@@ -347,13 +350,13 @@ createMissingFlag = ($page, pageObject) ->
       plugin.get 'favicon', (favicon) ->
         favicon.create())
 
-rebuildPage = (pageObject, $page, lineupEmitp, lineupBindp) ->
+rebuildPage = (pageObject, $page) ->
   $page.addClass('local') if pageObject.isLocal()
   $page.addClass('recycler') if pageObject.isRecycler()
   $page.addClass('remote') if pageObject.isRemote()
   $page.addClass('plugin') if pageObject.isPlugin()
 
-  promises = renderPageIntoPageElement pageObject, $page, lineupEmitp, lineupBindp
+  promises = renderPageIntoPageElement pageObject, $page
   createMissingFlag $page, pageObject
 
   #STATE -- update url when adding new page, removing others
@@ -365,9 +368,9 @@ rebuildPage = (pageObject, $page, lineupEmitp, lineupBindp) ->
     initAddButton $page
   promises
 
-buildPage = (pageObject, $page, lineupEmitp, lineupBindp) ->
+buildPage = (pageObject, $page) ->
   $page.data('key', lineup.addPage(pageObject))
-  rebuildPage(pageObject, $page, lineupEmitp, lineupBindp)
+  rebuildPage(pageObject, $page)
 
 newFuturePage = (title, create) ->
   slug = asSlug title
@@ -403,34 +406,37 @@ newFuturePage = (title, create) ->
       'create': create
   pageObject
 
-cycle = ($page, emitp, bindp) ->
-  [slug, rev] = $page.attr('id').split('_rev')
-  pageInformation = {
-    slug: slug
-    rev: rev
-    site: $page.data('site')
-  }
+cycle = ($page) ->
+  promise = new Promise (resolve, _reject) ->
+    [slug, rev] = $page.attr('id').split('_rev')
+    pageInformation = {
+      slug: slug
+      rev: rev
+      site: $page.data('site')
+    }
 
-  whenNotGotten = ->
-    link = $("""a.internal[href="/#{slug}.html"]:last""")
-    title = link.text() or slug
-    key = link.parents('.page').data('key')
-    create = lineup.atKey(key)?.getCreate()
-    pageObject = newFuturePage(title)
-    [emitp, bindp] = buildPage( pageObject, $page, emitp, bindp )
-    emitp
-      .then ($page) ->
-        $page.addClass('ghost')
+    whenNotGotten = ->
+      link = $("""a.internal[href="/#{slug}.html"]:last""")
+      title = link.text() or slug
+      key = link.parents('.page').data('key')
+      create = lineup.atKey(key)?.getCreate()
+      pageObject = newFuturePage(title)
+      [emitp, bindp] = buildPage( pageObject, $page)
+      emitp
+        .then ($page) ->
+          $page.addClass('ghost')
+      resolve [emitp, bindp]
 
-  whenGotten = (pageObject) ->
-    [emitp, bindp] = buildPage( pageObject, $page, emitp, bindp )
-    for site in pageObject.getNeighbors(location.host)
-      neighborhood.registerNeighbor site
+    whenGotten = (pageObject) ->
+      [emitp, bindp] = buildPage( pageObject, $page)
+      for site in pageObject.getNeighbors(location.host)
+        neighborhood.registerNeighbor site
+      resolve [emitp, bindp]
 
-  pageHandler.get
-    whenGotten: whenGotten
-    whenNotGotten: whenNotGotten
-    pageInformation: pageInformation
-  return [emitp, bindp]
+    pageHandler.get
+      whenGotten: whenGotten
+      whenNotGotten: whenNotGotten
+      pageInformation: pageInformation
+  return promise
 
 module.exports = {cycle, emitTwins, buildPage, rebuildPage, newFuturePage}
