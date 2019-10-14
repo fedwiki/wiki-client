@@ -96,6 +96,8 @@ bind = (name, pluginBind) ->
         $item[0].promise = bindPromise
         console.log("promise bound for", name)
       .then ->
+        # If the plugin has the needed callback, subscribe to server side events
+        # for the current page
         if window.plugins[name].processServerEvent
           console.log 'listening for server events', $item, item
           forward.init $item, item, window.plugins[name].processServerEvent
