@@ -92,6 +92,7 @@ bind = (name, pluginBind) ->
         bindPromise = pluginBind($item, item)
         if not bindPromise or typeof(bindPromise.then) == 'function'
           bindPromise = Promise.resolve(bindPromise)
+        # This is where the "bind results" promise for the current item is stored
         $item[0].promise = bindPromise
         console.log("promise bound for", name)
       .then ->

@@ -305,12 +305,16 @@ renderPageIntoPageElement = (pageObject, $page) ->
   emitHeader $header, $page, pageObject
   emitTimestamp $header, $page, pageObject
 
+  # Emits can be done in parallel. We perform them sequentially here.
   emitp = pageObject.seqItems (item, done) ->
       $item = $ """<div class="item #{item.type}" data-id="#{item.id}">"""
       $story.append $item
       plugin.emit $item, item, {done}
   .then ->
     return $page
+  # Binds must be called sequentially in order to store the promises used to order bind operations.
+  # Note: The bind promises used here are for ordering "bind creation".
+  # The ordering of "bind results" is done within the plugin.bind wrapper.
   bindp = emitp.then ->
     $page.find('.item').each (_i, itemElem) ->
       console.log(itemElem)

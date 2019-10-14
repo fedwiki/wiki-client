@@ -344,6 +344,9 @@ $ ->
   $ ->
     state.first()
     pages = $('.page').toArray()
+    # Render pages in order
+    # Emits and "bind creations" for the previous page must be complete before we start
+    # rendering the next page or plugin bind ordering will not work
     renderNextPage = (pages) ->
       if pages.length == 0
         active.set($('.page').last())
