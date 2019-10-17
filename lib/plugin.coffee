@@ -57,8 +57,8 @@ plugin.notifyConsumers = (name, produces, notifIndex) ->
     tonotify = pluginsThatConsume(producer)
     console.log(producer, "is consumed by", tonotify)
     tonotify.forEach (name) ->
-      instances = $(".item:gt(#{notifIndex-1})").filter("." + name)
-      console.log("there are #{instances.length} instances of #{name} beyond index #{notifIndex-1}")
+      instances = $(".item:gt(#{notifIndex})").filter("." + name)
+      console.log("there are #{instances.length} instances of #{name} beyond index #{notifIndex}")
       instances.each (_i, consumer) ->
         $consumer = $(consumer)
         plugin.do $consumer.empty(), $consumer.data("item")

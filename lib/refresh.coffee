@@ -74,7 +74,7 @@ handleDrop = (evt, ui, originalIndex, originalOrder) ->
   if moveWithinPage
     order = getStoryItemOrder($item.parents('.story:first'))
     if not _.isEqual(order, originalOrder)
-      plugin.do $item.empty(), $item.data("item"), (->), originalIndex
+      plugin.do $item.empty(), $item.data("item"), (->), originalIndex-1
       pageHandler.put $destinationPage, {id: item.id, type: 'move', order: order}
     return
   copying = sourceIsGhost or evt.shiftKey
@@ -91,7 +91,7 @@ handleDrop = (evt, ui, originalIndex, originalOrder) ->
   item = aliasItem $destinationPage, $item, item
   pageHandler.put $destinationPage,
                   {id: item.id, type: 'add', item, after: before?.id}
-  plugin.do $item.empty(), item, (->), originalIndex
+  plugin.do $item.empty(), item, (->), originalIndex-1
 
 changeMouseCursor = (e, ui) ->
   $sourcePage = ui.item.data('pageElement')
