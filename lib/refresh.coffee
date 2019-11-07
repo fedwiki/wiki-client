@@ -74,7 +74,10 @@ handleDrop = (evt, ui, originalIndex, originalOrder) ->
   if moveWithinPage
     order = getStoryItemOrder($item.parents('.story:first'))
     if not _.isEqual(order, originalOrder)
-      plugin.do $item.empty(), $item.data("item"), (->), originalIndex-1
+      $('.shadow-copy').remove()
+      $item.empty()
+      plugin.renderFrom originalIndex-1
+      #plugin.do $item.empty(), $item.data("item"), (->), originalIndex-1
       pageHandler.put $destinationPage, {id: item.id, type: 'move', order: order}
     return
   copying = sourceIsGhost or evt.shiftKey
@@ -91,7 +94,10 @@ handleDrop = (evt, ui, originalIndex, originalOrder) ->
   item = aliasItem $destinationPage, $item, item
   pageHandler.put $destinationPage,
                   {id: item.id, type: 'add', item, after: before?.id}
-  plugin.do $item.empty(), item, (->), originalIndex-1
+  $('.shadow-copy').remove()
+  $item.empty()
+  plugin.renderFrom originalIndex - 1
+  #plugin.do $item.empty(), item, (->), originalIndex-1
 
 changeMouseCursor = (e, ui) ->
   $sourcePage = ui.item.data('pageElement')
@@ -147,7 +153,6 @@ initDragging = ($page) ->
     .on 'sortstop', (e, ui) ->
       $('body').css('cursor', origCursor).off('keydown', cancelDrag)
       handleDrop(e, ui, originalIndex, originalOrder) unless dragCancelled
-      $('.shadow-copy').remove()
 
 getPageObject = ($journal) ->
   $page = $($journal).parents('.page:first')
@@ -309,29 +314,15 @@ renderPageIntoPageElement = (pageObject, $page) ->
   emitp = pageObject.seqItems (item, done) ->
       $item = $ """<div class="item #{item.type}" data-id="#{item.id}">"""
       $story.append $item
-      plugin.emit $item, item, {done}
+      $item.data('item', item)
+      done()
   .then ->
     return $page
-  # Binds must be called sequentially in order to store the promises used to order bind operations.
-  # Note: The bind promises used here are for ordering "bind creation".
-  # The ordering of "bind results" is done within the plugin.bind wrapper.
   bindp = emitp.then ->
-    $page.find('.item').each (_i, itemElem) ->
-      console.log(itemElem)
-    promise = Promise.resolve()
-    items = $page.find('.item').toArray()
-    bindNextItem = (items) ->
-      return promise if items.length == 0
-      itemElem = items.shift()
-      $item = $(itemElem)
-      item = $item.data('item')
-      promise = promise.then ->
-        return new Promise (resolve, reject) ->
-          plugin.getPlugin item.type, (plugin) ->
-            plugin.bind $item, item
-            resolve()
-      bindNextItem(items)
-    bindNextItem(items)
+    index = $(".page").index($page[0])
+    itemIndex = $('.item').index($($('.page')[index]).find('.item'))
+    console.log('binding for page', itemIndex, $('.page')[index])
+    plugin.renderFrom itemIndex
 
   if $('.editEnable').is(':visible')
     pageObject.seqActions (each, done) ->

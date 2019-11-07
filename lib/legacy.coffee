@@ -104,14 +104,14 @@ $ ->
     link.doInternalLink name, page, $(e.target).data('site')
     return false
 
-  originalFirstItemIndex = null
+  originalPageIndex = null
   $('.main')
     .sortable({handle: '.page-handle', cursor: 'grabbing'})
       .on 'sortstart', (evt, ui) ->
         return if not ui.item.hasClass('page')
         noScroll = true
         active.set ui.item, noScroll
-        originalFirstItemIndex = $(".item").index(ui.item.find(".item")[0])
+        originalPageIndex = $(".page").index(ui.item[0])
       .on 'sort', (evt, ui) ->
         return if not ui.item.hasClass('page')
         $page = ui.item
@@ -126,28 +126,19 @@ $ ->
         $page = ui.item
         $pages = $('.page')
         index = $pages.index($('.active'))
-        firstItemIndex = $(".item").index($page.find(".item")[0])
-        if originalFirstItemIndex < firstItemIndex
-          firstItemIndex = originalFirstItemIndex
+        firstItemIndex = $('.item').index($page.find('.item')[0])
         if $page.hasClass('pending-remove')
           return if $pages.length == 1
-          affectedPlugins = $page.find(".item").map (_i, e) ->
-            $item = $(e)
-            name = $item.data("item").type
-            return {name, produces: plugin.produces($item)}
-          index = index - 1 if $pages.length - 1 == index
           lineup.removeKey($page.data('key'))
           $page.remove()
           active.set($('.page')[index])
-          affectedPlugins.map (_i, {name, produces}) ->
-            plugin.notifyConsumers(name, produces, firstItemIndex)
         else
           lineup.changePageIndex($page.data('key'), index)
           active.set $('.active')
-          $page.find(".item").each (_i, e) ->
-            $item = $(e)
-            item = $item.data("item")
-            plugin.do $item.empty(), item, (->), firstItemIndex
+          if originalPageIndex < index
+            index = originalPageIndex
+            firstItemIndex = $('.item').index($($('.page')[index]).find('.item')[0])
+        plugin.renderFrom firstItemIndex
         state.setUrl()
         state.debugStates()
 

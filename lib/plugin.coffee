@@ -51,23 +51,65 @@ plugin.produces = ($item) ->
     .map (c) -> "." + c
   return produces
 
-plugin.notifyConsumers = (name, produces, notifIndex) ->
-  return if produces.length == 0
-  produces.forEach (producer) ->
-    tonotify = pluginsThatConsume(producer)
-    console.log(producer, "is consumed by", tonotify)
-    tonotify.forEach (name) ->
-      instances = $(".item:gt(#{notifIndex})").filter("." + name)
-      console.log("there are #{instances.length} instances of #{name} beyond index #{notifIndex}")
-      instances.each (_i, consumer) ->
-        $consumer = $(consumer)
-        plugin.do $consumer.empty(), $consumer.data("item")
+plugin.renderFrom = (notifIndex) ->
+  # (name, produces, notifIndex) ->
+  #return if produces.length == 0 
+  $items = $(".item").slice(notifIndex)
+  # Possible optimization...
+  #tonotify = []
+  #produces.forEach (producer) ->
+  #  tonotify = tonotify.concat(pluginsThatConsume(producer))
+  #  console.log(producer, "is consumed by", tonotify)
+  #console.log "need to notify", tonotify
+
+  #consumers = []
+  #for item in items.toArray()
+  #  for name in tonotify
+  #    if item.className.indexOf(name) != -1
+  #      consumers.push(item)
+
+  #console.log "notifIndex", notifIndex, "about to notify", $items
+  
+  console.log "notifIndex", notifIndex, "about to render", $items
+  emitp = Promise.resolve()
+  emitNextItem = (itemElems) ->
+    return emitp if itemElems.length == 0
+    itemElem = itemElems.shift()
+    $item = $(itemElem)
+    item = $item.data('item')
+    emitp = emitp.then ->
+      console.log 'emitting', $item, item
+      return new Promise (resolve, reject) ->
+        plugin.emit $item.empty(), item,
+          done: () ->
+          resolve()
+    emitNextItem(itemElems)
+  # The concat here makes a copy since we need to loop through the same
+  # items to do a bind.
+  emitp = emitNextItem $items.toArray()
+  # Binds must be called sequentially in order to store the promises used to order bind operations.
+  # Note: The bind promises used here are for ordering "bind creation".
+  # The ordering of "bind results" is done within the plugin.bind wrapper.
+  bindp = emitp.then ->
+    promise = Promise.resolve()
+    bindNextItem = (itemElems) ->
+      return promise if itemElems.length == 0
+      itemElem = itemElems.shift()
+      $item = $(itemElem)
+      item = $item.data('item')
+      console.log $item, item
+      promise = promise.then ->
+        return new Promise (resolve, reject) ->
+          plugin.getPlugin item.type, (plugin) ->
+            plugin.bind $item, item
+            resolve()
+      bindNextItem(itemElems)
+    bindNextItem($items.toArray())
+  return bindp
 
 bind = (name, pluginBind) ->
   fn = ($item, item, oldIndex) ->
     index = $('.item').index($item)
-    notifIndex = oldIndex
-    notifIndex = index if not oldIndex or index < oldIndex
     consumes = window.plugins[name].consumes
     waitFor = Promise.resolve()
     # Wait for all items in the lineup that produce what we consume
@@ -101,26 +143,6 @@ bind = (name, pluginBind) ->
         if window.plugins[name].processServerEvent
           console.log 'listening for server events', $item, item
           forward.init $item, item, window.plugins[name].processServerEvent
-      # After we bind, notify everyone that depends on us to reload
-      .then ->
-        console.log('notifying consumers')
-        produces = plugin.produces($item)
-        if $item[0].sources
-          # notify consumers of previous sources, if needed
-          notifyPrevious = false
-          for source in $item[0].sources
-            if source not in produces
-              console.log("plugin no longer produces #{source}")
-              notifyPrevious = true
-          plugin.notifyConsumers(name, $item[0].sources, notifIndex) if notifyPrevious
-        plugin.notifyConsumers(name, produces, notifIndex)
-      .then ->
-        # Save off current list of sources so we can detect removal later
-        $item[0].sources = $item[0]
-          .className
-          .split " "
-          .map (c) -> '.' + c
-          .filter (c) -> c.match(/.*-source/)
       .catch (e) ->
         console.log 'plugin emit: unexpected error', e
   return fn
