@@ -77,7 +77,6 @@ handleDrop = (evt, ui, originalIndex, originalOrder) ->
       $('.shadow-copy').remove()
       $item.empty()
       plugin.renderFrom originalIndex-1
-      #plugin.do $item.empty(), $item.data("item"), (->), originalIndex-1
       pageHandler.put $destinationPage, {id: item.id, type: 'move', order: order}
     return
   copying = sourceIsGhost or evt.shiftKey
@@ -97,7 +96,6 @@ handleDrop = (evt, ui, originalIndex, originalOrder) ->
   $('.shadow-copy').remove()
   $item.empty()
   plugin.renderFrom originalIndex - 1
-  #plugin.do $item.empty(), item, (->), originalIndex-1
 
 changeMouseCursor = (e, ui) ->
   $sourcePage = ui.item.data('pageElement')

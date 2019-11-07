@@ -39,36 +39,8 @@ getScript = plugin.getScript = (url, callback = () ->) ->
         console.log('getScript: Failed to load:', url, err)
         callback()
 
-# Consumes is a list
-pluginsThatConsume = (capability) ->
-  Object.keys(window.plugins)
-    .filter (plugin) -> window.plugins[plugin].consumes
-    .filter (plugin) -> window.plugins[plugin].consumes.indexOf(capability) != -1
-
-plugin.produces = ($item) ->
-  produces = $item[0].className.split(" ")
-    .filter (c) -> c.indexOf("-source") != -1
-    .map (c) -> "." + c
-  return produces
-
 plugin.renderFrom = (notifIndex) ->
-  # (name, produces, notifIndex) ->
-  #return if produces.length == 0 
   $items = $(".item").slice(notifIndex)
-  # Possible optimization...
-  #tonotify = []
-  #produces.forEach (producer) ->
-  #  tonotify = tonotify.concat(pluginsThatConsume(producer))
-  #  console.log(producer, "is consumed by", tonotify)
-  #console.log "need to notify", tonotify
-
-  #consumers = []
-  #for item in items.toArray()
-  #  for name in tonotify
-  #    if item.className.indexOf(name) != -1
-  #      consumers.push(item)
-
-  #console.log "notifIndex", notifIndex, "about to notify", $items
   
   console.log "notifIndex", notifIndex, "about to render", $items
   emitp = Promise.resolve()
@@ -170,10 +142,10 @@ plugin.get = plugin.getPlugin = (name, callback) ->
   return loadingScripts[name]
 
 
-plugin.do = plugin.doPlugin = (div, item, done=->, originalIndex) ->
-  plugin.emit div, item, {done, originalIndex, bind: true}
+plugin.do = plugin.doPlugin = (div, item, done=->) ->
+  plugin.emit div, item, {done, bind: true}
 
-plugin.emit = (div, item, {done=->, originalIndex, bind=false}) ->
+plugin.emit = (div, item, {done=->, bind=false}) ->
   error = (ex, script) ->
     div.append """
       <div class="error">
@@ -206,11 +178,11 @@ plugin.emit = (div, item, {done=->, originalIndex, bind=false}) ->
       $('.retry').on 'click', ->
         if script.emit.length > 2
           script.emit div, item, ->
-            script.bind div, item, originalIndex if bind
+            script.bind div, item if bind
             done()
         else
           script.emit div, item
-          script.bind div, item, originalIndex if bind
+          script.bind div, item if bind
           done()
 
   div.data 'pageElement', div.parents(".page")
@@ -220,11 +192,11 @@ plugin.emit = (div, item, {done=->, originalIndex, bind=false}) ->
       throw TypeError("Can't find plugin for '#{item.type}'") unless script?
       if script.emit.length > 2
         script.emit div, item, ->
-          script.bind div, item, originalIndex if bind
+          script.bind div, item if bind
           done()
       else
         script.emit div, item
-        script.bind div, item, originalIndex if bind
+        script.bind div, item if bind
         done()
     catch err
       console.log 'plugin error', err
