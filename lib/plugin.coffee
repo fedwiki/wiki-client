@@ -42,7 +42,7 @@ getScript = plugin.getScript = (url, callback = () ->) ->
 plugin.renderFrom = (notifIndex) ->
   $items = $(".item").slice(notifIndex)
   
-  console.log "notifIndex", notifIndex, "about to render", $items
+  console.log "notifIndex", notifIndex, "about to render", $items.toArray()
   emitp = Promise.resolve()
   emitNextItem = (itemElems) ->
     return emitp if itemElems.length == 0
@@ -50,10 +50,8 @@ plugin.renderFrom = (notifIndex) ->
     $item = $(itemElem)
     item = $item.data('item')
     emitp = emitp.then ->
-      console.log 'emitting', $item, item
       return new Promise (resolve, reject) ->
-        plugin.emit $item.empty(), item,
-          done: () ->
+        plugin.emit $item.empty(), item, () ->
           resolve()
     emitNextItem(itemElems)
   # The concat here makes a copy since we need to loop through the same
@@ -69,7 +67,6 @@ plugin.renderFrom = (notifIndex) ->
       itemElem = itemElems.shift()
       $item = $(itemElem)
       item = $item.data('item')
-      console.log $item, item
       promise = promise.then ->
         return new Promise (resolve, reject) ->
           plugin.getPlugin item.type, (plugin) ->
@@ -142,10 +139,11 @@ plugin.get = plugin.getPlugin = (name, callback) ->
   return loadingScripts[name]
 
 
-plugin.do = plugin.doPlugin = (div, item, done=->) ->
-  plugin.emit div, item, {done, bind: true}
+plugin.do = plugin.doPlugin = ($item, item, done=->) ->
+  $item.data('item', item)
+  plugin.renderFrom $('.item').index($item)
 
-plugin.emit = (div, item, {done=->, bind=false}) ->
+plugin.emit = (div, item, done=->) ->
   error = (ex, script) ->
     div.append """
       <div class="error">
@@ -178,11 +176,9 @@ plugin.emit = (div, item, {done=->, bind=false}) ->
       $('.retry').on 'click', ->
         if script.emit.length > 2
           script.emit div, item, ->
-            script.bind div, item if bind
             done()
         else
           script.emit div, item
-          script.bind div, item if bind
           done()
 
   div.data 'pageElement', div.parents(".page")
@@ -196,7 +192,6 @@ plugin.emit = (div, item, {done=->, bind=false}) ->
           done()
       else
         script.emit div, item
-        script.bind div, item if bind
         done()
     catch err
       console.log 'plugin error', err

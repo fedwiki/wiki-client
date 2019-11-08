@@ -319,7 +319,6 @@ renderPageIntoPageElement = (pageObject, $page) ->
   bindp = emitp.then ->
     index = $(".page").index($page[0])
     itemIndex = $('.item').index($($('.page')[index]).find('.item'))
-    console.log('binding for page', itemIndex, $('.page')[index])
     plugin.renderFrom itemIndex
 
   if $('.editEnable').is(':visible')
