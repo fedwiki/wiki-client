@@ -110,11 +110,9 @@ textEditor = ($item, item, option={}) ->
     else
       unless option.after
         pageHandler.put $page, {type: 'remove', id: item.id}
-      produces = plugin.produces($item)
-      name = $item.data("item").type
       index = $(".item").index($item)
       $item.remove()
-      plugin.notifyConsumers(name, produces, index)
+      plugin.renderFrom index
     null
 
   return if $item.hasClass 'textEditing'
