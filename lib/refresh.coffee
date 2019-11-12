@@ -308,15 +308,14 @@ renderPageIntoPageElement = (pageObject, $page) ->
   emitHeader $header, $page, pageObject
   emitTimestamp $header, $page, pageObject
 
-  # Emits can be done in parallel. We perform them sequentially here.
-  emitp = pageObject.seqItems (item, done) ->
+  promise = pageObject.seqItems (item, done) ->
       $item = $ """<div class="item #{item.type}" data-id="#{item.id}">"""
       $story.append $item
       $item.data('item', item)
       done()
   .then ->
     return $page
-  bindp = emitp.then ->
+  promise = promise.then ->
     index = $(".page").index($page[0])
     itemIndex = $('.item').index($($('.page')[index]).find('.item'))
     plugin.renderFrom itemIndex
@@ -333,7 +332,7 @@ renderPageIntoPageElement = (pageObject, $page) ->
   $pagehandle.css({
     height: "#{$story.position().top-$handleParent.position().top-5}px"
   })
-  return [emitp, bindp]
+  return promise
 
 
 createMissingFlag = ($page, pageObject) ->
@@ -348,7 +347,7 @@ rebuildPage = (pageObject, $page) ->
   $page.addClass('remote') if pageObject.isRemote()
   $page.addClass('plugin') if pageObject.isPlugin()
 
-  promises = renderPageIntoPageElement pageObject, $page
+  promise = renderPageIntoPageElement pageObject, $page
   createMissingFlag $page, pageObject
 
   #STATE -- update url when adding new page, removing others
@@ -358,7 +357,7 @@ rebuildPage = (pageObject, $page) ->
     initDragging $page
     initMerging $page
     initAddButton $page
-  promises
+  promise
 
 buildPage = (pageObject, $page) ->
   $page.data('key', lineup.addPage(pageObject))
@@ -413,17 +412,17 @@ cycle = ($page) ->
       key = link.parents('.page').data('key')
       create = lineup.atKey(key)?.getCreate()
       pageObject = newFuturePage(title)
-      [emitp, bindp] = buildPage( pageObject, $page)
-      emitp
+      promise = buildPage( pageObject, $page)
+      promise
         .then ($page) ->
           $page.addClass('ghost')
-      resolve [emitp, bindp]
+      resolve promise
 
     whenGotten = (pageObject) ->
-      [emitp, bindp] = buildPage( pageObject, $page)
+      promise = buildPage( pageObject, $page)
       for site in pageObject.getNeighbors(location.host)
         neighborhood.registerNeighbor site
-      resolve [emitp, bindp]
+      resolve promise
 
     pageHandler.get
       whenGotten: whenGotten

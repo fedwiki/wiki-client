@@ -343,7 +343,6 @@ $ ->
         active.set($('.page').last())
         return
       $page = $(pages.shift())
-      refresh.cycle($page).then ([emitp, bindp]) ->
-        Promise.all([emitp, bindp]).then ->
-          renderNextPage(pages)
+      refresh.cycle($page).then () ->
+        renderNextPage(pages)
     renderNextPage(pages)

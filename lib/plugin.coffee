@@ -43,24 +43,24 @@ plugin.renderFrom = (notifIndex) ->
   $items = $(".item").slice(notifIndex)
   
   console.log "notifIndex", notifIndex, "about to render", $items.toArray()
-  emitp = Promise.resolve()
+  promise = Promise.resolve()
   emitNextItem = (itemElems) ->
-    return emitp if itemElems.length == 0
+    return promise if itemElems.length == 0
     itemElem = itemElems.shift()
     $item = $(itemElem)
     item = $item.data('item')
-    emitp = emitp.then ->
+    promise = promise.then ->
       return new Promise (resolve, reject) ->
         plugin.emit $item.empty(), item, () ->
           resolve()
     emitNextItem(itemElems)
   # The concat here makes a copy since we need to loop through the same
   # items to do a bind.
-  emitp = emitNextItem $items.toArray()
+  promise = emitNextItem $items.toArray()
   # Binds must be called sequentially in order to store the promises used to order bind operations.
   # Note: The bind promises used here are for ordering "bind creation".
   # The ordering of "bind results" is done within the plugin.bind wrapper.
-  bindp = emitp.then ->
+  promise = promise.then ->
     promise = Promise.resolve()
     bindNextItem = (itemElems) ->
       return promise if itemElems.length == 0
@@ -74,7 +74,7 @@ plugin.renderFrom = (notifIndex) ->
             resolve()
       bindNextItem(itemElems)
     bindNextItem($items.toArray())
-  return bindp
+  return promise
 
 bind = (name, pluginBind) ->
   fn = ($item, item, oldIndex) ->
@@ -141,7 +141,9 @@ plugin.get = plugin.getPlugin = (name, callback) ->
 
 plugin.do = plugin.doPlugin = ($item, item, done=->) ->
   $item.data('item', item)
-  plugin.renderFrom $('.item').index($item)
+  promise = plugin.renderFrom $('.item').index($item)
+  promise.then ->
+    done()
 
 plugin.emit = (div, item, done=->) ->
   error = (ex, script) ->
