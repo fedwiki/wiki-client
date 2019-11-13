@@ -128,8 +128,9 @@ initDragging = ($page) ->
   originalIndex = null
   dragCancelled = null
   cancelDrag = (e) ->
-    dragCancelled = true
-    $story.sortable('cancel') if e.which == 27
+    if e.which == 27
+      dragCancelled = true
+      $story.sortable('cancel')
   $story.sortable(options)
     .on 'sortstart', (e, ui) ->
       $item = ui.item
@@ -151,6 +152,7 @@ initDragging = ($page) ->
     .on 'sortstop', (e, ui) ->
       $('body').css('cursor', origCursor).off('keydown', cancelDrag)
       handleDrop(e, ui, originalIndex, originalOrder) unless dragCancelled
+      $('.shadow-copy').remove()
 
 getPageObject = ($journal) ->
   $page = $($journal).parents('.page:first')
