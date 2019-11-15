@@ -119,7 +119,7 @@ $ ->
     return false
 
   $('.main')
-    .sortable({handle: '.page-handle', cursor: 'grabbing', cancel: 'journal'})
+    .sortable({handle: '.page-handle', cursor: 'grabbing'})
       .on 'sortstart', (evt, ui) ->
         return if not ui.item.hasClass('page')
         noScroll = true
