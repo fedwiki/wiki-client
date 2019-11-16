@@ -121,8 +121,9 @@ initDragging = ($page) ->
   originalOrder = null
   dragCancelled = null
   cancelDrag = (e) ->
-    dragCancelled = true
-    $story.sortable('cancel') if e.which == 27
+    if e.which == 27
+      dragCancelled = true
+      $story.sortable('cancel')
   $story.sortable(options)
     .on 'sortstart', (e, ui) ->
       originalOrder = getStoryItemOrder($story)
