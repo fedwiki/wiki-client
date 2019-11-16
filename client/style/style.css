@@ -162,6 +162,10 @@ footer {
   padding: 1px;
 }
 
+.journal.ui-draggable {
+  width: 420px;
+}
+
 .action.fork {
   color: black; }
 

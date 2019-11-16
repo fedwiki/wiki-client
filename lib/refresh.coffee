@@ -164,6 +164,7 @@ initMerging = ($page) ->
   $journal.droppable
     hoverClass: "ui-state-hover"
     drop: handleMerging
+    accept: '.journal'
 
 initAddButton = ($page) ->
   $page.find(".add-factory").on("click", (evt) ->
