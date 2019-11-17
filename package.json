@@ -1,6 +1,6 @@
 {
   "name": "wiki-client",
-  "version": "0.18.1",
+  "version": "0.19.0",
   "description": "Federated Wiki - Client-side Javascript",
   "keywords": [
     "wiki",
@@ -21,7 +21,7 @@
     {
       "name": "Paul Rodwell",
       "email": "paul.rodwell@btinternet.com",
-      "url": "http://wiki-paul90.rhcloud.com"
+      "url": "https://rodwell.me"
     }
   ],
   "dependencies": {
@@ -59,6 +59,6 @@
     "url": "https://github.com/fedwiki/wiki-client/issues"
   },
   "engines": {
-    "node": ">=6.x"
+    "node": ">=8.x"
   }
 }
