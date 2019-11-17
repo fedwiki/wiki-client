@@ -6,7 +6,9 @@
 
 targeting = false
 item = null
+itemElem = null
 action = null
+consumed = null
 
 
 
@@ -22,32 +24,58 @@ bind = ->
     .delegate '.page', 'align-item', alignItem
 
 
-
 startTargeting = (e) ->
   targeting = e.shiftKey
   if targeting
     if id = item || action
       $("[data-id=#{id}]").addClass('target')
+    if itemElem
+      consumed = itemElem.consuming
+      if consumed
+        consumed.forEach (i) -> itemFor(i).addClass('consumed')
+
 
 
 stopTargeting = (e) ->
   targeting = e.shiftKey
   unless targeting
     $('.item, .action').removeClass 'target'
+    $('.item').removeClass 'consumed'
 
+pageFor = (pageKey) ->
+  $page = $('.page').filter((_i, page) => $(page).data('key') == pageKey)
+  return null if $page.length == 0
+  console.log('warning: more than one page found for', key, $page) if $page.length > 1
+  return $page
+
+itemFor = (pageItem) ->
+  [pageKey, _item] = pageItem.split('/')
+  $page = pageFor(pageKey)
+  return null if !$page
+  $item = $page.find(".item[data-id=#{_item}]")
+  return null if $item.length == 0
+  console.log('warning: more than one item found for', pageItem, $item) if $item.length > 1
+  return $item
 
 enterItem = (e) ->
   item = ($item = $(this)).attr('data-id')
+  itemElem = $item[0]
   if targeting
     $("[data-id=#{item}]").addClass('target')
     key = ($page = $(this).parents('.page:first')).data('key')
     place = $item.offset().top
     $('.page').trigger('align-item', {key, id:item, place})
+    consumed = itemElem.consuming
+    if consumed
+      consumed.forEach (i) -> itemFor(i).addClass('consumed')
+
 
 leaveItem = (e) ->
   if targeting
     $('.item, .action').removeClass('target')
+    $('.item').removeClass('consumed')
   item = null
+  itemElem = null
 
 
 

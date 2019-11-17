@@ -96,6 +96,10 @@ textEditor = ($item, item, option={}) ->
     $textarea.unbind()
     $page = $item.parents('.page:first')
     if item[option.field||'text'] = $textarea.val()
+      # Remove output and source styling as type may have changed.
+      $item.removeClass("output-item")
+      $item.removeClass (_index, className) ->
+        return (className.match(/\S+-source/) || []).join " "
       plugin.do $item.empty(), item
       if option.after
         return if item[option.field||'text'] == ''
@@ -106,7 +110,9 @@ textEditor = ($item, item, option={}) ->
     else
       unless option.after
         pageHandler.put $page, {type: 'remove', id: item.id}
+      index = $(".item").index($item)
       $item.remove()
+      plugin.renderFrom index
     null
 
   return if $item.hasClass 'textEditing'

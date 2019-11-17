@@ -53,7 +53,7 @@ equals = (a, b) -> a and b and a.get(0) == b.get(0)
 getStoryItemOrder = ($story) ->
   $story.children().map((_, value) -> $(value).attr('data-id')).get()
 
-handleDrop = (evt, ui, originalOrder) ->
+handleDrop = (evt, ui, originalIndex, originalOrder) ->
   $item = ui.item
 
   item = getItem($item)
@@ -74,6 +74,9 @@ handleDrop = (evt, ui, originalOrder) ->
   if moveWithinPage
     order = getStoryItemOrder($item.parents('.story:first'))
     if not _.isEqual(order, originalOrder)
+      $('.shadow-copy').remove()
+      $item.empty()
+      plugin.renderFrom originalIndex-1
       pageHandler.put $destinationPage, {id: item.id, type: 'move', order: order}
     return
   copying = sourceIsGhost or evt.shiftKey
@@ -90,6 +93,9 @@ handleDrop = (evt, ui, originalOrder) ->
   item = aliasItem $destinationPage, $item, item
   pageHandler.put $destinationPage,
                   {id: item.id, type: 'add', item, after: before?.id}
+  $('.shadow-copy').remove()
+  $item.empty()
+  plugin.renderFrom originalIndex - 1
 
 changeMouseCursor = (e, ui) ->
   $sourcePage = ui.item.data('pageElement')
@@ -119,6 +125,7 @@ initDragging = ($page) ->
     delay: 150
   $story = $page.find('.story')
   originalOrder = null
+  originalIndex = null
   dragCancelled = null
   cancelDrag = (e) ->
     if e.which == 27
@@ -126,13 +133,15 @@ initDragging = ($page) ->
       $story.sortable('cancel')
   $story.sortable(options)
     .on 'sortstart', (e, ui) ->
+      $item = ui.item
       originalOrder = getStoryItemOrder($story)
+      originalIndex = $('.item').index($item)
       dragCancelled = false
       $('body').on('keydown', cancelDrag)
       # Create a copy that we control since sortable removes theirs too early.
       # Insert after the placeholder to prevent adding history when item not moved.
       # Clear out the styling they add. Updates to jquery ui can affect this.
-      ui.item.clone().insertAfter(ui.placeholder).hide().addClass("shadow-copy")
+      $item.clone().insertAfter(ui.placeholder).hide().addClass("shadow-copy")
         .css(
           width: ''
           height: ''
@@ -142,7 +151,7 @@ initDragging = ($page) ->
     .on 'sort', changeMouseCursor
     .on 'sortstop', (e, ui) ->
       $('body').css('cursor', origCursor).off('keydown', cancelDrag)
-      handleDrop(e, ui, originalOrder) unless dragCancelled
+      handleDrop(e, ui, originalIndex, originalOrder) unless dragCancelled
       $('.shadow-copy').remove()
 
 getPageObject = ($journal) ->
@@ -302,10 +311,17 @@ renderPageIntoPageElement = (pageObject, $page) ->
   emitHeader $header, $page, pageObject
   emitTimestamp $header, $page, pageObject
 
-  pageObject.seqItems (item, done) ->
-    $item = $ """<div class="item #{item.type}" data-id="#{item.id}">"""
-    $story.append $item
-    plugin.do $item, item, done
+  promise = pageObject.seqItems (item, done) ->
+      $item = $ """<div class="item #{item.type}" data-id="#{item.id}">"""
+      $story.append $item
+      $item.data('item', item)
+      done()
+  .then ->
+    return $page
+  promise = promise.then ->
+    index = $(".page").index($page[0])
+    itemIndex = $('.item').index($($('.page')[index]).find('.item'))
+    plugin.renderFrom itemIndex
 
   if $('.editEnable').is(':visible')
     pageObject.seqActions (each, done) ->
@@ -319,6 +335,7 @@ renderPageIntoPageElement = (pageObject, $page) ->
   $pagehandle.css({
     height: "#{$story.position().top-$handleParent.position().top-5}px"
   })
+  return promise
 
 
 createMissingFlag = ($page, pageObject) ->
@@ -333,7 +350,7 @@ rebuildPage = (pageObject, $page) ->
   $page.addClass('remote') if pageObject.isRemote()
   $page.addClass('plugin') if pageObject.isPlugin()
 
-  renderPageIntoPageElement pageObject, $page
+  promise = renderPageIntoPageElement pageObject, $page
   createMissingFlag $page, pageObject
 
   #STATE -- update url when adding new page, removing others
@@ -343,7 +360,7 @@ rebuildPage = (pageObject, $page) ->
     initDragging $page
     initMerging $page
     initAddButton $page
-  $page
+  promise
 
 buildPage = (pageObject, $page) ->
   $page.data('key', lineup.addPage(pageObject))
@@ -383,33 +400,37 @@ newFuturePage = (title, create) ->
       'create': create
   pageObject
 
-cycle = ->
-  $page = $(this)
+cycle = ($page) ->
+  promise = new Promise (resolve, _reject) ->
+    [slug, rev] = $page.attr('id').split('_rev')
+    pageInformation = {
+      slug: slug
+      rev: rev
+      site: $page.data('site')
+    }
 
-  [slug, rev] = $page.attr('id').split('_rev')
-  pageInformation = {
-    slug: slug
-    rev: rev
-    site: $page.data('site')
-  }
+    whenNotGotten = ->
+      link = $("""a.internal[href="/#{slug}.html"]:last""")
+      title = link.text() or slug
+      key = link.parents('.page').data('key')
+      create = lineup.atKey(key)?.getCreate()
+      pageObject = newFuturePage(title)
+      promise = buildPage( pageObject, $page)
+      promise
+        .then ($page) ->
+          $page.addClass('ghost')
+      resolve promise
 
-  whenNotGotten = ->
-    link = $("""a.internal[href="/#{slug}.html"]:last""")
-    title = link.text() or slug
-    key = link.parents('.page').data('key')
-    create = lineup.atKey(key)?.getCreate()
-    pageObject = newFuturePage(title)
-    buildPage( pageObject, $page ).addClass('ghost')
+    whenGotten = (pageObject) ->
+      promise = buildPage( pageObject, $page)
+      for site in pageObject.getNeighbors(location.host)
+        neighborhood.registerNeighbor site
+      resolve promise
 
-
-  whenGotten = (pageObject) ->
-    buildPage( pageObject, $page )
-    for site in pageObject.getNeighbors(location.host)
-      neighborhood.registerNeighbor site
-
-  pageHandler.get
-    whenGotten: whenGotten
-    whenNotGotten: whenNotGotten
-    pageInformation: pageInformation
+    pageHandler.get
+      whenGotten: whenGotten
+      whenNotGotten: whenNotGotten
+      pageInformation: pageInformation
+  return promise
 
 module.exports = {cycle, emitTwins, buildPage, rebuildPage, newFuturePage}
