@@ -30,3 +30,4 @@ Santiago Ferreira <santiago.ferreira@wyeworks.com>
 i2p-lbt <lbt@i2pmail.org>
 Andrew Ettinger <andrew@skoobistudios.com>
 Joshua Benuck <joshua_benuck@yahoo.com>
+Eric Dobbs <eric@dobbse.net>
