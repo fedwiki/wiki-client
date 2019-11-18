@@ -27,6 +27,7 @@ bind = ->
 startTargeting = (e) ->
   targeting = e.shiftKey
   if targeting
+    $('.emit').addClass('highlight')
     if id = item || action
       $("[data-id=#{id}]").addClass('target')
     if itemElem
@@ -39,6 +40,7 @@ startTargeting = (e) ->
 stopTargeting = (e) ->
   targeting = e.shiftKey
   unless targeting
+    $('.emit').removeClass('highlight')
     $('.item, .action').removeClass 'target'
     $('.item').removeClass 'consumed'
 

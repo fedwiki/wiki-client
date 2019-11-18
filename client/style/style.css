@@ -249,6 +249,9 @@ footer {
 .consumed {
   outline: solid 2px orange !important; }
 
+.highlight {
+  outline: solid 2px red; }
+
 .report p,
 .factory p,
 .data p,

@@ -76,6 +76,12 @@ plugin.renderFrom = (notifIndex) ->
     bindNextItem($items.toArray())
   return promise
 
+emit = (pluginEmit) ->
+  fn = ($item, item) ->
+    $item.addClass('emit')
+    pluginEmit($item, item)
+  fn
+
 bind = (name, pluginBind) ->
   fn = ($item, item, oldIndex) ->
     index = $('.item').index($item)
@@ -97,6 +103,7 @@ bind = (name, pluginBind) ->
       waitFor = Promise.all(deps)
     waitFor
       .then ->
+        $item.removeClass('emit')
         bindPromise = pluginBind($item, item)
         if not bindPromise or typeof(bindPromise.then) == 'function'
           bindPromise = Promise.resolve(bindPromise)
@@ -113,6 +120,7 @@ bind = (name, pluginBind) ->
   return fn
 
 plugin.wrap = (name, p) ->
+  p.emit = emit(p.emit)
   p.bind = bind(name, p.bind)
   return p
 
