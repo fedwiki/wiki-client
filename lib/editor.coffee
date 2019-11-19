@@ -142,7 +142,6 @@ spawnEditor = ($page, $before, type, text) ->
     .data('item', item)
     .data('pageElement', $page)
   $before.after $item
-  plugin.do $item, item
   before = itemz.getItem $before
   textEditor $item, item, {after: before?.id}
 
