@@ -51,6 +51,7 @@ plugin.renderFrom = (notifIndex) ->
     item = $item.data('item')
     promise = promise.then ->
       return new Promise (resolve, reject) ->
+        $item.off()
         plugin.emit $item.empty(), item, () ->
           resolve()
     emitNextItem(itemElems)
