@@ -76,6 +76,12 @@ plugin.renderFrom = (notifIndex) ->
     bindNextItem($items.toArray())
   return promise
 
+emit = (pluginEmit) ->
+  fn = ($item, item) ->
+    $item.addClass('emit')
+    pluginEmit($item, item)
+  fn
+
 bind = (name, pluginBind) ->
   fn = ($item, item, oldIndex) ->
     index = $('.item').index($item)
@@ -84,6 +90,7 @@ bind = (name, pluginBind) ->
     # Wait for all items in the lineup that produce what we consume
     # before calling our bind method.
     if consumes
+      $item[0].consuming = []
       deps = []
       consumes.forEach (consuming) ->
         producers = $(".item:lt(#{index})").filter(consuming)
@@ -93,10 +100,14 @@ bind = (name, pluginBind) ->
           console.log 'warn: no items in lineup that produces', consuming
         console.log("there are #{producers.length} instances of #{consuming}")
         producers.each (_i, el) ->
+          page_key = $(el).parents('.page').data('key')
+          item_id = $(el).attr('data-id')
+          $item[0].consuming.push("#{page_key}/#{item_id}")
           deps.push(el.promise)
       waitFor = Promise.all(deps)
     waitFor
       .then ->
+        $item.removeClass('emit')
         bindPromise = pluginBind($item, item)
         if not bindPromise or typeof(bindPromise.then) == 'function'
           bindPromise = Promise.resolve(bindPromise)
@@ -113,6 +124,7 @@ bind = (name, pluginBind) ->
   return fn
 
 plugin.wrap = (name, p) ->
+  p.emit = emit(p.emit)
   p.bind = bind(name, p.bind)
   return p
 
