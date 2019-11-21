@@ -85,6 +85,8 @@ emit = (pluginEmit) ->
 
 bind = (name, pluginBind) ->
   fn = ($item, item, oldIndex) ->
+    # Clear out any list of consumed items.
+    $item[0].consuming = []
     index = $('.item').index($item)
     consumes = window.plugins[name].consumes
     waitFor = Promise.resolve()
