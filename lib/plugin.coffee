@@ -93,7 +93,6 @@ bind = (name, pluginBind) ->
     # Wait for all items in the lineup that produce what we consume
     # before calling our bind method.
     if consumes
-      $item[0].consuming = []
       deps = []
       consumes.forEach (consuming) ->
         producers = $(".item:lt(#{index})").filter(consuming)
