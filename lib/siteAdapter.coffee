@@ -351,7 +351,7 @@ siteAdapter.site = (site) ->
           console.log "#{site} is unreachable"
           errMsg = {msg: "#{site} is unreachable", xhr: {status: 0}}
           done errMsg, null
-          Promise.reject(errMsg)
+          Promise.reject(errMsg) unless callback
         else
           getContent route, done
       else
@@ -361,7 +361,7 @@ siteAdapter.site = (site) ->
             console.log "#{site} is unreachable"
             errMsg = {msg: "#{site} is unreachable", xhr: {status: 0}}
             done errMsg, null
-            Promise.reject(errMsg)
+            Promise.reject(errMsg) unless callback
           else
             getContent route, done
 
