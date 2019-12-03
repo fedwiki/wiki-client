@@ -316,12 +316,12 @@ renderPageIntoPageElement = (pageObject, $page) ->
       $story.append $item
       $item.data('item', item)
       done()
-  .then ->
-    return $page
   promise = promise.then ->
     index = $(".page").index($page[0])
     itemIndex = $('.item').index($($('.page')[index]).find('.item'))
     plugin.renderFrom itemIndex
+  .then ->
+    return $page
 
   if $('.editEnable').is(':visible')
     pageObject.seqActions (each, done) ->
