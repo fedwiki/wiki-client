@@ -11,11 +11,18 @@ module.exports = ($journal, action) ->
   title += "#{action.site}\n" if action.site?
   title += action.type || 'separator'
   title += " #{util.formatElapsedTime(action.date)}" if action.date?
+  title += "\nfrom #{action.attribution.page}" if action.attribution?.page?
+  title += "\nto #{action.removedTo.page}" if action.removedTo?.page?
   $action = $("""<a href="#" /> """).addClass("action").addClass(action.type || 'separator')
     .text(action.symbol || actionSymbols.symbols[action.type])
     .attr('title',title)
     .attr('data-id', action.id || "0")
     .data('action', action)
+  if action.type is 'add' and action.attribution?
+    $action.text(actionSymbols.symbols['copyIn'])
+    $action.css("background-image", "url(#{wiki.site(action.attribution.site).flag()})") if action.attribution.site?
+  if action.tyle is 'remove' and action.removedTo?
+    $action.text(actionSymbols.symbols['copyOut'])
   controls = $journal.children('.control-buttons')
   if controls.length > 0
     $action.insertBefore(controls)
