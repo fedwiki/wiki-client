@@ -58,7 +58,7 @@ handleDrop = (evt, ui, originalIndex, originalOrder) ->
 
   item = getItem($item)
   $sourcePage = $item.data('pageElement')
-  sourceIsGhost = $sourcePage.hasClass('ghost')
+  sourceIsReadOnly = $sourcePage.hasClass('ghost') || $sourcePage.hasClass('remote')
 
   $destinationPage = $item.parents('.page:first')
   destinationIsGhost = $destinationPage.hasClass('ghost')
@@ -76,10 +76,12 @@ handleDrop = (evt, ui, originalIndex, originalOrder) ->
     if not _.isEqual(order, originalOrder)
       $('.shadow-copy').remove()
       $item.empty()
-      plugin.renderFrom originalIndex-1
+      index = $(".item").index($item)
+      index = originalIndex if originalIndex < index
+      plugin.renderFrom index
       pageHandler.put $destinationPage, {id: item.id, type: 'move', order: order}
     return
-  copying = sourceIsGhost or evt.shiftKey
+  copying = sourceIsReadOnly or evt.shiftKey
   if copying
     # If making a copy, update the temp clone so it becomes a true copy.
     $('.shadow-copy').removeClass('shadow-copy')
@@ -95,17 +97,20 @@ handleDrop = (evt, ui, originalIndex, originalOrder) ->
                   {id: item.id, type: 'add', item, after: before?.id}
   $('.shadow-copy').remove()
   $item.empty()
-  plugin.renderFrom originalIndex - 1
+  $before.after($item)
+  index = $(".item").index($item)
+  index = originalIndex if originalIndex < index
+  plugin.renderFrom index
 
 changeMouseCursor = (e, ui) ->
   $sourcePage = ui.item.data('pageElement')
-  sourceIsGhost = $sourcePage.hasClass('ghost')
+  sourceIsReadOnly = $sourcePage.hasClass('ghost') || $sourcePage.hasClass('remote')
   $destinationPage = ui.placeholder.parents('.page:first')
   destinationIsGhost = $destinationPage.hasClass('ghost')
   moveWithinPage = equals($sourcePage, $destinationPage)
   moveBetweenDuplicatePages = not moveWithinPage and \
     $sourcePage.attr('id') == $destinationPage.attr('id')
-  copying = sourceIsGhost or (e.shiftKey and not moveWithinPage)
+  copying = sourceIsReadOnly or (e.shiftKey and not moveWithinPage)
   if destinationIsGhost or moveBetweenDuplicatePages
     $('body').css('cursor', 'no-drop')
     $('.shadow-copy').hide()
