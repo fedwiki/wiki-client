@@ -13,8 +13,8 @@ symbols =
   fork: '⚑'
   move: '↕'
   remove: '✕'
-  copyIn: '⤽'
-  copyOut: '⤼'
+  copyIn: '⨭'
+  copyOut: '⨵'
 
 fork = symbols['fork']
 add = symbols['add']

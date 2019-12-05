@@ -21,7 +21,7 @@ module.exports = ($journal, action) ->
   if action.type is 'add' and action.attribution?
     $action.text(actionSymbols.symbols['copyIn'])
     $action.css("background-image", "url(#{wiki.site(action.attribution.site).flag()})") if action.attribution.site?
-  if action.tyle is 'remove' and action.removedTo?
+  if action.type is 'remove' and action.removedTo?
     $action.text(actionSymbols.symbols['copyOut'])
   controls = $journal.children('.control-buttons')
   if controls.length > 0
