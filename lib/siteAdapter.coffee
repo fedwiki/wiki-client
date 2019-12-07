@@ -129,12 +129,12 @@ siteAdapter.local = {
     if page = localStorage.getItem(route.replace(/\.json$/,''))
       parsedPage = JSON.parse page
       done null, parsedPage
-      Promise.resolve(parsedPage)
+      Promise.resolve(parsedPage) unless callback
     else
       errMsg = {msg: "no page named '#{route}' in browser local storage"}
       done errMsg, null
       console.log("tried to local fetch a page that isn't local")
-      Promise.reject(errMsg)
+      Promise.reject(errMsg) unless callback
   put: (route, data, done) ->
     console.log "wiki.local.put #{route}"
     localStorage.setItem(route, JSON.stringify(data))
@@ -351,7 +351,7 @@ siteAdapter.site = (site) ->
           console.log "#{site} is unreachable"
           errMsg = {msg: "#{site} is unreachable", xhr: {status: 0}}
           done errMsg, null
-          Promise.reject(errMsg)
+          Promise.reject(errMsg) unless callback
         else
           getContent route, done
       else
@@ -361,7 +361,7 @@ siteAdapter.site = (site) ->
             console.log "#{site} is unreachable"
             errMsg = {msg: "#{site} is unreachable", xhr: {status: 0}}
             done errMsg, null
-            Promise.reject(errMsg)
+            Promise.reject(errMsg) unless callback
           else
             getContent route, done
 
