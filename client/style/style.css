@@ -70,6 +70,10 @@ footer form, .footer-item {
   font-style: italic;
 }
 
+.omitted-results {
+  font-style: italic;
+}
+
 .incremental-search {
   position: absolute;
   background-color: white;
