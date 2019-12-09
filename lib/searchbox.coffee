@@ -22,7 +22,5 @@ bind = ->
   $('input.search').on 'input', (e)->
     searchQuery = $(this).val()
     search.incrementalSearch( searchQuery )
-  $('input.search').blur (e)->
-    $('.incremental-search').remove()
 
 module.exports = {inject, bind}

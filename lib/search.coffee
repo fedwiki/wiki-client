@@ -49,6 +49,8 @@ createSearch = ({neighborhood})->
     searchResults = neighborhood.search(searchQuery)
     $search = $('.incremental-search').empty()
     plugin.get 'reference', (p) ->
+      if !searchResults.finds || searchResults.finds.length == 0
+        $('<div/>').text('No results found').addClass('no-results').appendTo($search)
       for result in searchResults.finds
         $item = $('<div/>').appendTo($search)
         item =
