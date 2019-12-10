@@ -49,7 +49,16 @@ createSearch = ({neighborhood})->
     searchResults = neighborhood.search(searchQuery)
     $search = $('.incremental-search').empty()
     plugin.get 'reference', (p) ->
+      if !searchResults.finds || searchResults.finds.length == 0
+        $('<div/>').text('No results found').addClass('no-results').appendTo($search)
+      count = 0
+      max_results = 100
       for result in searchResults.finds
+        count += 1
+        if count == max_results + 1
+          $('<div/>').text("#{searchResults.finds.length - max_results} results omitted").addClass('omitted-results').appendTo($search)
+        if count > max_results
+          continue
         $item = $('<div/>').appendTo($search)
         item =
           id: random.itemId(),

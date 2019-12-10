@@ -38,6 +38,7 @@ scrollTo = ($page) ->
 
 
 active.set = ($page, noScroll) ->
+  $('.incremental-search').remove()
   $page = $($page)
   $(".active").removeClass("active")
   $page.addClass("active")
