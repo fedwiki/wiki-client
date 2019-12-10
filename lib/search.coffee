@@ -27,6 +27,7 @@ createSearch = ({neighborhood})->
         .css('bottom', "#{offset.top + $('.searchbox').height()}px")
         .addClass('incremental-search')
         .delegate '.internal', 'click', (e) ->
+          e.target = $(e.target).parent()[0] if e.target.nodeName == 'SPAN'
           name = $(e.target).data 'pageName'
           # ensure that name is a string (using string interpolation)
           name = "#{name}"
@@ -72,9 +73,14 @@ createSearch = ({neighborhood})->
                 return "{{#{p}}}"
               else return p
             .join('')
-          text: result.page.synopsis.split(new RegExp(searchQuery, 'i')).join("{{#{searchQuery}}}") || '',
+          text: result.page.synopsis
+            .split(new RegExp("(#{searchQuery})", 'i'))
+            .map (p) ->
+              if searchQuery.toLowerCase() == p.toLowerCase()
+                return "{{#{p}}}"
+              else return p
+            .join('')
         p.emit($item, item)
-        p.bind($item, item)
         $item.html($item.html()
           .split new RegExp("(\{\{#{searchQuery}\}\})", 'i')
           .map (p) ->
