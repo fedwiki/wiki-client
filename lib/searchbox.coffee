@@ -19,6 +19,10 @@ bind = ->
     search.performSearch( searchQuery )
     $(this).val("")
 
+  $('input.search').on 'focus', (e)->
+    searchQuery = $(this).val()
+    search.incrementalSearch( searchQuery )
+
   $('input.search').on 'input', (e)->
     searchQuery = $(this).val()
     search.incrementalSearch( searchQuery )

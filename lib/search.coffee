@@ -17,7 +17,7 @@ finishClick = (e, name) ->
 
 createSearch = ({neighborhood})->
   incrementalSearch = (searchQuery)->
-    if searchQuery.length == 0
+    if searchQuery.length < 2
       $('.incremental-search').remove()
       return
     if $('.incremental-search').length == 0
