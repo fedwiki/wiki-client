@@ -4,11 +4,32 @@
 
 pageHandler = require './pageHandler'
 random = require './random'
-plugin = require './plugin'
 link = require './link'
 active = require './active'
 newPage = require('./page').newPage
+resolve = require './resolve'
+page = require './page'
 
+# From reference.coffee
+emit = ($item, item) ->
+  slug = item.slug
+  slug ||= page.asSlug item.title if item.title?
+  slug ||= 'welcome-visitors'
+  site = item.site
+  resolve.resolveFrom site, ->
+    $item.append """
+      <p>
+        <img class='remote'
+          src='#{wiki.site(site).flag()}'
+          title='#{site}'
+          data-site="#{site}"
+          data-slug="#{slug}"
+        >
+        #{resolve.resolveLinks "[[#{item.title or slug}]]"}
+        —
+        #{resolve.resolveLinks(item.text)}
+      </p>
+    """
 finishClick = (e, name) ->
   e.preventDefault()
   page = $(e.target).parents('.page') unless e.shiftKey
@@ -49,46 +70,45 @@ createSearch = ({neighborhood})->
 
     searchResults = neighborhood.search(searchQuery)
     $search = $('.incremental-search').empty()
-    plugin.get 'reference', (p) ->
-      if !searchResults.finds || searchResults.finds.length == 0
-        $('<div/>').text('No results found').addClass('no-results').appendTo($search)
-      count = 0
-      max_results = 100
-      for result in searchResults.finds
-        count += 1
-        if count == max_results + 1
-          $('<div/>').text("#{searchResults.finds.length - max_results} results omitted").addClass('omitted-results').appendTo($search)
-        if count > max_results
-          continue
-        $item = $('<div/>').appendTo($search)
-        item =
-          id: random.itemId(),
-          type: "reference"
-          site: result.site,
-          slug: result.page.slug,
-          title: result.page.title
-            .split(new RegExp("(#{searchQuery})", 'i'))
-            .map (p) ->
-              if searchQuery.toLowerCase() == p.toLowerCase()
-                return "{{#{p}}}"
-              else return p
-            .join('')
-          text: result.page.synopsis
-            .split(new RegExp("(#{searchQuery})", 'i'))
-            .map (p) ->
-              if searchQuery.toLowerCase() == p.toLowerCase()
-                return "{{#{p}}}"
-              else return p
-            .join('')
-        p.emit($item, item)
-        $item.html($item.html()
-          .split new RegExp("(\{\{#{searchQuery}\}\})", 'i')
+    if !searchResults.finds || searchResults.finds.length == 0
+      $('<div/>').text('No results found').addClass('no-results').appendTo($search)
+    count = 0
+    max_results = 100
+    for result in searchResults.finds
+      count += 1
+      if count == max_results + 1
+        $('<div/>').text("#{searchResults.finds.length - max_results} results omitted").addClass('omitted-results').appendTo($search)
+      if count > max_results
+        continue
+      $item = $('<div/>').appendTo($search)
+      item =
+        id: random.itemId(),
+        type: "reference"
+        site: result.site,
+        slug: result.page.slug,
+        title: result.page.title
+          .split(new RegExp("(#{searchQuery})", 'i'))
           .map (p) ->
-            if (p.indexOf '{{') == 0
-              return "<span class='search-term'>#{p.substring(2, p.length - 2)}</span>"
+            if searchQuery.toLowerCase() == p.toLowerCase()
+              return "{{#{p}}}"
             else return p
-          .join ''
-        )
+          .join('')
+        text: result.page.synopsis
+          .split(new RegExp("(#{searchQuery})", 'i'))
+          .map (p) ->
+            if searchQuery.toLowerCase() == p.toLowerCase()
+              return "{{#{p}}}"
+            else return p
+          .join('')
+      emit($item, item)
+      $item.html($item.html()
+        .split new RegExp("(\{\{#{searchQuery}\}\})", 'i')
+        .map (p) ->
+          if (p.indexOf '{{') == 0
+            return "<span class='search-term'>#{p.substring(2, p.length - 2)}</span>"
+          else return p
+        .join ''
+      )
 
   performSearch = (searchQuery)->
     searchResults = neighborhood.search(searchQuery)
