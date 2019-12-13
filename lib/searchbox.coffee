@@ -11,9 +11,10 @@ inject = (neighborhood) ->
 
 bind = ->
   $('input.search').attr('autocomplete', 'off')
-  $('input.search').on 'keypress', (e)->
+  $('input.search').on 'keydown', (e)->
     if e.keyCode == 27
       $('.incremental-search').remove()
+  $('input.search').on 'keypress', (e)->
     return if e.keyCode != 13 # 13 == return
     searchQuery = $(this).val()
     search.performSearch( searchQuery )
