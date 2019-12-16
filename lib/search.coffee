@@ -106,7 +106,7 @@ createSearch = ({neighborhood})->
           .join('')
       emit($item, item)
       $item.html($item.html()
-        .split new RegExp("(\{\{.*\}\})", 'i')
+        .split new RegExp("(\{\{.*?\}\})", 'i')
         .map (p) ->
           if (p.indexOf '{{') == 0
             return "<span class='search-term'>#{p.substring(2, p.length - 2)}</span>"
