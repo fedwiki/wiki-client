@@ -10,6 +10,10 @@ newPage = require('./page').newPage
 resolve = require './resolve'
 page = require './page'
 
+# from: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
+escapeRegExp = (string) ->
+  string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
 # From reference.coffee
 emit = ($item, item) ->
   slug = item.slug
@@ -87,14 +91,14 @@ createSearch = ({neighborhood})->
         site: result.site,
         slug: result.page.slug,
         title: result.page.title
-          .split(new RegExp("(#{searchQuery})", 'i'))
+          .split(new RegExp("(#{escapeRegExp(searchQuery)})", 'i'))
           .map (p) ->
             if searchQuery.toLowerCase() == p.toLowerCase()
               return "{{#{p}}}"
             else return p
           .join('')
-        text: result.page.synopsis
-          .split(new RegExp("(#{searchQuery})", 'i'))
+        text: (result.page.synopsis || '')
+          .split(new RegExp("(#{escapeRegExp(searchQuery)})", 'i'))
           .map (p) ->
             if searchQuery.toLowerCase() == p.toLowerCase()
               return "{{#{p}}}"
@@ -102,7 +106,7 @@ createSearch = ({neighborhood})->
           .join('')
       emit($item, item)
       $item.html($item.html()
-        .split new RegExp("(\{\{#{searchQuery}\}\})", 'i')
+        .split new RegExp("(\{\{.*\}\})", 'i')
         .map (p) ->
           if (p.indexOf '{{') == 0
             return "<span class='search-term'>#{p.substring(2, p.length - 2)}</span>"
