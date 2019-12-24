@@ -80,6 +80,7 @@ footer form, .footer-item {
   color: black;
   display: inline-block;
   max-height: 300px;
+  max-width: 430px;
   padding-top: 5px;
   padding-bottom: 5px;
   padding-right: 10px;
