@@ -3,6 +3,7 @@
 # slowly and keeps track of get requests in flight.
 
 _ = require 'underscore'
+miniSearch = require 'minisearch'
 
 module.exports = neighborhood = {}
 
@@ -32,6 +33,19 @@ populateSiteInfoFor = (site,neighborInfo)->
         transition site, 'fetch', 'fail'
         wiki.site(site).refresh () ->
           # empty function
+    console.log site, 'fetching index'
+    # we can't use `wiki.site(site).get` as that returns a JSON object, and we want a string...
+    siteIndexURL = wiki.site(site).getURL 'system/site-index.json'
+    fetch(siteIndexURL)
+      .then (data) ->
+        data.text()
+      .then (indexString) ->
+        neighborInfo.siteIndex = miniSearch.loadJSON(indexString, {
+          fields: ['title', 'content']
+        })
+        console.log site, 'index loaded'
+      .catch (err) ->
+        console.log 'error loading index', site, err
 
   now = Date.now()
   if now > nextAvailableFetch
@@ -92,22 +106,50 @@ neighborhood.search = (searchQuery)->
   tick = (key) ->
     if tally[key]? then tally[key]++ else tally[key] = 1
 
-  match = (key, text) ->
-    hit = text? and text.toLowerCase().indexOf( searchQuery.toLowerCase() ) >= 0
-    tick key if hit
-    hit
+  indexSite = (site, siteInfo) ->
+    timeLabel = "indexing sitemap ( #{site} )"
+    console.time timeLabel
+    console.log 'indexing sitemap:', site
+    siteIndex = new miniSearch({
+      fields: ['title', 'content']
+    })
+    neighborInfo.sitemap.forEach ((page) ->
+      siteIndex.add {
+        'id': page.slug
+        'title': page.title
+        'content': page.synopsis
+      }
+      return
+    )
+    console.timeEnd timeLabel
+    return siteIndex
 
   start = Date.now()
+  # load, or create (from sitemap), site index
   for own neighborSite,neighborInfo of neighborhood.sites
-    sitemap = neighborInfo.sitemap
-    tick 'sites' if sitemap?
-    matchingPages = _.each sitemap, (page)->
-      tick 'pages'
-      return unless match('title', page.title) or match('text', page.synopsis) or match('slug', page.slug)
-      tick 'finds'
-      finds.push
-        page: page,
-        site: neighborSite,
-        rank: 1 # HARDCODED FOR NOW
+    if neighborInfo.sitemap
+      # do we already have an index?
+      unless neighborInfo.siteIndex?
+        # create an index using sitemap
+        neighborInfo.siteIndex = indexSite(neighborSite, neighborInfo)
+  
+  for own neighborSite,neighborInfo of neighborhood.sites
+    if neighborInfo.siteIndex
+      searchResult = neighborInfo.siteIndex.search searchQuery,
+        boost:
+          title: 10
+          content: 1
+        prefix: true
+      searchResult.forEach (result) ->
+        tick 'finds'
+        finds.push
+          page: neighborInfo.sitemap.find ({slug}) => slug is result.id
+          site: neighborSite
+          rank: result.score
+  
+  # sort the finds by rank
+  finds.sort (a,b) ->
+    return b.rank - a.rank
+  
   tally['msec'] = Date.now() - start
   { finds, tally }
