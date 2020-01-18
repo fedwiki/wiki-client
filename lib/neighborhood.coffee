@@ -99,7 +99,26 @@ neighborhood.deleteFromSitemap = (pageObject)->
 neighborhood.listNeighbors = ()->
   _.keys( neighborhood.sites )
 
+# Page Search
+
+extractPageText = (pageText, currentItem) ->
+  switch currentItem.type
+    when 'paragraph'
+      pageText += ' ' + currentItem.text.replace /\[{1,2}|\]{1,2}/g, ''
+    when 'markdown'
+      # really need to extract text from the markdown, but for now just remove link brackets...
+      pageText += ' ' + currentItem.text.replace /\[{1,2}|\]{1,2}/g, ''
+    when 'html'
+      pageText += ' ' + currentItem.text.replace /<[^>]*>/g, ''
+    else
+      if currentItem.text?
+        for line in currentItem.text.split /\r\n?|\n/
+          pageText += ' ' + line.replace /\[{1,2}|\]{1,2}/g, '' unless line.match /^[A-Z]+[ ].*/
+  pageText
+
+
 neighborhood.updateIndex = (pageObject, originalStory) ->
+  console.log "updating #{pageObject.getSlug()} in index"
   site = location.host
   return unless neighborInfo = neighborhood.sites[site]
 
