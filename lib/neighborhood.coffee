@@ -33,7 +33,7 @@ populateSiteInfoFor = (site,neighborInfo)->
         transition site, 'fetch', 'fail'
         wiki.site(site).refresh () ->
           # empty function
-    console.log site, 'fetching index'
+
     # we can't use `wiki.site(site).get` as that returns a JSON object, and we want a string...
     siteIndexURL = wiki.site(site).getURL 'system/site-index.json'
     fetch(siteIndexURL)
@@ -98,6 +98,53 @@ neighborhood.deleteFromSitemap = (pageObject)->
 
 neighborhood.listNeighbors = ()->
   _.keys( neighborhood.sites )
+
+neighborhood.updateIndex = (pageObject, originalStory) ->
+  site = location.host
+  return unless neighborInfo = neighborhood.sites[site]
+
+  originalText = originalStory.reduce( extractPageText, '')
+
+  slug = pageObject.getSlug()
+  title = pageObject.getTitle()
+  rawStory = pageObject.getRawPage().story
+  newText = rawStory.reduce( extractPageText, '')
+
+  # try remove original page from index
+  try
+    neighborInfo.siteIndex.remove {
+      'id': slug
+      'title': title
+      'content': originalText
+    }
+  catch err
+    # swallow error, if the page was not in index
+    console.log "removing #{slug} from index failed", err unless err.message.includes('not in the index')
+
+  neighborInfo.siteIndex.add {
+    'id': slug
+    'title': title
+    'content': newText
+  }
+
+neighborhood.deleteFromIndex = (pageObject) ->
+  site = location.host
+  return unless neighborInfo = neighborhood.sites[site]
+
+  slug = pageObject.getSlug()
+  title = pageObject.getTitle()
+  rawStory = pageObject.getRawPage().story
+  pageText = rawStory.reduce(extractPageText, '')
+  try
+    neighborInfo.siteIndex.remove {
+      'id': slug
+      'title': title
+      'content': pageText
+    }
+  catch err
+    # swallow error, if the page was not in index
+    console.log "removing #{slug} from index failed", err unless err.message.includes('not in the index')
+
 
 neighborhood.search = (searchQuery)->
   finds = []
