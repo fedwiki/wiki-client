@@ -128,7 +128,7 @@ pushToServer = ($page, pagePutInfo, action) ->
     bundle.item = deepCopy pageObject.getRawPage()
 
   # we need the original page so we can update the index
-  wiki.origin.get pagePutInfo.slug, (err, originalPage) ->
+  wiki.origin.get "#{pagePutInfo.slug}.json", (err, originalPage) ->
     if err
       originalStory = []
     else
