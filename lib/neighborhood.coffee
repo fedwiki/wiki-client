@@ -198,14 +198,22 @@ neighborhood.search = (searchQuery)->
       unless neighborInfo.siteIndex?
         # create an index using sitemap
         neighborInfo.siteIndex = indexSite(neighborSite, neighborInfo)
-  
+
+  origin = location.host
   for own neighborSite,neighborInfo of neighborhood.sites
     if neighborInfo.siteIndex
+      if neighborSite is origin
+        titleBoost = 20
+        contentBoost = 2
+      else
+        titleBoost = 10
+        contentBoost = 1
       searchResult = neighborInfo.siteIndex.search searchQuery,
         boost:
-          title: 10
-          content: 1
+          title: titleBoost
+          content: contentBoost
         prefix: true
+        combineWith: 'AND'
       searchResult.forEach (result) ->
         tick 'finds'
         finds.push
