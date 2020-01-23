@@ -172,6 +172,8 @@ neighborhood.search = (searchQuery)->
   tick = (key) ->
     if tally[key]? then tally[key]++ else tally[key] = 1
 
+
+
   indexSite = (site, siteInfo) ->
     timeLabel = "indexing sitemap ( #{site} )"
     console.time timeLabel
@@ -202,6 +204,11 @@ neighborhood.search = (searchQuery)->
   origin = location.host
   for own neighborSite,neighborInfo of neighborhood.sites
     if neighborInfo.siteIndex
+      tick 'sites'
+      if tally['pages']?
+        tally['pages'] += neighborInfo.sitemap.length
+      else 
+        tally['pages'] = neighborInfo.sitemap.length
       if neighborSite is origin
         titleBoost = 20
         contentBoost = 2
