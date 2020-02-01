@@ -54,6 +54,9 @@ $ ->
       newIndex = pages.index($('.active')) + direction
       if 0 <= newIndex < pages.length
         active.set(pages.eq(newIndex))
+    if (event.ctrlKey || event.metaKey) and event.which == 83 #ctrl-s for search
+      event.preventDefault()
+      $('input.search').focus()
 
 # HANDLERS for jQuery events
 
