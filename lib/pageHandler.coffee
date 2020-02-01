@@ -127,16 +127,24 @@ pushToServer = ($page, pagePutInfo, action) ->
   if action.type == 'fork'
     bundle.item = deepCopy pageObject.getRawPage()
 
-  wiki.origin.put pagePutInfo.slug, bundle, (err) ->
+  # we need the original page so we can update the index
+  wiki.origin.get "#{pagePutInfo.slug}.json", (err, originalPage) ->
     if err
-      action.error = { type: err.type, msg: err.msg, response: err.xhr.responseText}
-      pushToLocal $page, pagePutInfo, action
+      originalStory = []
     else
-      pageObject.apply action if pageObject?.apply
-      neighborhood.updateSitemap pageObject
-      addToJournal $page.find('.journal'), action
-      if action.type == 'fork'
-        wiki.local.delete $page.attr('id')
+      originalStory = originalPage.story or []
+
+    wiki.origin.put pagePutInfo.slug, bundle, (err) ->
+      if err
+        action.error = { type: err.type, msg: err.msg, response: err.xhr.responseText}
+        pushToLocal $page, pagePutInfo, action
+      else
+        pageObject.apply action if pageObject?.apply
+        neighborhood.updateSitemap pageObject
+        neighborhood.updateIndex pageObject, originalStory
+        addToJournal $page.find('.journal'), action
+        if action.type == 'fork'
+          wiki.local.delete $page.attr('id')
 
 pageHandler.put = ($page, action) ->
 
@@ -210,5 +218,6 @@ pageHandler.delete = (pageObject, $page, done) ->
       more = ->
         # err = null
         neighborhood.deleteFromSitemap pageObject unless err?
+        neighborhood.deleteFromIndex pageObject unless err?
         done err
       setTimeout(more, 300) # simulate server turnaround

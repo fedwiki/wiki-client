@@ -3,6 +3,7 @@
 # slowly and keeps track of get requests in flight.
 
 _ = require 'underscore'
+miniSearch = require 'minisearch'
 
 module.exports = neighborhood = {}
 
@@ -32,6 +33,19 @@ populateSiteInfoFor = (site,neighborInfo)->
         transition site, 'fetch', 'fail'
         wiki.site(site).refresh () ->
           # empty function
+
+    # we can't use `wiki.site(site).get` as that returns a JSON object, and we want a string...
+    siteIndexURL = wiki.site(site).getURL 'system/site-index.json'
+    fetch(siteIndexURL)
+      .then (data) ->
+        data.text()
+      .then (indexString) ->
+        neighborInfo.siteIndex = miniSearch.loadJSON(indexString, {
+          fields: ['title', 'content']
+        })
+        console.log site, 'index loaded'
+      .catch (err) ->
+        console.log 'error loading index', site, err
 
   now = Date.now()
   if now > nextAvailableFetch
@@ -85,6 +99,72 @@ neighborhood.deleteFromSitemap = (pageObject)->
 neighborhood.listNeighbors = ()->
   _.keys( neighborhood.sites )
 
+# Page Search
+
+extractPageText = (pageText, currentItem) ->
+  switch currentItem.type
+    when 'paragraph'
+      pageText += ' ' + currentItem.text.replace /\[{1,2}|\]{1,2}/g, ''
+    when 'markdown'
+      # really need to extract text from the markdown, but for now just remove link brackets...
+      pageText += ' ' + currentItem.text.replace /\[{1,2}|\]{1,2}/g, ''
+    when 'html'
+      pageText += ' ' + currentItem.text.replace /<[^>]*>/g, ''
+    else
+      if currentItem.text?
+        for line in currentItem.text.split /\r\n?|\n/
+          pageText += ' ' + line.replace /\[{1,2}|\]{1,2}/g, '' unless line.match /^[A-Z]+[ ].*/
+  pageText
+
+
+neighborhood.updateIndex = (pageObject, originalStory) ->
+  console.log "updating #{pageObject.getSlug()} in index"
+  site = location.host
+  return unless neighborInfo = neighborhood.sites[site]
+
+  originalText = originalStory.reduce( extractPageText, '')
+
+  slug = pageObject.getSlug()
+  title = pageObject.getTitle()
+  rawStory = pageObject.getRawPage().story
+  newText = rawStory.reduce( extractPageText, '')
+
+  # try remove original page from index
+  try
+    neighborInfo.siteIndex.remove {
+      'id': slug
+      'title': title
+      'content': originalText
+    }
+  catch err
+    # swallow error, if the page was not in index
+    console.log "removing #{slug} from index failed", err unless err.message.includes('not in the index')
+
+  neighborInfo.siteIndex.add {
+    'id': slug
+    'title': title
+    'content': newText
+  }
+
+neighborhood.deleteFromIndex = (pageObject) ->
+  site = location.host
+  return unless neighborInfo = neighborhood.sites[site]
+
+  slug = pageObject.getSlug()
+  title = pageObject.getTitle()
+  rawStory = pageObject.getRawPage().story
+  pageText = rawStory.reduce(extractPageText, '')
+  try
+    neighborInfo.siteIndex.remove {
+      'id': slug
+      'title': title
+      'content': pageText
+    }
+  catch err
+    # swallow error, if the page was not in index
+    console.log "removing #{slug} from index failed", err unless err.message.includes('not in the index')
+
+
 neighborhood.search = (searchQuery)->
   finds = []
   tally = {}
@@ -92,22 +172,65 @@ neighborhood.search = (searchQuery)->
   tick = (key) ->
     if tally[key]? then tally[key]++ else tally[key] = 1
 
-  match = (key, text) ->
-    hit = text? and text.toLowerCase().indexOf( searchQuery.toLowerCase() ) >= 0
-    tick key if hit
-    hit
+
+
+  indexSite = (site, siteInfo) ->
+    timeLabel = "indexing sitemap ( #{site} )"
+    console.time timeLabel
+    console.log 'indexing sitemap:', site
+    siteIndex = new miniSearch({
+      fields: ['title', 'content']
+    })
+    neighborInfo.sitemap.forEach ((page) ->
+      siteIndex.add {
+        'id': page.slug
+        'title': page.title
+        'content': page.synopsis
+      }
+      return
+    )
+    console.timeEnd timeLabel
+    return siteIndex
 
   start = Date.now()
+  # load, or create (from sitemap), site index
   for own neighborSite,neighborInfo of neighborhood.sites
-    sitemap = neighborInfo.sitemap
-    tick 'sites' if sitemap?
-    matchingPages = _.each sitemap, (page)->
-      tick 'pages'
-      return unless match('title', page.title) or match('text', page.synopsis) or match('slug', page.slug)
-      tick 'finds'
-      finds.push
-        page: page,
-        site: neighborSite,
-        rank: 1 # HARDCODED FOR NOW
+    if neighborInfo.sitemap
+      # do we already have an index?
+      unless neighborInfo.siteIndex?
+        # create an index using sitemap
+        neighborInfo.siteIndex = indexSite(neighborSite, neighborInfo)
+
+  origin = location.host
+  for own neighborSite,neighborInfo of neighborhood.sites
+    if neighborInfo.siteIndex
+      tick 'sites'
+      if tally['pages']?
+        tally['pages'] += neighborInfo.sitemap.length
+      else 
+        tally['pages'] = neighborInfo.sitemap.length
+      if neighborSite is origin
+        titleBoost = 20
+        contentBoost = 2
+      else
+        titleBoost = 10
+        contentBoost = 1
+      searchResult = neighborInfo.siteIndex.search searchQuery,
+        boost:
+          title: titleBoost
+          content: contentBoost
+        prefix: true
+        combineWith: 'AND'
+      searchResult.forEach (result) ->
+        tick 'finds'
+        finds.push
+          page: neighborInfo.sitemap.find ({slug}) => slug is result.id
+          site: neighborSite
+          rank: result.score
+  
+  # sort the finds by rank
+  finds.sort (a,b) ->
+    return b.rank - a.rank
+  
   tally['msec'] = Date.now() - start
   { finds, tally }
