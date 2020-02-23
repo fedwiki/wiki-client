@@ -104,6 +104,12 @@ bind = ($item, item) ->
     item.text = "#{video.text}\n(double-click to edit caption)\n"
     syncEditAction()
 
+  addRemoteImage = (url) ->
+    item.type = 'image'
+    item.url = url
+    item.caption ||= "Remote image"
+    syncEditAction()
+
   readFile = (file) ->
     if file?
       [majorType, minorType] = file.type.split("/")
@@ -150,6 +156,7 @@ bind = ($item, item) ->
     page: addReference
     file: readFile
     video: addVideo
+    image: addRemoteImage
     punt: punt
 
 # from http://www.bennadel.com/blog/1504-Ask-Ben-Parsing-CSV-Strings-With-Javascript-Exec-Regular-Expression-Command.htm
