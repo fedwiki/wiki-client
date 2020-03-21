@@ -34,17 +34,14 @@ populateSiteInfoFor = (site,neighborInfo)->
         wiki.site(site).refresh () ->
           # empty function
 
-    # we can't use `wiki.site(site).get` as that returns a JSON object, and we want a string...
-    siteIndexURL = wiki.site(site).getURL 'system/site-index.json'
-    fetch(siteIndexURL)
-      .then (data) ->
-        data.text()
-      .then (indexString) ->
-        neighborInfo.siteIndex = miniSearch.loadJSON(indexString, {
+    # we use `wiki.site(site).getIndex` as we want the serialized index as a string.
+    wiki.site(site).getIndex 'system/site-index.json', (err, data) ->
+      if !err       
+        neighborInfo.siteIndex = miniSearch.loadJSON(data, {
           fields: ['title', 'content']
         })
         console.log site, 'index loaded'
-      .catch (err) ->
+      else
         console.log 'error loading index', site, err
 
   now = Date.now()
