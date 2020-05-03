@@ -105,10 +105,15 @@ bind = ($item, item) ->
     syncEditAction()
 
   addRemoteImage = (url) ->
-    item.type = 'image'
-    item.url = url
-    item.caption ||= "Remote image"
-    syncEditAction()
+    fetchRemoteImage(url)
+      .then (dataURL) ->
+        resizeImage dataURL
+      .then (resizedURL) ->
+        item.type = 'image'
+        item.url = resizedURL
+        item.source = url
+        item.caption ||= "Remote image"
+        syncEditAction()
 
   readFile = (file) ->
     if file?
@@ -185,6 +190,31 @@ arrayToJson = (array) ->
       obj[k] = v if v? && (v.match /\S/) && v != 'NULL'
     obj
   (rowToObject row for row in array)
+
+
+fetchRemoteImage = (url) ->
+  arrayBufferToBase64 = (buffer) ->
+    binary = ''
+    bytes = [].slice.call(new Uint8Array(buffer))
+    bytes.forEach((b) -> binary += String.fromCharCode(b));
+    return window.btoa(binary);
+
+  fetch(url)
+    .then (response) ->
+      if response.ok
+        return response
+      throw new Error('Unable to fetch image')
+    .then (response) ->
+      response.arrayBuffer()
+        .then (buffer) ->
+          imgStr = 'data:image/jpeg;base64,'
+          imgStr += arrayBufferToBase64(buffer)
+          return imgStr
+    
+    .catch (error) ->
+      console.log 'Unable to fetch remote image'
+    
+
 
 # from http://www.benknowscode.com/2014/01/resizing-images-in-browser-using-canvas.html
 # Patrick Oswald version from comment, coffeescript and further simplification for wiki
