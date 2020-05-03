@@ -73,6 +73,22 @@ createSearch = ({neighborhood})->
         .appendTo($('.searchbox'))
 
     searchResults = neighborhood.search(searchQuery)
+    searchTerms = searchQuery.split(' ')
+            .map (t) ->
+              return t.toLowerCase()
+            .filter(String)
+    searchHighlightRegExp = new RegExp("\\b(" + searchQuery.split(' ')
+            .map (t) ->
+              return t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+            .filter(String)
+            .join('|') + ")", 'i')
+    highlightText = (text) ->
+      text.split(searchHighlightRegExp)
+        .map (p) ->
+          if searchTerms.includes p.toLowerCase()
+            return "{{#{p}}}"
+          else return p
+        .join('')
     $search = $('.incremental-search').empty()
     if !searchResults.finds || searchResults.finds.length == 0
       $('<div/>').text('No results found').addClass('no-results').appendTo($search)
@@ -90,20 +106,8 @@ createSearch = ({neighborhood})->
         type: "reference"
         site: result.site,
         slug: result.page.slug,
-        title: result.page.title
-          .split(new RegExp("(#{escapeRegExp(searchQuery)})", 'i'))
-          .map (p) ->
-            if searchQuery.toLowerCase() == p.toLowerCase()
-              return "{{#{p}}}"
-            else return p
-          .join('')
-        text: (result.page.synopsis || '')
-          .split(new RegExp("(#{escapeRegExp(searchQuery)})", 'i'))
-          .map (p) ->
-            if searchQuery.toLowerCase() == p.toLowerCase()
-              return "{{#{p}}}"
-            else return p
-          .join('')
+        title: highlightText(result.page.title)
+        text: highlightText(result.page.synopsis)
       emit($item, item)
       $item.html($item.html()
         .split new RegExp("(\{\{.*?\}\})", 'i')
