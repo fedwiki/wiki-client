@@ -216,7 +216,7 @@ fetchRemoteImage = (url) ->
     
 
 
-# from http://www.benknowscode.com/2014/01/resizing-images-in-browser-using-canvas.html
+# from https://web.archive.org/web/20140327091827/http://www.benknowscode.com/2014/01/resizing-images-in-browser-using-canvas.html
 # Patrick Oswald version from comment, coffeescript and further simplification for wiki
 
 resizeImage = (dataURL) ->
