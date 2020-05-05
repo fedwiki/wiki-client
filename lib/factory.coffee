@@ -108,9 +108,9 @@ bind = ($item, item) ->
     fetchRemoteImage(url)
       .then (dataURL) ->
         resizeImage dataURL
-      .then (resizedURL) ->
+      .then (resizedImageURL) ->
         item.type = 'image'
-        item.url = resizedURL
+        item.url = resizedImageURL
         item.source = url
         item.caption ||= "Remote image"
         syncEditAction()
@@ -121,10 +121,12 @@ bind = ($item, item) ->
       reader = new FileReader()
       if majorType == "image"
         reader.onload = (loadEvent) ->
-          item.type = 'image'
-          item.url = resizeImage loadEvent.target.result
-          item.caption ||= "Uploaded image"
-          syncEditAction()
+          resizeImage loadEvent.target.result
+          .then (resizedImageURL) ->
+            item.type = 'image'
+            item.url = resizedImageURL
+            item.caption ||= "Uploaded image"
+            syncEditAction()
         reader.readAsDataURL(file)
       else if majorType == "text"
         reader.onload = (loadEvent) ->
@@ -220,19 +222,43 @@ fetchRemoteImage = (url) ->
 # Patrick Oswald version from comment, coffeescript and further simplification for wiki
 
 resizeImage = (dataURL) ->
-  smallEnough = (src) ->
-    src.width <= 500 || src.height <= 300
-  squeezeSteps = (src) ->
-    return src if smallEnough src
-    canvas = document.createElement 'canvas'
-    canvas.width = cW = src.width / 2
-    canvas.height = cH = src.height / 2
-    context = canvas.getContext '2d'
-    context.drawImage src, 0, 0, cW, cH
-    return squeezeSteps canvas
-  img = new Image
-  img.src = dataURL
-  return dataURL if smallEnough img
-  squeezeSteps(img).toDataURL 'image/jpeg', .5  # medium quality encoding
+  src = new Image
+  cW = undefined
+  cH = undefined
+
+  new Promise (resolve) ->
+    console.log 'loading image'
+    src.src = dataURL
+    src.onload = ->
+      console.log 'image loaded (initial)'
+      resolve()
+  .then () ->
+    cW = src.naturalWidth
+    cH = src.naturalHeight
+    console.log 'loaded', cW, cH
+  .then () ->
+    new Promise (resolve) -> 
+      tmp = new Image
+      tmp.src = src.src
+      tmp.onload = ->
+        console.log 'image loaded (squeeze)'
+        canvas = document.createElement('canvas')
+        if cW > 500 or cH > 300
+          cW /= 2
+          cH /= 2
+        console.log 'squeezing', cW, cH
+        canvas.width = cW
+        canvas.height = cH
+        context = canvas.getContext('2d')
+        context.drawImage tmp, 0, 0, cW, cH
+        dataURL = canvas.toDataURL('image/jpeg', .5)
+        if cW <= 500 or cH <= 300
+          return resolve dataURL
+        else
+          tmp.src = dataURL
+  .then ->
+    console.log 'image squeezed!'
+    return dataURL
+
 
 module.exports = {emit, bind}
