@@ -26,7 +26,7 @@ isPage = (url) ->
 
 isImage = (url) ->
   parsedURL = nurl.parse(url, true, true)
-  if parsedURL.pathname.match(/\.(jpg|jpeg|png|svg)$/)
+  if parsedURL.pathname.match(/\.(jpg|jpeg|png|svg)$/i)
     return url
   null
 
