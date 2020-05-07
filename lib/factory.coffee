@@ -106,12 +106,12 @@ bind = ($item, item) ->
 
   addRemoteImage = (url) ->
     # give some feedback, in case this is going to take a while...
-    document.body.style.cursor = 'progress'
+    document.documentElement.style.cursor = 'wait'
     fetchRemoteImage(url)
       .then (dataURL) ->
         resizeImage dataURL
       .then (resizedImageURL) ->
-        document.body.style.cursor = 'default'
+        document.documentElement.style.cursor = 'default'
         item.type = 'image'
         item.url = resizedImageURL
         item.source = url
