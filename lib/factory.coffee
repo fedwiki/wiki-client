@@ -229,8 +229,8 @@ resizeImage = (dataURL) ->
   cW = undefined
   cH = undefined
   # target size
-  tW = 800
-  tH = 512
+  tW = 500
+  tH = 300
   # image quality
   imageQuality = 0.5
 
