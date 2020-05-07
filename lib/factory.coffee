@@ -225,39 +225,55 @@ resizeImage = (dataURL) ->
   src = new Image
   cW = undefined
   cH = undefined
+  # target size
+  tW = 800
+  tH = 512
+  # image quality
+  imageQuality = 0.5
+
+  smallEnough = (img) ->
+    img.width <= tW or img.height <= tH
 
   new Promise (resolve) ->
-    console.log 'loading image'
     src.src = dataURL
     src.onload = ->
-      console.log 'image loaded (initial)'
       resolve()
   .then () ->
     cW = src.naturalWidth
     cH = src.naturalHeight
-    console.log 'loaded', cW, cH
   .then () ->
-    new Promise (resolve) -> 
+    # determine size for first squeeze
+    return if smallEnough src
+    oW = cW
+    oH = cH
+    fW = cW.toString(2).length - tW.toString(2).length + 1
+    fH = cH.toString(2).length - tH.toString(2).length + 1
+
+    if fW <= fH
+      cW = tW * fW
+      cH = oH * (cW / oW)
+    else
+      cH = tH * fH
+      cW = oW * (cH / oH)
+  .then () ->
+    new Promise (resolve) ->
       tmp = new Image
       tmp.src = src.src
       tmp.onload = ->
-        console.log 'image loaded (squeeze)'
+        if smallEnough tmp
+          return resolve dataURL  
         canvas = document.createElement('canvas')
-        if cW > 500 or cH > 300
-          cW /= 2
-          cH /= 2
-        console.log 'squeezing', cW, cH
+        
+        cW /= 2
+        cH /= 2
+
         canvas.width = cW
         canvas.height = cH
         context = canvas.getContext('2d')
         context.drawImage tmp, 0, 0, cW, cH
-        dataURL = canvas.toDataURL('image/jpeg', .5)
-        if cW <= 500 or cH <= 300
-          return resolve dataURL
-        else
-          tmp.src = dataURL
+        dataURL = canvas.toDataURL('image/jpeg', imageQuality)
+        tmp.src = dataURL
   .then ->
-    console.log 'image squeezed!'
     return dataURL
 
 
