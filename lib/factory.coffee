@@ -248,32 +248,12 @@ resizeImage = (dataURL) ->
     # determine size for first squeeze
     return if smallEnough src
 
-    f = if cW / cH > tW / tH then cH / tH else cW / tW
+    oversize = Math.max 1, Math.min cW/tW, cH/tH
+    iterations = Math.floor Math.log2 oversize
+    prescale = oversize / 2**iterations
 
-    fW = Math.round(cW / f)
-    fH = Math.round(cH / f)
-
-    squeezes = 0
-
-    if fW = tW
-      x = tW
-      y = cW
-    else
-      x = tH
-      y = cH
-    
-    while x < y
-      x *= 2
-      squeezes += 1
-
-    cW = fW
-    cH = fH
-
-    x = 1
-    while x < squeezes
-      cW *= 2
-      cH *= 2
-      x++
+    cW = Math.round(cW / prescale)
+    cH = Math.round(cH / prescale)
 
   .then () ->
     new Promise (resolve) ->
