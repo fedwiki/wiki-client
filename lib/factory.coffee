@@ -249,17 +249,34 @@ resizeImage = (dataURL) ->
   .then () ->
     # determine size for first squeeze
     return if smallEnough src
-    oW = cW
-    oH = cH
-    fW = cW.toString(2).length - tW.toString(2).length + 1
-    fH = cH.toString(2).length - tH.toString(2).length + 1
-    console.log 'f', fW, fH, fW<=fH
-    if fW <= fH
-      cW = tW * fW
-      cH = oH * (cW / oW)
+
+    f = if cW / cH > tW / tH then cH / tH else cW / tW
+
+    fW = Math.round(cW / f)
+    fH = Math.round(cH / f)
+
+    squeezes = 0
+
+    if fW = tW
+      x = tW
+      y = cW
     else
-      cH = tH * fH
-      cW = oW * (cH / oH)
+      x = tH
+      y = cH
+    
+    while x < y
+      x *= 2
+      squeezes += 1
+
+    cW = fW
+    cH = fH
+
+    x = 1
+    while x < squeezes
+      cW *= 2
+      cH *= 2
+      x++
+
   .then () ->
     new Promise (resolve) ->
       tmp = new Image
