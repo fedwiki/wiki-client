@@ -235,6 +235,7 @@ resizeImage = (dataURL) ->
   imageQuality = 0.5
 
   smallEnough = (img) ->
+    console.log 'smallEnough', img.width, '<=', tw, img.width <= tW, img.height, '<=', tH,  img.height <= tH
     img.width <= tW or img.height <= tH
 
   new Promise (resolve) ->
@@ -244,6 +245,7 @@ resizeImage = (dataURL) ->
   .then () ->
     cW = src.naturalWidth
     cH = src.naturalHeight
+    console.log 'naturalSize', cW, cH
   .then () ->
     # determine size for first squeeze
     return if smallEnough src
@@ -251,7 +253,7 @@ resizeImage = (dataURL) ->
     oH = cH
     fW = cW.toString(2).length - tW.toString(2).length + 1
     fH = cH.toString(2).length - tH.toString(2).length + 1
-
+    console.log 'f', fW, fH, fW<=fH
     if fW <= fH
       cW = tW * fW
       cH = oH * (cW / oW)
@@ -269,11 +271,14 @@ resizeImage = (dataURL) ->
         
         cW /= 2
         cH /= 2
+        console.log 'drawImage', cW, cH
 
         canvas.width = cW
         canvas.height = cH
+        console.log 'canvas', canvas.width, canvas.height
         context = canvas.getContext('2d')
         context.drawImage tmp, 0, 0, cW, cH
+        console.log 'context', context.width, context.height
         dataURL = canvas.toDataURL('image/jpeg', imageQuality)
         tmp.src = dataURL
   .then ->
