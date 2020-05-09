@@ -24,6 +24,12 @@ isPage = (url) ->
     return item
   null
 
+isImage = (url) ->
+  parsedURL = nurl.parse(url, true, true)
+  if parsedURL.pathname.match(/\.(jpg|jpeg|png|svg)$/i)
+    return url
+  null
+
 isVideo = (url) ->
   parsedURL = nurl.parse(url, true, true)
   # check if video dragged from search (Google)
@@ -68,6 +74,9 @@ dispatch = (handlers) ->
       if video = isVideo url
         if (handle = handlers.video)?
           return stop handle video
+      if image = isImage url
+        if (handle = handlers.image)?
+          return stop handle image
       punt = {url}
     if file = isFile event
       if (handle = handlers.file)?
