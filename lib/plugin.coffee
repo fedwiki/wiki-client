@@ -48,12 +48,13 @@ plugin.renderFrom = (notifIndex) ->
     return promise if itemElems.length == 0
     itemElem = itemElems.shift()
     $item = $(itemElem)
-    item = $item.data('item')
-    promise = promise.then ->
-      return new Promise (resolve, reject) ->
-        $item.off()
-        plugin.emit $item.empty(), item, () ->
-          resolve()
+    unless $item.hasClass('textEditing')
+      item = $item.data('item')
+      promise = promise.then ->
+        return new Promise (resolve, reject) ->
+          $item.off()
+          plugin.emit $item.empty(), item, () ->
+            resolve()
     emitNextItem(itemElems)
   # The concat here makes a copy since we need to loop through the same
   # items to do a bind.
