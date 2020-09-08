@@ -30,6 +30,7 @@
     "underscore": "^1.9.2"
   },
   "scripts": {
+    "build": "grunt build",
     "test": "grunt mochaTest"
   },
   "devDependencies": {
