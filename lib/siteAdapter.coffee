@@ -39,7 +39,7 @@ withCredsStore.iterate (value, key, iterationNumber) ->
 .catch (err) ->
   console.log "siteAdapter: error loading withCredentials data ", err
 
-testWikiSite = (url, good, bad) ->
+testWikiSite = (url) ->
   fetchTimeout = new Promise( (resolve, reject) ->
     id = setTimeout( () ->
       clearTimeout id
@@ -59,8 +59,8 @@ testWikiSite = (url, good, bad) ->
     fetchTimeout
     fetchURL
     ])
-  .then () -> good()
-  .catch () -> bad()
+  .then () -> return true
+  .catch () -> return false
 
 
 
@@ -71,25 +71,25 @@ findAdapterQ = queue( (task, done) ->
     done sitePrefix[site]
 
   testURL = "//#{site}/favicon.png"
-  testWikiSite testURL, (->
+  if testWikiSite testURL
     sitePrefix[site] = "//#{site}"
     done "//#{site}"
-  ), ->
+  else
     switch location.protocol
       when 'http:'
         testURL = "https://#{site}/favicon.png"
-        testWikiSite testURL, (->
+        if testWikiSite testURL
           sitePrefix[site] = "https://#{site}"
           done "https://#{site}"
-        ), ->
+        else
           sitePrefix[site] = ""
           done ""
       when 'https:'
         testURL = "/proxy/#{site}/favicon.png"
-        testWikiSite testURL, (->
+        if testWikiSite testURL
           sitePrefix[site] = "/proxy/#{site}"
           done "/proxy/#{site}"
-        ), ->
+        else
           sitePrefix[site] = ""
           done ""
       else
@@ -102,10 +102,10 @@ findAdapter = (site, done) ->
     console.log "findAdapter: ", site, value
     if !value?
       findAdapterQ.push {site: site}, (prefix) ->
-        routeStore.setItem(site, prefix).then (value) ->
+        routeStore.setItem(site, prefix).then () ->
           done prefix
         .catch (err) ->
-          console.log "findAdapter setItem error: ", site, err
+          console.log "findAdapter setItem error: ", site, prefix, err
           sitePrefix[site] = ""
           done ""
     else
