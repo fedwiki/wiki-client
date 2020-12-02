@@ -231,3 +231,38 @@ neighborhood.search = (searchQuery)->
   
   tally['msec'] = Date.now() - start
   { finds, tally }
+
+neighborhood.backLinks = (slug) ->
+
+  finds = []
+
+  for own neighborSite, neighborInfo of neighborhood.sites
+    if neighborInfo.sitemap
+      neighborInfo.sitemap.forEach (sitemapData, pageSlug) ->
+        if sitemapData.links?.includes(slug)
+          finds.push
+            slug: sitemapData.slug
+            title: sitemapData.title
+            site: neighborSite
+            date: sitemapData.date
+  console.log '+++++ backlinks - finds', finds
+  results = {}
+
+  finds.forEach (find) ->
+
+    slug = find['slug']
+    title = find['title']
+    site = find['site']
+    date = find['date']
+
+    results[slug] = results[slug] or {}
+    results[slug]['title'] = title
+    results[slug]['sites'] = results[slug]['sites'] or []
+    results[slug]['sites'].push
+      site: site
+      date: date
+  
+  console.log '+++++ backlinks - results', results
+  results
+    
+  

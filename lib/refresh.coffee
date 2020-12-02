@@ -248,6 +248,42 @@ emitControls = ($journal) ->
     </div>
   """
 
+emitBacklinks = ($backlinks, pageObject) ->
+  slug = pageObject.getSlug()
+  backlinks = neighborhood.backLinks(slug)
+  console.log '+++++ Backlinks ===', backlinks
+  if Object.keys(backlinks).length > 0
+    links = []
+    
+    for linkSlug, backlink of backlinks
+      console.log "+++++ backlink -> ", linkSlug, backlink
+      backlink.sites.sort (a,b) ->
+        a.site.date < b.site.date
+      flags = for i, site of backlink.sites
+        console.log '!!!!!!! in flags', site
+        """
+          <img class="remote"
+               src="#{wiki.site(site.site).flag()}"
+               data-slug="#{linkSlug}"
+               data-site="#{site.site}"
+               title="#{site.site}\n#{wiki.util.formatElapsedTime site.date}">
+        """
+      
+      linkBack = resolve.resolveLinks("[[#{backlink.title}]]")
+      links.push """
+        <div style="clear: both;">
+          <div style="float: left;">#{linkBack}</div>
+          <div style="text-align: right;"> #{flags.join " "} </div>
+        </div>
+      """
+
+    if links
+      console.log '+++++ we have some links'
+      $backlinks.append """
+        <h3>Linked from:</h3>
+        #{links.join "\n"}
+      """
+
 emitFooter = ($footer, pageObject) ->
   host = pageObject.getRemoteSite(location.host)
   slug = pageObject.getSlug()
@@ -309,7 +345,7 @@ renderPageIntoPageElement = (pageObject, $page) ->
   $page.empty()
   $paper = $("<div class='paper' />")
   $page.append($paper)
-  [$handleParent, $twins, $header, $story, $journal, $footer] = ['handle-parent', 'twins', 'header', 'story', 'journal', 'footer'].map (className) ->
+  [$handleParent, $twins, $header, $story, $backlinks, $journal, $footer] = ['handle-parent', 'twins', 'header', 'story', 'backlinks', 'journal', 'footer'].map (className) ->
     $('<div />').addClass(className).appendTo($paper) if className != 'journal' or $('.editEnable').is(':visible')
   $pagehandle = $('<div />').addClass('page-handle').appendTo($handleParent)
 
@@ -335,6 +371,7 @@ renderPageIntoPageElement = (pageObject, $page) ->
       done()
 
   emitTwins $page
+  emitBacklinks $backlinks, pageObject
   emitControls $journal if $('.editEnable').is(':visible')
   emitFooter $footer, pageObject
   $pagehandle.css({
