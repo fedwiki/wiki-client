@@ -239,11 +239,12 @@ neighborhood.backLinks = (slug) ->
   for own neighborSite, neighborInfo of neighborhood.sites
     if neighborInfo.sitemap
       neighborInfo.sitemap.forEach (sitemapData, pageSlug) ->
-        if sitemapData.links?.includes(slug)
+        if sitemapData.links? and Object.keys(sitemapData.links).length > 0 and Object.keys(sitemapData.links).includes(slug)
           finds.push
             slug: sitemapData.slug
             title: sitemapData.title
             site: neighborSite
+            itemId: sitemapData.links[slug]
             date: sitemapData.date
   console.log '+++++ backlinks - finds', finds
   results = {}
@@ -251,16 +252,14 @@ neighborhood.backLinks = (slug) ->
   finds.forEach (find) ->
 
     slug = find['slug']
-    title = find['title']
-    site = find['site']
-    date = find['date']
 
     results[slug] = results[slug] or {}
-    results[slug]['title'] = title
+    results[slug]['title'] = find['title']
     results[slug]['sites'] = results[slug]['sites'] or []
     results[slug]['sites'].push
-      site: site
-      date: date
+      site: find['site']
+      date: find['date']
+      itemId: find['itemId']
   
   console.log '+++++ backlinks - results', results
   results

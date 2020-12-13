@@ -47,6 +47,10 @@ A:link, A:visited {
 	font-weight: 500;
 }
 
+.backlinks {
+	display: none;
+}
+
 .journal {
 	display: none;
 }

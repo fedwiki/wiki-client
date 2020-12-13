@@ -266,6 +266,7 @@ emitBacklinks = ($backlinks, pageObject) ->
                src="#{wiki.site(site.site).flag()}"
                data-slug="#{linkSlug}"
                data-site="#{site.site}"
+               data-id="#{site.itemId}"
                title="#{site.site}\n#{wiki.util.formatElapsedTime site.date}">
         """
       
@@ -280,8 +281,10 @@ emitBacklinks = ($backlinks, pageObject) ->
     if links
       console.log '+++++ we have some links'
       $backlinks.append """
-        <h3>Linked from:</h3>
-        #{links.join "\n"}
+        <details>
+          <summary>#{links.length} pages link here:</summary>
+          #{links.join "\n"}
+        </details>
       """
 
 emitFooter = ($footer, pageObject) ->
