@@ -352,8 +352,10 @@ siteAdapter.site = (site) ->
                   done err, page
             else
               done null, data
+              Promise.resolve(data) unless callback
           error: (xhr, type, msg) ->
             done {msg, xhr}, null
+            Promise.reject(msg) unless callback
 
       if sitePrefix[site]?
         if sitePrefix[site] is ""
@@ -400,8 +402,10 @@ siteAdapter.site = (site) ->
                   done err, page
             else
               done null, data
+              Promise.resolve(data) unless callback
           error: (xhr, type, msg) ->
             done {msg, xhr}, null
+            Promise.reject(msg) unless callback
 
       if sitePrefix[site]?
         if sitePrefix[site] is ""
