@@ -251,16 +251,13 @@ emitControls = ($journal) ->
 emitBacklinks = ($backlinks, pageObject) ->
   slug = pageObject.getSlug()
   backlinks = neighborhood.backLinks(slug)
-  console.log '+++++ Backlinks ===', backlinks
   if Object.keys(backlinks).length > 0
     links = []
     
     for linkSlug, backlink of backlinks
-      console.log "+++++ backlink -> ", linkSlug, backlink
       backlink.sites.sort (a,b) ->
         a.site.date < b.site.date
       flags = for i, site of backlink.sites
-        console.log '!!!!!!! in flags', site
         """
           <img class="remote"
                src="#{wiki.site(site.site).flag()}"
@@ -279,7 +276,6 @@ emitBacklinks = ($backlinks, pageObject) ->
       """
 
     if links
-      console.log '+++++ we have some links'
       $backlinks.append """
         <details>
           <summary>#{links.length} pages link here:</summary>
