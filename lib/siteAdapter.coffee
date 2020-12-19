@@ -102,12 +102,12 @@ findAdapter = (site, done) ->
     console.log "findAdapter: ", site, value
     if !value?
       findAdapterQ.push {site: site}, (prefix) ->
+        sitePrefix[site] = prefix
         routeStore.setItem(site, prefix).then (value) ->
           done prefix
         .catch (err) ->
           console.log "findAdapter setItem error: ", site, err
-          sitePrefix[site] = ""
-          done ""
+          done prefix
     else
       sitePrefix[site] = value
       done value
