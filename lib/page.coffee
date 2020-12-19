@@ -111,6 +111,32 @@ newPage = (json, site) ->
   getSynopsis = ->
     synopsis page
 
+  getLinks = ->
+
+    extractPageLinks = (collaborativeLinks, currentItem, currentIndex, array) ->
+      # extract collaborative links 
+      # - this will need extending if we also extract the id of the item containing the link
+      try
+        linkRe = /\[\[([^\]]+)\]\]/g
+        match = undefined
+        while (match = linkRe.exec(currentItem.text)) != null
+          if not collaborativeLinks.has(asSlug(match[1]))
+            collaborativeLinks.set(asSlug(match[1]), currentItem.id)
+      catch err
+        console.log "*** Error extracting links from #{currentIndex} of #{JSON.stringify(array)}", err.message
+      collaborativeLinks
+
+    try
+      pageLinksMap = page.story.reduce( extractPageLinks, new Map())
+    catch err
+      console.log "+++ Extract links on #{page.slug} fails", err
+    if pageLinksMap.size > 0
+      pageLinks = Object.fromEntries(pageLinksMap)
+    else
+      pageLinks = {}
+    pageLinks
+
+
   addItem = (item) ->
     item = _.extend {}, {id: random.itemId()}, item
     page.story.push item
@@ -189,6 +215,6 @@ newPage = (json, site) ->
     isCreate = (action) -> action.type == 'create'
     page.journal.reverse().find(isCreate)
 
-  {getRawPage, getContext, isPlugin, isRemote, isLocal, isRecycler, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, setTitle, getRevision, getDate, getTimestamp, getSynopsis, addItem, getItem, addParagraph, seqItems, seqActions, become, siteLineup, merge, apply, getCreate}
+  {getRawPage, getContext, isPlugin, isRemote, isLocal, isRecycler, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, getLinks, setTitle, getRevision, getDate, getTimestamp, getSynopsis, addItem, getItem, addParagraph, seqItems, seqActions, become, siteLineup, merge, apply, getCreate}
 
 module.exports = {newPage, asSlug, asTitle, pageEmitter}

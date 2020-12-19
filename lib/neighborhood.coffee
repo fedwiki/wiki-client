@@ -73,7 +73,8 @@ neighborhood.updateSitemap = (pageObject)->
   date = pageObject.getDate()
   title = pageObject.getTitle()
   synopsis = pageObject.getSynopsis()
-  entry = {slug, date, title, synopsis}
+  links = pageObject.getLinks()
+  entry = {slug, date, title, synopsis, links}
   sitemap = neighborInfo.sitemap
   index = sitemap.findIndex (slot) -> slot.slug == slug
   if index >= 0
