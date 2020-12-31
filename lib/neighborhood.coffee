@@ -247,7 +247,6 @@ neighborhood.backLinks = (slug) ->
             site: neighborSite
             itemId: sitemapData.links[slug]
             date: sitemapData.date
-  console.log '+++++ backlinks - finds', finds
   results = {}
 
   finds.forEach (find) ->
@@ -261,8 +260,6 @@ neighborhood.backLinks = (slug) ->
       site: find['site']
       date: find['date']
       itemId: find['itemId']
-  
-  console.log '+++++ backlinks - results', results
   results
     
   
