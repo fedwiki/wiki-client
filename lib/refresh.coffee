@@ -256,22 +256,28 @@ emitBacklinks = ($backlinks, pageObject) ->
     
     for linkSlug, backlink of backlinks
       backlink.sites.sort (a,b) ->
-        a.site.date < b.site.date
-      flags = for i, site of backlink.sites
-        """
-          <img class="remote"
-               src="#{wiki.site(site.site).flag()}"
-               data-slug="#{linkSlug}"
-               data-site="#{site.site}"
-               data-id="#{site.itemId}"
-               title="#{site.site}\n#{wiki.util.formatElapsedTime site.date}">
-        """
+        (a.date || 0) < (b.date || 0)
+      flags = []
+      for site, i in backlink.sites
+        if i < 10
+          joint = if backlink.sites[i-1]?.date == site.date then "" else " "
+          flags.unshift joint
+          flags.unshift """
+            <img class="remote"
+                src="#{wiki.site(site.site).flag()}"
+                data-slug="#{linkSlug}"
+                data-site="#{site.site}"
+                data-id="#{site.itemId}"
+                title="#{site.site}\n#{wiki.util.formatElapsedTime site.date}">
+          """
+        else if i == 10
+          flags.unshift ' ⋯ '
       
       linkBack = resolve.resolveLinks("[[#{backlink.title}]]")
       links.push """
         <div style="clear: both;">
           <div style="float: left;">#{linkBack}</div>
-          <div style="text-align: right;"> #{flags.join " "} </div>
+          <div style="text-align: right;"> #{flags.join('')} </div>
         </div>
       """
 
