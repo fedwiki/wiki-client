@@ -33,13 +33,20 @@ bind = ->
     .on 'new-neighbor', (e, site) ->
       $neighborhood.append flag site
     .on 'new-neighbor-done', (e, site) ->
-      pageCount = sites[site].sitemap.length
+      try
+        pageCount = sites[site].sitemap.length
+      catch error
+        pageCount = 0
       img = $(""".neighborhood .neighbor[data-site="#{site}"]""").find('img')
-      if sites[site].sitemap.some(hasLinks)
-        img.attr('title', "#{site}\n #{pageCount} pages with 2-way links")
-      else
-        img.attr('title', "#{site}\n #{pageCount} pages")
-      totalPages += pageCount
+      try
+        if sites[site].sitemap.some(hasLinks)
+          img.attr('title', "#{site}\n #{pageCount} pages with 2-way links")
+        else
+          img.attr('title', "#{site}\n #{pageCount} pages")
+      catch error
+        console.info '+++ sitemap not valid for ', site
+        sites[site].sitemap = []
+      totalPages += pageCount 
       $('.searchbox .pages').text "#{totalPages} pages"
     .delegate '.neighbor img', 'click', (e) ->
       # add handling refreshing neighbor that has failed

@@ -36,11 +36,14 @@ populateSiteInfoFor = (site,neighborInfo)->
 
     # we use `wiki.site(site).getIndex` as we want the serialized index as a string.
     wiki.site(site).getIndex 'system/site-index.json', (err, data) ->
-      if !err       
-        neighborInfo.siteIndex = miniSearch.loadJSON(data, {
-          fields: ['title', 'content']
-        })
-        console.log site, 'index loaded'
+      if !err
+        try      
+          neighborInfo.siteIndex = miniSearch.loadJSON(data, {
+            fields: ['title', 'content']
+          })
+          console.log site, 'index loaded'
+        catch error
+          console.log 'error loading index - not a valid index', site
       else
         console.log 'error loading index', site, err
 
@@ -203,10 +206,14 @@ neighborhood.search = (searchQuery)->
   for own neighborSite,neighborInfo of neighborhood.sites
     if neighborInfo.siteIndex
       tick 'sites'
-      if tally['pages']?
-        tally['pages'] += neighborInfo.sitemap.length
-      else 
-        tally['pages'] = neighborInfo.sitemap.length
+      try
+        if tally['pages']?
+          tally['pages'] += neighborInfo.sitemap.length
+        else
+          tally['pages'] = neighborInfo.sitemap.length
+      catch error
+        console.info '+++ sitemap not valid for ', neighborSite
+        neighborInfo.sitemap = []
       if neighborSite is origin
         titleBoost = 20
         contentBoost = 2
