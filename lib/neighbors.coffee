@@ -10,6 +10,8 @@ neighborhood = require './neighborhood'
 sites = null
 totalPages = 0
 
+hasLinks = (element) -> element.hasOwnProperty('links')
+
 
 flag = (site) ->
   # status class progression: .wait, .fetch, .fail or .done
@@ -33,7 +35,10 @@ bind = ->
     .on 'new-neighbor-done', (e, site) ->
       pageCount = sites[site].sitemap.length
       img = $(""".neighborhood .neighbor[data-site="#{site}"]""").find('img')
-      img.attr('title', "#{site}\n #{pageCount} pages")
+      if sites[site].sitemap.some(hasLinks)
+        img.attr('title', "#{site}\n #{pageCount} pages with 2-way links")
+      else
+        img.attr('title', "#{site}\n #{pageCount} pages")
       totalPages += pageCount
       $('.searchbox .pages').text "#{totalPages} pages"
     .delegate '.neighbor img', 'click', (e) ->

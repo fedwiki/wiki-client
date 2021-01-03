@@ -301,6 +301,7 @@ $ ->
   $('body').on 'new-neighbor-done', (e, neighbor) ->
     $('.page').each (index, element) ->
       refresh.emitTwins $(element)
+      # refresh backlinks??
 
   getPluginReference = (title) ->
     return new Promise((resolve, reject) ->

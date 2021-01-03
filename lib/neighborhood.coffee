@@ -73,7 +73,8 @@ neighborhood.updateSitemap = (pageObject)->
   date = pageObject.getDate()
   title = pageObject.getTitle()
   synopsis = pageObject.getSynopsis()
-  entry = {slug, date, title, synopsis}
+  links = pageObject.getLinks()
+  entry = {slug, date, title, synopsis, links}
   sitemap = neighborInfo.sitemap
   index = sitemap.findIndex (slot) -> slot.slug == slug
   if index >= 0
@@ -231,3 +232,34 @@ neighborhood.search = (searchQuery)->
   
   tally['msec'] = Date.now() - start
   { finds, tally }
+
+neighborhood.backLinks = (slug) ->
+
+  finds = []
+
+  for own neighborSite, neighborInfo of neighborhood.sites
+    if neighborInfo.sitemap
+      neighborInfo.sitemap.forEach (sitemapData, pageSlug) ->
+        if sitemapData.links? and Object.keys(sitemapData.links).length > 0 and Object.keys(sitemapData.links).includes(slug)
+          finds.push
+            slug: sitemapData.slug
+            title: sitemapData.title
+            site: neighborSite
+            itemId: sitemapData.links[slug]
+            date: sitemapData.date
+  results = {}
+
+  finds.forEach (find) ->
+
+    slug = find['slug']
+
+    results[slug] = results[slug] or {}
+    results[slug]['title'] = find['title']
+    results[slug]['sites'] = results[slug]['sites'] or []
+    results[slug]['sites'].push
+      site: find['site']
+      date: find['date']
+      itemId: find['itemId']
+  results
+    
+  

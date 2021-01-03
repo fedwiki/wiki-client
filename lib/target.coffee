@@ -22,6 +22,8 @@ bind = ->
     .delegate '.action', 'mouseenter', enterAction
     .delegate '.action', 'mouseleave', leaveAction
     .delegate '.page', 'align-item', alignItem
+    .delegate '.backlinks .remote', 'mouseenter', enterBacklink
+    .delegate '.backlinks .remote', 'mouseleave', leaveBacklink
 
 
 startTargeting = (e) ->
@@ -94,6 +96,20 @@ leaveAction = (e) ->
   action = null
 
 
+enterBacklink = (e) ->
+  item = ($item = $(this)).attr('data-id')
+  itemElem = $item[0]
+  if targeting
+    $("[data-id=#{item}]").addClass('target')
+    key = ($page = $(this).parents('.page:first')).data('key')
+    place = $item.offset().top
+    $('.page').trigger('align-item', {key, id: item, place})
+
+leaveBacklink = (e) ->
+  if targeting
+    $('.item, .action').removeClass('target')
+  item = null
+  itemElem = null
 
 alignItem = (e, align) ->
   $page = $(this)
