@@ -1,6 +1,7 @@
 # The plugin module manages the dynamic retrieval of plugin
 # javascript including additional scripts that may be requested.
-forward = require './forward'
+
+# forward = require './forward'
 
 module.exports = plugin = {}
 
@@ -116,12 +117,14 @@ bind = (name, pluginBind) ->
           bindPromise = Promise.resolve(bindPromise)
         # This is where the "bind results" promise for the current item is stored
         $item[0].promise = bindPromise
+      ### 
       .then ->
         # If the plugin has the needed callback, subscribe to server side events
         # for the current page
         if window.plugins[name].processServerEvent
           console.log 'listening for server events', $item, item
-          forward.init $item, item, window.plugins[name].processServerEvent
+          forward.init $item, item, window.plugins[name].processServerEvent 
+      ###
       .catch (e) ->
         console.log 'plugin emit: unexpected error', e
   return fn
