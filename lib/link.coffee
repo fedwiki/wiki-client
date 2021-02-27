@@ -8,9 +8,9 @@ active = require './active'
 refresh = require './refresh'
 {asTitle, asSlug, pageEmitter} = require './page'
 
-createPage = (name, loc) ->
+createPage = (name, loc, title=null) ->
   site = loc if loc and loc isnt 'view'
-  title = asTitle(name)
+  title = asTitle(name) unless title
   $page = $ """
     <div class="page" id="#{name}" tabindex="-1">
       <div class="paper">
@@ -24,14 +24,14 @@ createPage = (name, loc) ->
   $page.data('site', site) if site
   $page
 
-showPage = (name, loc) ->
-  createPage(name, loc).appendTo('.main').each((_i, e) -> refresh.cycle($(e)))
+showPage = (name, loc, title=null) ->
+  createPage(name, loc, title).appendTo('.main').each((_i, e) -> refresh.cycle($(e)))
 
-doInternalLink = (name, $page, site=null) ->
-  name = asSlug(name)
+doInternalLink = (title, $page, site=null) ->
+  slug = asSlug(title)
   $($page).nextAll().remove() if $page?
   lineup.removeAllAfterKey $($page).data('key') if $page?
-  showPage(name,site)
+  showPage(slug, site, title)
   active.set($('.page').last())
 
 showResult = (pageObject, options={}) ->

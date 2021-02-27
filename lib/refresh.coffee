@@ -450,6 +450,7 @@ newFuturePage = (title, create) ->
 cycle = ($page) ->
   promise = new Promise (resolve, _reject) ->
     [slug, rev] = $page.attr('id').split('_rev')
+    title = $page.find('.header h1').text().trim()
     pageInformation = {
       slug: slug
       rev: rev
@@ -458,7 +459,7 @@ cycle = ($page) ->
 
     whenNotGotten = ->
       link = $("""a.internal[href="/#{slug}.html"]:last""")
-      title = link.text() or slug
+      title = title or link.text() or slug
       key = link.parents('.page').data('key')
       create = lineup.atKey(key)?.getCreate()
       pageObject = newFuturePage(title)

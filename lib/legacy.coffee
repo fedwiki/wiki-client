@@ -176,11 +176,12 @@ $ ->
       active.set this unless $(e.target).is("a")
 
     .delegate '.internal', 'click', (e) ->
-      name = $(e.target).data 'pageName'
+      $link = $(e.target)
+      title = $link.text() or $link.data 'pageName'
       # ensure that name is a string (using string interpolation)
-      name = "#{name}"
+      title = "#{title}"
       pageHandler.context = $(e.target).attr('title').split(' => ')
-      finishClick e, name
+      finishClick e, title
 
     .delegate 'img.remote', 'click', (e) ->
       # expand to handle click on temporary flag
