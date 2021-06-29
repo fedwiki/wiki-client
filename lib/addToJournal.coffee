@@ -11,6 +11,7 @@ module.exports = ($journal, action) ->
   title += "#{action.site}\n" if action.site?
   title += action.type || 'separator'
   title += " #{util.formatElapsedTime(action.date)}" if action.date?
+  title += "\nERROR: #{action.error.response || action.error.msg}" if action.error?
   $action = $("""<a href="#" /> """).addClass("action").addClass(action.type || 'separator')
     .text(action.symbol || actionSymbols.symbols[action.type])
     .attr('title',title)
@@ -28,3 +29,7 @@ module.exports = ($journal, action) ->
       .attr("target", "#{action.site}")
       .data("site", action.site)
       .data("slug", $page.attr('id'))
+  if action.error?
+    $action
+      .css("border", "2px solid red")
+      .css("margin", "1px")
