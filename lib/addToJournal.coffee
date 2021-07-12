@@ -31,5 +31,5 @@ module.exports = ($journal, action) ->
       .data("slug", $page.attr('id'))
   if action.error?
     $action
-      .css("border", "2px solid red")
+      .css("border", "2px solid #FFC000")
       .css("margin", "1px")
