@@ -21,7 +21,7 @@ module.exports = ($journal, action) ->
     $action.insertBefore(controls)
   else
     $action.appendTo($journal)
-  if action.type == 'fork' and action.site?
+  if action.site?
     $action
       .css("background-image", "url(#{wiki.site(action.site).flag()}")
       .attr("href", "#{wiki.site(action.site).getDirectURL($page.attr('id'))}.html")
