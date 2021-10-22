@@ -34,12 +34,12 @@ textEditor = ($item, item, option={}) ->
 
     if e.which == 27 #esc for save
       e.preventDefault()
-      $textarea.focusout()
+      focusOutHandler()
       return false
 
     if (e.ctrlKey || e.metaKey) and e.which == 83 #ctrl-s for save
       e.preventDefault()
-      $textarea.focusout()
+      focusOutHandler()
       return false
 
     if (e.ctrlKey || e.metaKey) and e.which == 73 #ctrl-i for information
@@ -51,7 +51,7 @@ textEditor = ($item, item, option={}) ->
     if (e.ctrlKey || e.metaKey) and e.which == 77 #ctrl-m for menu
       e.preventDefault()
       $item.removeClass(item.type).addClass(item.type = 'factory')
-      $textarea.focusout()
+      focusOutHandler()
       return false
 
     # provides automatic new paragraphs on enter and concatenation on backspace
@@ -81,11 +81,11 @@ textEditor = ($item, item, option={}) ->
           suffix = text.substring(sel.end)
           if prefix is ''
             $textarea.val(suffix)
-            $textarea.focusout()
+            focusOutHandler()
             spawnEditor($page, $item.prev(), item.type, prefix)
           else
             $textarea.val(prefix)
-            $textarea.focusout()
+            focusOutHandler()
             spawnEditor($page, $item, item.type, suffix)
           return false
       else
@@ -119,8 +119,9 @@ textEditor = ($item, item, option={}) ->
   $item.addClass 'textEditing'
   $item.unbind()
   original = item[option.field||'text'] ? ''
+  if $("textarea")
+    return
   $textarea = $("<textarea>#{escape original}#{escape option.suffix ? ''}</textarea>")
-    .focusout focusoutHandler
     .bind 'keydown', keydownHandler
   $item.html $textarea
   if option.caret
