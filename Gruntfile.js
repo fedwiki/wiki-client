@@ -113,6 +113,7 @@ module.exports = function (grunt) {
           'test/drop.coffee',
           'test/revision.coffee',
           'test/resolve.coffee',
+          'test/state.coffee',
           'test/wiki.coffee'
         ]
       }
