@@ -17,14 +17,14 @@ state.pagesInDom = ->
   $.makeArray $(".page").map (_, el) -> el.id
 
 state.urlPages = ->
-  (i for i in $(location).attr('pathname').split('/') by 2)[1..]
+  (i for i in location.pathname.split('/') by 2)[1..]
 
 state.locsInDom = ->
   $.makeArray $(".page").map (_, el) ->
     $(el).data('site') or 'view'
 
 state.urlLocs = ->
-  (j for j in $(location).attr('pathname').split('/')[1..] by 2)
+  (j for j in location.pathname.split('/')[1..] by 2)
 
 state.setUrl = ->
   document.title = lineup.bestTitle()
@@ -32,7 +32,7 @@ state.setUrl = ->
     locs = state.locsInDom()
     pages = state.pagesInDom()
     url = ("/#{locs?[idx] or 'view'}/#{page}" for page, idx in pages).join('')
-    unless url is $(location).attr('pathname')
+    unless url is location.pathname
       history.pushState(null, null, url)
 
 state.debugStates = () ->
