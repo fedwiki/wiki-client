@@ -6,6 +6,7 @@ expect = require 'expect.js'
 
 describe 'state', ->
   actual = null
+  title = null
   tests = [
     # [pathname, locs, pages]
     ['/', [], []],
@@ -18,6 +19,7 @@ describe 'state', ->
     global.$ = (el) -> {attr: (key) -> el[key]}
     global.history =
       pushState: (state, title, url) -> actual = url
+    lineup.bestTitle = () -> title
 
   context 'using URL.pathname', ->
     for [pathname, locs, pages] in tests
@@ -31,6 +33,7 @@ describe 'state', ->
     describe 'setUrl', ->
       beforeEach ->
         actual = null
+        title = 'Welcome Visitors'
         global.location = new URL('https://example.com/view/welcome-visitors')
         global.document = {title: null}
       it 'does not push url to history for the same location', ->
@@ -42,7 +45,7 @@ describe 'state', ->
         state.pagesInDom = -> ['welcome-visitors', 'welcome-visitors']
         state.locsInDom = -> ['view', 'fed.wiki.org']
         state.setUrl()
-        expect(global.document.title).to.be('Wiki')
+        expect(global.document.title).to.be('Welcome Visitors')
         expect(actual.pathname).to.be('/view/welcome-visitors/fed.wiki.org/welcome-visitors')
 
   context 'using URL.search', ->
@@ -57,6 +60,7 @@ describe 'state', ->
     describe 'setUrl', ->
       beforeEach ->
         actual = null
+        title = 'Welcome Visitors'
         global.location = new URL('https://example.com?pathname=view/welcome-visitors')
         global.document = {title: null}
       it 'does not push url to history for the same location', ->
@@ -68,7 +72,7 @@ describe 'state', ->
         state.pagesInDom = -> ['welcome-visitors', 'welcome-visitors']
         state.locsInDom = -> ['view', 'fed.wiki.org']
         state.setUrl()
-        expect(global.document.title).to.be('Wiki')
+        expect(global.document.title).to.be('Welcome Visitors')
         expect(actual.searchParams.get('pathname'))
           .to.be('view/welcome-visitors/fed.wiki.org/welcome-visitors')
 
