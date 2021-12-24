@@ -33,9 +33,15 @@ state.fromDOM = () ->
   slugs.map (slug, idx) ->
     {site: sites[idx], slug: slug}
 
-state.toURL = (siteSlugs) ->
+toURL = (siteSlugs) ->
   combine = (url, item) -> "#{url}/#{item.site}/#{item.slug}"
-  siteSlugs.reduce(combine, "")
+  new URL(siteSlugs.reduce(combine, ""), location)
+
+unchanged = (url, location) ->
+  loc = new URL(location)
+  url.pathname == loc.pathname and
+    url.search == loc.search and
+    url.hash == loc.hash
 
 state.pagesInDom = ->
   $.makeArray $(".page").map (_, el) -> el.id
@@ -54,8 +60,8 @@ state.setUrl = ->
   document.title = lineup.bestTitle()
   if history and history.pushState
     siteSlugs = state.fromDOM()
-    url = state.toURL(siteSlugs)
-    unless url is location.pathname
+    url = toURL(siteSlugs)
+    unless unchanged(url, location)
       history.pushState(null, null, url)
 
 state.debugStates = () ->

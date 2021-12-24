@@ -32,10 +32,10 @@ describe 'state', ->
     actual = null
     beforeEach ->
       actual = null
-      global.location = {pathname: '/view/welcome-visitors'}
+      global.location = new URL('https://example.com/view/welcome-visitors')
       global.document = {title: null}
       global.history =
-        pushState: (x, y, url) -> actual = url
+        pushState: (state, title, url) -> actual = url
     it 'does not push url to history for the same location', ->
       state.pagesInDom = -> ['welcome-visitors']
       state.locsInDom = -> ['view']
@@ -46,4 +46,4 @@ describe 'state', ->
       state.locsInDom = -> ['view', 'fed.wiki.org']
       state.setUrl()
       expect(global.document.title).to.be('Wiki')
-      expect(actual).to.be('/view/welcome-visitors/fed.wiki.org/welcome-visitors')
+      expect(actual.pathname).to.be('/view/welcome-visitors/fed.wiki.org/welcome-visitors')
