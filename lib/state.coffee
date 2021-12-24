@@ -13,25 +13,48 @@ module.exports = state = {}
 state.inject = (link_) ->
   link = link_
 
+state.fromLocation = (location) ->
+  # [{site, slug},...]
+  search = new URLSearchParams(location.search)
+  pathname = (search.get("pathname") || location.pathname)
+    .replace(/^\//,'')
+  toSiteSlug = (acc, item, idx) ->
+    if idx % 2 == 0
+      acc.push({site: item})
+    else
+      acc[acc.length-1].slug = item
+    acc
+  pathname.split('/').reduce(toSiteSlug, [])
+
+state.fromDOM = () ->
+  # [{site, slug},...]
+  slugs = state.pagesInDom()
+  sites = state.locsInDom()
+  slugs.map (slug, idx) ->
+    {site: sites[idx], slug: slug}
+
+state.toURL = (siteSlugs) ->
+  combine = (url, item) -> "#{url}/#{item.site}/#{item.slug}"
+  siteSlugs.reduce(combine, "")
+
 state.pagesInDom = ->
   $.makeArray $(".page").map (_, el) -> el.id
 
 state.urlPages = ->
-  (i for i in location.pathname.split('/') by 2)[1..]
+  state.fromLocation(location).map((it) -> it.slug)
 
 state.locsInDom = ->
   $.makeArray $(".page").map (_, el) ->
     $(el).data('site') or 'view'
 
 state.urlLocs = ->
-  (j for j in location.pathname.split('/')[1..] by 2)
+  state.fromLocation(location).map((it) -> it.site)
 
 state.setUrl = ->
   document.title = lineup.bestTitle()
   if history and history.pushState
-    locs = state.locsInDom()
-    pages = state.pagesInDom()
-    url = ("/#{locs?[idx] or 'view'}/#{page}" for page, idx in pages).join('')
+    siteSlugs = state.fromDOM()
+    url = state.toURL(siteSlugs)
     unless url is location.pathname
       history.pushState(null, null, url)
 
@@ -72,4 +95,3 @@ state.first = ->
   oldPages = state.pagesInDom()
   for urlPage, idx in firstUrlPages when urlPage not in oldPages
     link.createPage(urlPage, firstUrlLocs[idx]) unless urlPage is ''
-
