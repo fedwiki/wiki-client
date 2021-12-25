@@ -35,7 +35,13 @@ state.fromDOM = () ->
 
 toURL = (siteSlugs) ->
   combine = (url, item) -> "#{url}/#{item.site}/#{item.slug}"
-  new URL(siteSlugs.reduce(combine, ""), location)
+  pathname = siteSlugs.reduce(combine, "")
+  url = new URL(location)
+  if !!url.search
+    url.search = "pathname=#{pathname.replace(/^\//,'')}"
+  else
+    url.pathname = pathname
+  url
 
 unchanged = (url, location) ->
   loc = new URL(location)

@@ -23,7 +23,7 @@ describe 'state', ->
     for [pathname, locs, pages] in tests
       context pathname, ->
         beforeEach ->
-          global.location = {pathname: pathname}
+          global.location = new URL("https://example.com#{pathname}")
         it "urlPages() is [#{pages}]", ->
           expect(state.urlPages()).to.eql(pages)
         it "urlLocs() is [#{locs}]", ->
@@ -45,7 +45,7 @@ describe 'state', ->
         expect(global.document.title).to.be('Wiki')
         expect(actual.pathname).to.be('/view/welcome-visitors/fed.wiki.org/welcome-visitors')
 
-  context.skip 'using URL.search', ->
+  context 'using URL.search', ->
     for [pathname, locs, pages] in tests
       context pathname, ->
         beforeEach ->
@@ -70,4 +70,4 @@ describe 'state', ->
         state.setUrl()
         expect(global.document.title).to.be('Wiki')
         expect(actual.searchParams.get('pathname'))
-          .to.be('/view/welcome-visitors/fed.wiki.org/welcome-visitors')
+          .to.be('view/welcome-visitors/fed.wiki.org/welcome-visitors')
