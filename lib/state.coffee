@@ -37,7 +37,7 @@ toURL = (siteSlugs) ->
   combine = (url, item) -> "#{url}/#{item.site}/#{item.slug}"
   pathname = siteSlugs.reduce(combine, "")
   url = new URL(location)
-  if !!url.search
+  if !!url.search or url.pathname == '/'
     url.search = "pathname=#{pathname.replace(/^\//,'')}"
   else
     url.pathname = pathname

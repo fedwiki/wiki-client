@@ -71,3 +71,13 @@ describe 'state', ->
         expect(global.document.title).to.be('Wiki')
         expect(actual.searchParams.get('pathname'))
           .to.be('view/welcome-visitors/fed.wiki.org/welcome-visitors')
+
+  it 'setUrl() defaults to URL.search', ->
+    actual = null
+    global.location = new URL('https://example.com')
+    global.document = {title: null}
+    state.pagesInDom = -> ['welcome-visitors']
+    state.locsInDom = -> ['view']
+    state.setUrl()
+    expect(actual.pathname).to.be('/')
+    expect(actual.searchParams.get('pathname')).to.be('view/welcome-visitors')
