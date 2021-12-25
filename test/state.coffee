@@ -5,6 +5,7 @@ expect = require 'expect.js'
 # here we test manipulations of the lineup and window.location
 
 describe 'state', ->
+  actual = null
   tests = [
     # [pathname, locs, pages]
     ['/', [], []],
@@ -13,37 +14,60 @@ describe 'state', ->
     ['/view/welcome-visitors/fed.wiki.org/featured-sites',
       ['view', 'fed.wiki.org'], ['welcome-visitors', 'featured-sites']]
   ]
-  beforeEach ->
+  before ->
     global.$ = (el) -> {attr: (key) -> el[key]}
+    global.history =
+      pushState: (state, title, url) -> actual = url
 
-  describe 'urlPages', ->
+  context 'using URL.pathname', ->
     for [pathname, locs, pages] in tests
-      it pathname, ->
-        global.location = {pathname: pathname}
-        expect(state.urlPages()).to.eql(pages)
+      context pathname, ->
+        beforeEach ->
+          global.location = {pathname: pathname}
+        it "urlPages() is [#{pages}]", ->
+          expect(state.urlPages()).to.eql(pages)
+        it "urlLocs() is [#{locs}]", ->
+          expect(state.urlLocs()).to.eql(locs)
+    describe 'setUrl', ->
+      beforeEach ->
+        actual = null
+        global.location = new URL('https://example.com/view/welcome-visitors')
+        global.document = {title: null}
+      it 'does not push url to history for the same location', ->
+        state.pagesInDom = -> ['welcome-visitors']
+        state.locsInDom = -> ['view']
+        state.setUrl()
+        expect(actual).to.be(null)
+      it 'pushes url to history when location changes', ->
+        state.pagesInDom = -> ['welcome-visitors', 'welcome-visitors']
+        state.locsInDom = -> ['view', 'fed.wiki.org']
+        state.setUrl()
+        expect(global.document.title).to.be('Wiki')
+        expect(actual.pathname).to.be('/view/welcome-visitors/fed.wiki.org/welcome-visitors')
 
-  describe 'urlLocs', ->
+  context.skip 'using URL.search', ->
     for [pathname, locs, pages] in tests
-      it pathname, ->
-        global.location = {pathname: pathname}
-        expect(state.urlLocs()).to.eql(locs)
-
-  describe 'setUrl', ->
-    actual = null
-    beforeEach ->
-      actual = null
-      global.location = new URL('https://example.com/view/welcome-visitors')
-      global.document = {title: null}
-      global.history =
-        pushState: (state, title, url) -> actual = url
-    it 'does not push url to history for the same location', ->
-      state.pagesInDom = -> ['welcome-visitors']
-      state.locsInDom = -> ['view']
-      state.setUrl()
-      expect(actual).to.be(null)
-    it 'pushes url to history when location changes', ->
-      state.pagesInDom = -> ['welcome-visitors', 'welcome-visitors']
-      state.locsInDom = -> ['view', 'fed.wiki.org']
-      state.setUrl()
-      expect(global.document.title).to.be('Wiki')
-      expect(actual.pathname).to.be('/view/welcome-visitors/fed.wiki.org/welcome-visitors')
+      context pathname, ->
+        beforeEach ->
+          global.location = new URL("https://example.com?pathname=#{pathname}")
+        it "urlPages() is [#{pages}]", ->
+          expect(state.urlPages()).to.eql(pages)
+        it "urlLocs() is [#{locs}]", ->
+          expect(state.urlLocs()).to.eql(locs)
+    describe 'setUrl', ->
+      beforeEach ->
+        actual = null
+        global.location = new URL('https://example.com?pathname=view/welcome-visitors')
+        global.document = {title: null}
+      it 'does not push url to history for the same location', ->
+        state.pagesInDom = -> ['welcome-visitors']
+        state.locsInDom = -> ['view']
+        state.setUrl()
+        expect(actual).to.be(null)
+      it 'pushes url to history when location changes', ->
+        state.pagesInDom = -> ['welcome-visitors', 'welcome-visitors']
+        state.locsInDom = -> ['view', 'fed.wiki.org']
+        state.setUrl()
+        expect(global.document.title).to.be('Wiki')
+        expect(actual.searchParams.get('pathname'))
+          .to.be('/view/welcome-visitors/fed.wiki.org/welcome-visitors')
