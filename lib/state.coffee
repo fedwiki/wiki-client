@@ -24,7 +24,13 @@ state.fromLocation = (location) ->
     else
       acc[acc.length-1].slug = item
     acc
-  pathname.split('/').reduce(toSiteSlug, [])
+  parts = pathname.split('/')
+  if parts.length % 2 == 0
+    parts.reduce(toSiteSlug, [])
+  else if parts.length == 1 and parts[0].endsWith(".html")
+    [{site: "view", slug: parts[0].replace(/\.html$/,'')}]
+  else
+    [{site: "view", slug: "welcome-visitors"}]
 
 state.fromDOM = () ->
   # [{site, slug},...]
@@ -107,3 +113,12 @@ state.first = ->
   oldPages = state.pagesInDom()
   for urlPage, idx in firstUrlPages when urlPage not in oldPages
     link.createPage(urlPage, firstUrlLocs[idx]) unless urlPage is ''
+
+state.syncDomWithLocation = ->
+  main = ""
+  for {site, slug} in state.fromLocation(location)
+    dataSite = ""
+    if site != "view"
+      dataSite = """data-site="#{site}" """
+    main += """<div id="#{slug}" #{dataSite}class="page"></div>\n"""
+  $('section.main').html(main)

@@ -13,7 +13,9 @@ describe 'state', ->
     ['/view/welcome-visitors', ['view'], ['welcome-visitors']],
     ['/view/foo/view/bar', ['view', 'view'], ['foo', 'bar']],
     ['/view/welcome-visitors/fed.wiki.org/featured-sites',
-      ['view', 'fed.wiki.org'], ['welcome-visitors', 'featured-sites']]
+      ['view', 'fed.wiki.org'], ['welcome-visitors', 'featured-sites']],
+    ['/welcome-visitors.html', ['view'], ['welcome-visitors']],
+    ['/how-to-wiki.html', ['view'], ['how-to-wiki']]
   ]
   before ->
     global.$ = (el) -> {attr: (key) -> el[key]}
