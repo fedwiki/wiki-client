@@ -15,8 +15,8 @@ state.inject = (link_) ->
 
 state.fromLocation = (location) ->
   # [{site, slug},...]
-  search = new URLSearchParams(location.search)
-  pathname = (search.get("pathname") || location.pathname)
+  hash = new URLSearchParams(location.hash.substring(1))
+  pathname = (hash.get("pathname") || location.pathname)
     .replace(/^\//,'')
   toSiteSlug = (acc, item, idx) ->
     if idx % 2 == 0
@@ -37,8 +37,8 @@ toURL = (siteSlugs) ->
   combine = (url, item) -> "#{url}/#{item.site}/#{item.slug}"
   pathname = siteSlugs.reduce(combine, "")
   url = new URL(location)
-  if !!url.search or url.pathname == '/'
-    url.search = "pathname=#{pathname.replace(/^\//,'')}"
+  if !!url.hash or url.pathname == '/'
+    url.hash = "pathname=#{pathname.replace(/^\//,'')}"
   else
     url.pathname = pathname
   url
@@ -80,7 +80,7 @@ state.show = (e) ->
   oldLocs = state.locsInDom()
   newLocs = state.urlLocs()
 
-  return if (!location.pathname or location.pathname is '/')
+  return if !location.hash and (!location.pathname or location.pathname is '/')
 
   matching = true
   for name, idx in oldPages

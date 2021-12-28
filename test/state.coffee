@@ -48,11 +48,11 @@ describe 'state', ->
         expect(global.document.title).to.be('Welcome Visitors')
         expect(actual.pathname).to.be('/view/welcome-visitors/fed.wiki.org/welcome-visitors')
 
-  context 'using URL.search', ->
+  context 'using URL.hash', ->
     for [pathname, locs, pages] in tests
       context pathname, ->
         beforeEach ->
-          global.location = new URL("https://example.com?pathname=#{pathname}")
+          global.location = new URL("https://example.com#pathname=#{pathname}")
         it "urlPages() is [#{pages}]", ->
           expect(state.urlPages()).to.eql(pages)
         it "urlLocs() is [#{locs}]", ->
@@ -61,7 +61,7 @@ describe 'state', ->
       beforeEach ->
         actual = null
         title = 'Welcome Visitors'
-        global.location = new URL('https://example.com?pathname=view/welcome-visitors')
+        global.location = new URL('https://example.com#pathname=view/welcome-visitors')
         global.document = {title: null}
       it 'does not push url to history for the same location', ->
         state.pagesInDom = -> ['welcome-visitors']
@@ -73,10 +73,11 @@ describe 'state', ->
         state.locsInDom = -> ['view', 'fed.wiki.org']
         state.setUrl()
         expect(global.document.title).to.be('Welcome Visitors')
-        expect(actual.searchParams.get('pathname'))
+        params = new URLSearchParams(actual.hash.substring(1))
+        expect(params.get('pathname'))
           .to.be('view/welcome-visitors/fed.wiki.org/welcome-visitors')
 
-  it 'setUrl() defaults to URL.search', ->
+  it 'setUrl() defaults to URL.hash', ->
     actual = null
     global.location = new URL('https://example.com')
     global.document = {title: null}
@@ -84,4 +85,5 @@ describe 'state', ->
     state.locsInDom = -> ['view']
     state.setUrl()
     expect(actual.pathname).to.be('/')
-    expect(actual.searchParams.get('pathname')).to.be('view/welcome-visitors')
+    params = new URLSearchParams(actual.hash.substring(1))
+    expect(params.get('pathname')).to.be('view/welcome-visitors')
