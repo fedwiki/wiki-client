@@ -35,6 +35,7 @@ getItem = ($item) ->
 
 aliasItem = ($page, $item, oldItem) ->
   item = $.extend {}, oldItem
+  $item.data('item', item);
   pageObject = lineup.atKey($page.data('key'))
   if pageObject.getItem(item.id)?
     item.alias ||= item.id
