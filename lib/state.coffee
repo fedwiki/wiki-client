@@ -16,7 +16,7 @@ state.inject = (link_) ->
 state.fromLocation = (location) ->
   # [{site, slug},...]
   hash = new URLSearchParams(location.hash.substring(1))
-  pathname = (hash.get("pathname") || location.pathname)
+  intent = (hash.get("stat") || location.pathname)
     .replace(/^\//,'')
   toSiteSlug = (acc, item, idx) ->
     if idx % 2 == 0
@@ -24,7 +24,7 @@ state.fromLocation = (location) ->
     else
       acc[acc.length-1].slug = item
     acc
-  parts = pathname.split('/')
+  parts = intent.split('/')
   if parts.length % 2 == 0
     parts.reduce(toSiteSlug, [])
   else if parts.length == 1 and parts[0].endsWith(".html")
@@ -41,12 +41,12 @@ state.fromDOM = () ->
 
 toURL = (siteSlugs) ->
   combine = (url, item) -> "#{url}/#{item.site}/#{item.slug}"
-  pathname = siteSlugs.reduce(combine, "")
+  intent = siteSlugs.reduce(combine, "")
   url = new URL(location)
   if !!url.hash or url.pathname == '/'
-    url.hash = "pathname=#{pathname.replace(/^\//,'')}"
+    url.hash = "stat=#{intent.replace(/^\//,'')}"
   else
-    url.pathname = pathname
+    url.pathname = intent
   url
 
 unchanged = (url, location) ->

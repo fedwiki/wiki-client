@@ -51,10 +51,10 @@ describe 'state', ->
         expect(actual.pathname).to.be('/view/welcome-visitors/fed.wiki.org/welcome-visitors')
 
   context 'using URL.hash', ->
-    for [pathname, locs, pages] in tests
-      context pathname, ->
+    for [stat, locs, pages] in tests
+      context stat, ->
         beforeEach ->
-          global.location = new URL("https://example.com#pathname=#{pathname}")
+          global.location = new URL("https://example.com#stat=#{stat}")
         it "urlPages() is [#{pages}]", ->
           expect(state.urlPages()).to.eql(pages)
         it "urlLocs() is [#{locs}]", ->
@@ -63,7 +63,7 @@ describe 'state', ->
       beforeEach ->
         actual = null
         title = 'Welcome Visitors'
-        global.location = new URL('https://example.com#pathname=view/welcome-visitors')
+        global.location = new URL('https://example.com#stat=view/welcome-visitors')
         global.document = {title: null}
       it 'does not push url to history for the same location', ->
         state.pagesInDom = -> ['welcome-visitors']
@@ -76,7 +76,7 @@ describe 'state', ->
         state.setUrl()
         expect(global.document.title).to.be('Welcome Visitors')
         params = new URLSearchParams(actual.hash.substring(1))
-        expect(params.get('pathname'))
+        expect(params.get('stat'))
           .to.be('view/welcome-visitors/fed.wiki.org/welcome-visitors')
 
   it 'setUrl() defaults to URL.hash', ->
@@ -88,4 +88,4 @@ describe 'state', ->
     state.setUrl()
     expect(actual.pathname).to.be('/')
     params = new URLSearchParams(actual.hash.substring(1))
-    expect(params.get('pathname')).to.be('view/welcome-visitors')
+    expect(params.get('stat')).to.be('view/welcome-visitors')
