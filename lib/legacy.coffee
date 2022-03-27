@@ -86,7 +86,9 @@ $ ->
         resultPage.setTitle "Import from #{file.name}"
         if pages.title? && pages.story? && pages.journal?
           slug = asSlug pages.title
-          pages[slug] = pages
+          page = pages
+          pages = {}
+          pages[slug] = page
           resultPage.addParagraph """
             Import of one page
             (#{commas file.size} bytes)
