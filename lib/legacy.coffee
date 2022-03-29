@@ -84,11 +84,22 @@ $ ->
         pages = JSON.parse result
         resultPage = newPage()
         resultPage.setTitle "Import from #{file.name}"
-        resultPage.addParagraph """
-          Import of #{Object.keys(pages).length} pages
-          (#{commas file.size} bytes)
-          from an export file dated #{file.lastModifiedDate}.
-        """
+        if pages.title? && pages.story? && pages.journal?
+          slug = asSlug pages.title
+          page = pages
+          pages = {}
+          pages[slug] = page
+          resultPage.addParagraph """
+            Import of one page
+            (#{commas file.size} bytes)
+            from a page-json file dated #{file.lastModifiedDate}.
+          """
+        else
+          resultPage.addParagraph """
+            Import of #{Object.keys(pages).length} pages
+            (#{commas file.size} bytes)
+            from an export file dated #{file.lastModifiedDate}.
+          """
         resultPage.addItem {type: 'importer', pages: pages}
         link.showResult resultPage
       reader.readAsText(file)
