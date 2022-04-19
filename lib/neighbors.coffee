@@ -46,7 +46,7 @@ bind = ->
       catch error
         console.info '+++ sitemap not valid for ', site
         sites[site].sitemap = []
-      totalPages += pageCount 
+      totalPages = Object.values(neighborhood.sites).reduce ((sum, site) -> site.sitemap.length), 0
       $('.searchbox .pages').text "#{totalPages} pages"
     .delegate '.neighbor img', 'click', (e) ->
       # add handling refreshing neighbor that has failed
