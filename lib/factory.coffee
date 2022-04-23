@@ -118,19 +118,46 @@ bind = ($item, item) ->
         item.caption ||= "Remote image"
         syncEditAction()
 
+  addRemoteSvg = (url) ->
+    document.documentElement.style.cursor = 'wait'
+    fetch(url)
+    .then (response) ->
+      if response.ok
+        return response
+      throw new Error('Unable to fetch svg')
+    .then (response) ->
+      return response.text()
+    .then (svgText) ->
+      document.documentElement.style.cursor = 'default'
+      item.type = 'html'
+      item.source = url
+      item.text = svgText + "<p>[#{url} Source]</p>"
+      syncEditAction()
+      
+      
+
   readFile = (file) ->
     if file?
       [majorType, minorType] = file.type.split("/")
       reader = new FileReader()
       if majorType == "image"
-        reader.onload = (loadEvent) ->
-          resizeImage loadEvent.target.result
-          .then (resizedImageURL) ->
-            item.type = 'image'
-            item.url = resizedImageURL
-            item.caption ||= "Uploaded image"
+        # svg -> html plugin
+        if minorType.startsWith('svg')
+          reader.onload = (loadEvent) ->
+            result = loadEvent.target.result
+            item.type = 'html'
+            item.text = result
             syncEditAction()
-        reader.readAsDataURL(file)
+          reader.readAsText(file)
+        else
+          reader.onload = (loadEvent) ->
+            resizeImage loadEvent.target.result
+            .then (resizedImageURL) ->
+              item.type = 'image'
+              item.url = resizedImageURL
+              item.caption ||= "Uploaded image"
+              syncEditAction()
+          reader.readAsDataURL(file)
       else if majorType == "text"
         reader.onload = (loadEvent) ->
           result = loadEvent.target.result
@@ -167,6 +194,7 @@ bind = ($item, item) ->
     file: readFile
     video: addVideo
     image: addRemoteImage
+    svg: addRemoteSvg
     punt: punt
 
 # from http://www.bennadel.com/blog/1504-Ask-Ben-Parsing-CSV-Strings-With-Javascript-Exec-Regular-Expression-Command.htm

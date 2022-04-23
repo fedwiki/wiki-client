@@ -26,7 +26,13 @@ isPage = (url) ->
 
 isImage = (url) ->
   parsedURL = nurl.parse(url, true, true)
-  if parsedURL.pathname.match(/\.(jpg|jpeg|png|svg)$/i)
+  if parsedURL.pathname.match(/\.(jpg|jpeg|png)$/i)
+    return url
+  null
+
+isSvg = (url) ->
+  parsedURL = nurl.parse(url, true, true)
+  if parsedURL.pathname.match(/\.(svg)$/i)
     return url
   null
 
@@ -77,6 +83,9 @@ dispatch = (handlers) ->
       if image = isImage url
         if (handle = handlers.image)?
           return stop handle image
+      if svg = isSvg url
+        if (handle = handlers.svg)?
+          return stop handle svg
       punt = {url}
     if file = isFile event
       if (handle = handlers.file)?
