@@ -171,15 +171,32 @@ footer {
 .image {
   overflow: auto;   /* clearfix hack */
   float: right;
-  margin-left: 0.4em;
+  margin-left: 0.1em;
   margin-bottom: 0.4em;
   background: #eeeeee;
   padding: 0.8em;
-  width: 42%;
- }
+  width: 183px;
+}
 
-.image .thumbnail {
-  width: 100%; }
+.image.wide {
+  width: 100%;
+  margin-left: 0em;
+  padding: 0em;
+  padding-bottom: 0.8em;
+  float: none;
+}
+
+.image :is(.thumbnail, .wide) {
+  width: 100%;
+}
+
+/* image plugin editor */
+
+.imageEditing #image-options {
+  margin-left: 4px;
+}
+
+/* end image plugin editor */
 
 .backlinks {
   width: 420px;
@@ -406,10 +423,17 @@ div.pending-remove.page {
   position: relative;
 }
 
-.factory,
-textarea {
+.factory {
   font-size: inherit;
   width: 100%;
+  min-height: 150px;
+}
+
+textarea {
+  font-size: inherit;
+  margin-left: 2px;
+  resize: vertical;
+  width: calc(100% - 12px);
   min-height: 150px; }
 
 .clickable:hover {

@@ -10,6 +10,7 @@ editor = require './editor'
 synopsis = require './synopsis'
 drop = require './drop'
 active = require './active'
+image = require './image'
 
 escape = (line) ->
   line
@@ -107,6 +108,7 @@ bind = ($item, item) ->
   addRemoteImage = (url) ->
     # give some feedback, in case this is going to take a while...
     document.documentElement.style.cursor = 'wait'
+    ###
     fetchRemoteImage(url)
       .then (dataURL) ->
         resizeImage dataURL
@@ -117,6 +119,22 @@ bind = ($item, item) ->
         item.source = url
         item.caption ||= "Remote image"
         syncEditAction()
+    ###
+    fetch(url)
+      .then (response) ->
+        if response.ok
+          return response.blob()
+        throw new Error('Unable to fetch image')
+      .then (imageBlob) ->
+        imageFileName = url.split('/').pop().split('#')[0].split('?')[0]
+        # not sure if converting to file gives anything!
+        # imageFile = new File([imageBlob], imageFileName, { type: imageBlob.type })
+        reader = new FileReader()
+        reader.readAsDataURL(imageBlob)
+        reader.onload = (loadEvent) ->
+          imageDataURL = loadEvent.target.result
+          image.editor({ imageDataURL, imageSource: url, imageCaption: "Remote image [#{url} source]", $item, item })
+
 
   addRemoteSvg = (url) ->
     document.documentElement.style.cursor = 'wait'
@@ -151,12 +169,16 @@ bind = ($item, item) ->
           reader.readAsText(file)
         else
           reader.onload = (loadEvent) ->
+            imageDataURL = loadEvent.target.result
+            image.editor({ imageDataURL, imageSource: file.name, imageCaption: "Uploaded image" , $item, item})
+###             
             resizeImage loadEvent.target.result
             .then (resizedImageURL) ->
               item.type = 'image'
               item.url = resizedImageURL
               item.caption ||= "Uploaded image"
-              syncEditAction()
+              syncEditAction() 
+###
           reader.readAsDataURL(file)
       else if majorType == "text"
         reader.onload = (loadEvent) ->
@@ -224,7 +246,7 @@ arrayToJson = (array) ->
     obj
   (rowToObject row for row in array)
 
-
+###
 fetchRemoteImage = (url) ->
   arrayBufferToBase64 = (buffer) ->
     binary = ''
@@ -246,9 +268,9 @@ fetchRemoteImage = (url) ->
     
     .catch (error) ->
       console.log 'Unable to fetch remote image'
-    
+###   
 
-
+###
 # from https://web.archive.org/web/20140327091827/http://www.benknowscode.com/2014/01/resizing-images-in-browser-using-canvas.html
 # Patrick Oswald version from comment, coffeescript and further simplification for wiki
 
@@ -301,6 +323,6 @@ resizeImage = (dataURL) ->
         tmp.src = dataURL
   .then ->
     return dataURL
-
+###
 
 module.exports = {emit, bind}
