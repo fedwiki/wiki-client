@@ -58,7 +58,7 @@ editor = (spec) ->
         if img.width > 415
           return "wide"
         else
-          return ""
+          return "thumbnail"
 
   console.info('image editor', spec)
   { $item, item } = spec
@@ -125,7 +125,6 @@ editor = (spec) ->
     text: item.text ? ''
     size: item.size ? ''
   }
-  console.log('original', original)
 
   # add something so we can detect if the item is unchanged
 
@@ -133,21 +132,21 @@ editor = (spec) ->
     imageDataURL = item.url
     imageCaption = item.text ||= item.caption
   
-  console.info(imageDataURL, imageCaption)
 
+  imgPossibleSize = await imageSize(imageDataURL)
   if item.size
-    imgSize = item.size
+    imgCurrentSize = item.size
   else
-    if await imageSize(imageDataURL) is "wide"
-      console.info('image is wide')
-      $item.addClass('wide')
-      imgSize = "wide"
+    if newImage
+      imgCurrentSize = imgPossibleSize
     else
-      imgSize = "thumbnail"
+      imgCurrentSize = "thumbnail"
+  $item.addClass(imgCurrentSize)
 
+  console.info('*** Image Size:', imgPossibleSize, imgCurrentSize)
 
   $imageEditor = $ """
-    <img class='#{imgSize}' src='#{imageDataURL}'>
+    <img class='#{imgCurrentSize}' src='#{imageDataURL}'>
     <textarea>#{escape imageCaption}</textarea>
     """
   
@@ -155,17 +154,19 @@ editor = (spec) ->
 
   $item.append """<div id="image-options"></div>"""
 
-  if imgSize is "wide"
+  if imgPossibleSize is "wide"
     $('#image-options').append """
     <label>Image Size:</label>
     <select id="size-select">
       <option value="" disabled>--Please choose a size--</option>
       <option value="thumbnail">Half page width</option>
-      <option value="wide" selected>Full page width</option>
+      <option value="wide">Full page width</option>
     </select>
     """
+
+    $item.find('#size-select option[value="#{imgCurrentSize}"]').prop('selected', true)
+    
     $('#size-select').change( () ->
-      console.info('image size change', $(this).val())
       $item.removeClass("thumbnail wide")
       $item.addClass($(this).val())
       $item.find('img').removeClass("thumbnail wide")
