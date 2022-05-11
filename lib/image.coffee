@@ -22,7 +22,7 @@ probe_ipfs = () ->
 emit = ($item, item) ->
   item.text ||= item.caption
   $item.addClass(item.size or 'thumbnail')
-  $item.append "<img class='#{item.size or 'thumbnail'}' src=\"#{item.url}\"> <p>#{resolve.resolveLinks(item.text)}</p>"
+  $item.append "<img class='#{item.size or 'thumbnail'}' src='#{item.url}'> <p>#{resolve.resolveLinks(item.text)}</p>" 
 
 bind = ($item, item) ->
   $item.dblclick ->
@@ -60,7 +60,6 @@ editor = (spec) ->
         else
           return "thumbnail"
 
-  console.info('image editor', spec)
   { $item, item } = spec
   # if new image is being added we have some extra information
   { imageDataURL, imageSource, imageCaption } = spec if item.type is 'factory'
@@ -71,7 +70,6 @@ editor = (spec) ->
     newImage = true
   else
     newImage = false
-  console.info( imageDataURL , imageSource , newImage)
 
   keydownHandler = (e) ->
 
@@ -143,8 +141,6 @@ editor = (spec) ->
       imgCurrentSize = "thumbnail"
   $item.addClass(imgCurrentSize)
 
-  console.info('*** Image Size:', imgPossibleSize, imgCurrentSize)
-
   $imageEditor = $ """
     <img class='#{imgCurrentSize}' src='#{imageDataURL}'>
     <textarea>#{escape imageCaption}</textarea>
@@ -164,7 +160,7 @@ editor = (spec) ->
     </select>
     """
 
-    $item.find('#size-select option[value="#{imgCurrentSize}"]').prop('selected', true)
+    $item.find("#size-select option[value='#{imgCurrentSize}']").attr('selected', true)
     
     $('#size-select').change( () ->
       $item.removeClass("thumbnail wide")
@@ -184,6 +180,8 @@ editor = (spec) ->
 
   $item.focusout focusoutHandler
     .bind 'keydown', keydownHandler  
+
+  $imageEditor.focus()
   
   # from https://web.archive.org/web/20140327091827/http://www.benknowscode.com/2014/01/resizing-images-in-browser-using-canvas.html
   # Patrick Oswald version from comment, coffeescript and further simplification for wiki
