@@ -25,6 +25,11 @@ emit = ($item, item) ->
   $item.append "<img class='#{item.size or 'thumbnail'}' src='#{item.url}'> <p>#{resolve.resolveLinks(item.text)}</p>" 
 
 bind = ($item, item) ->
+  # This only really works once the images have been rendered, so we know where we are...
+  if $item.hasClass('thumbnail')
+    if $item.offset().left - $item.parent().offset().left < 200
+      $item.addClass('left') 
+
   $item.dblclick ->
     editor({ $item, item })
 
@@ -107,6 +112,8 @@ editor = (spec) ->
       item.size = $item.find('#size-select').val() ? 'thumbnail'
       plugin.do $item.empty(), item
       return if item.text is original.text and item.size is original.size
+      if item.hasOwnProperty('caption')
+        delete item.caption 
       pageHandler.put $page, { type: 'edit', id: item.id, item: item }
 
     else

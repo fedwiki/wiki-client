@@ -186,6 +186,11 @@ footer {
   float: none;
 }
 
+.image.left {
+  float: left;
+  margin-left: 0em;
+}
+
 .image :is(.thumbnail, .wide) {
   width: 100%;
 }
