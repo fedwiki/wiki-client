@@ -450,6 +450,11 @@ textarea {
     padding: 0; }
 }
 
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #ccc #eee;
+}
+
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
