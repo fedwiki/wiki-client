@@ -171,10 +171,10 @@ footer {
 .image {
   overflow: auto;   /* clearfix hack */
   float: right;
-  margin-left: 0.1em;
+  margin-left: 1.4px;
   margin-bottom: 0.4em;
   background: #eeeeee;
-  padding: 0.8em;
+  padding: 11.2px;
   width: 183px;
 }
 
@@ -189,6 +189,7 @@ footer {
 .image.left {
   float: left;
   margin-left: 0em;
+  margin-right: 2.8px;
 }
 
 .image :is(.thumbnail, .wide) {
