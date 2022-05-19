@@ -45,7 +45,10 @@ bind = ($item, item) ->
       item.source
     else
       item.url
-    dialog.open item.text, """<img style="width:100%" src="#{url}">"""
+    dialogTitle = (item.text||'').replace /\[\[([^\]]+)\]\]/gi, ''
+      .replace /\[((http|https|ftp):.*?) (.*?)\]/gi, ''
+      .replace /\<.*?\>/gi, ''
+    dialog.open dialogTitle, """<img style="width:100%" src="#{url}">"""
 
 editor = (spec) ->
 
@@ -67,12 +70,13 @@ editor = (spec) ->
 
   { $item, item } = spec
   # if new image is being added we have some extra information
-  { imageDataURL, imageSource, imageCaption } = spec if item.type is 'factory'
+  { imageDataURL, imageSourceURL, imageCaption } = spec if item.type is 'factory'
   if item.type is 'factory'
     document.documentElement.style.cursor = 'default'
     $item.removeClass('factory').addClass(item.type = 'image')
     $item.unbind()
     newImage = true
+    item.source = imageSourceURL
   else
     newImage = false
 

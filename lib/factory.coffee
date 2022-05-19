@@ -133,7 +133,7 @@ bind = ($item, item) ->
         reader.readAsDataURL(imageBlob)
         reader.onload = (loadEvent) ->
           imageDataURL = loadEvent.target.result
-          image.editor({ imageDataURL, imageSource: url, imageCaption: "Remote image [#{url} source]", $item, item })
+          image.editor({ imageDataURL, imageSourceURL: url, imageCaption: "Remote image [#{url} source]", $item, item })
 
 
   addRemoteSvg = (url) ->
@@ -170,7 +170,7 @@ bind = ($item, item) ->
         else
           reader.onload = (loadEvent) ->
             imageDataURL = loadEvent.target.result
-            image.editor({ imageDataURL, imageSource: file.name, imageCaption: "Uploaded image" , $item, item})
+            image.editor({ imageDataURL, imageCaption: "Uploaded image" , $item, item})
 ###             
             resizeImage loadEvent.target.result
             .then (resizedImageURL) ->
