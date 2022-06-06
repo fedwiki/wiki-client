@@ -7,7 +7,7 @@ dialog = require './dialog'
 pageHandler = require './pageHandler'
 resolve = require './resolve'
 link = require './link'
-
+md5 = require './md5'
 ipfs = false
 ipfs_probed = false
 
@@ -70,7 +70,7 @@ editor = (spec) ->
 
   { $item, item } = spec
   # if new image is being added we have some extra information
-  { imageDataURL, imageSourceURL, imageCaption } = spec if item.type is 'factory'
+  { imageDataURL, filename, imageSourceURL, imageCaption } = spec if item.type is 'factory'
   if item.type is 'factory'
     document.documentElement.style.cursor = 'default'
     $item.removeClass('factory').addClass(item.type = 'image')
@@ -108,12 +108,55 @@ editor = (spec) ->
       return
     
     $page = $item.parents('.page:first')
-    if newImage
-      item.url = await resizeImage imageDataURL
+    # if newImage
+    #   item.url = await resizeImage imageDataURL
     $item.removeClass 'imageEditing'
     $item.unbind()
     if item.text = $item.find('textarea').val()
       item.size = $item.find('#size-select').val() ? 'thumbnail'
+      if newImage
+        # create thumbnail
+        item.url = await resizeImage(imageDataURL, item.size)
+        # archive image, but not if drop url
+        if not item.source
+          console.info('new image, no source')
+          archiveImage = await resizeImage(imageDataURL, 'archive')
+          extension = filename.slice((Math.max(0, filename.lastIndexOf(".")) or Infinity) + 1)
+          console.log('extension', filename, extension)
+          archiveFilename = md5(imageDataURL) + '.' + extension
+          await fetch(archiveImage)
+          .then (response) ->
+            response.blob()
+          .then (blob) ->
+            file = new File(
+              [blob],
+              archiveFilename,
+              { type: blob.type }
+            )
+            form = new FormData()
+            form.append 'assets', '/plugins/image'
+            form.append 'uploads[]', file, file.name
+            fetch('/plugin/assets/upload', {
+              method: 'POST',
+              body: form
+            })
+            .then (response) ->
+              if response.ok
+                item.source = "/assets/plugins/image/" + archiveFilename
+            .catch (err) ->
+              console.log('image archive failed (save)', err)
+          .catch (err) ->
+            console.log('image archive failed', err)
+
+
+
+          console.info('archiveName', archiveFilename)
+
+          
+      else if item.size isnt original.size
+        # create new thumbnail
+        console.info('create new thumbnail - TODO')
+
       plugin.do $item.empty(), item
       return if item.text is original.text and item.size is original.size
       if item.hasOwnProperty('caption')
@@ -197,13 +240,22 @@ editor = (spec) ->
   # from https://web.archive.org/web/20140327091827/http://www.benknowscode.com/2014/01/resizing-images-in-browser-using-canvas.html
   # Patrick Oswald version from comment, coffeescript and further simplification for wiki
 
-  resizeImage = (dataURL) ->
+  resizeImage = (dataURL, tSize) ->
+    console.log('resize ', tSize)
     src = new Image
     cW = undefined
     cH = undefined
-    # target size
-    tW = 500
-    tH = 300
+    # target sizes
+    sizes = new Map([
+      ['thumbnail', {tW: 183, tH: 103}],
+      ['wide', {tW: 419, tH: 236}],
+      ['archive', {tW: 1024, tH: 576}]
+      ])
+    if sizes.has(tSize)
+      {tW, tH} = sizes.get(tSize)
+    else
+      tW = 500
+      tH = 300
     # image quality
     imageQuality = 0.5
 
@@ -224,6 +276,8 @@ editor = (spec) ->
       oversize = Math.max 1, Math.min cW/tW, cH/tH
       iterations = Math.floor Math.log2 oversize
       prescale = oversize / 2**iterations
+
+      console.info({ oversize, iterations, prescale })
 
       cW = Math.round(cW / prescale)
       cH = Math.round(cH / prescale)
