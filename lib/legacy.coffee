@@ -253,6 +253,8 @@ $ ->
         if $page.data('rev')?
           $page.find('.revision').remove()
         $page.removeClass 'ghost'
+        $page.attr('id', $page.attr('id').replace(/_rev\d+$/,''))
+        state.setUrl()
         pageHandler.put $page, action
 
     .delegate 'button.create', 'click', (e) ->
