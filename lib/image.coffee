@@ -5,6 +5,7 @@
 plugin = require './plugin'
 dialog = require './dialog'
 pageHandler = require './pageHandler'
+siteAdapter = require './siteAdapter'
 resolve = require './resolve'
 link = require './link'
 md5 = require './md5'
@@ -20,9 +21,31 @@ probe_ipfs = () ->
     complete: (xhr, status) -> console.log "ipfs gateway #{status}"
 
 emit = ($item, item) ->
+  alternates = ($item) ->
+    sites = []
+    if remote = $item.parents('.page').data('site')
+      unless remote == location.host
+        sites.push remote
+    journal = $item.parents('.page').data('data').journal
+    for action in journal.slice(0).reverse()
+      if action.site? and not sites.includes(action.site)
+        sites.push action.site
+    sites.map( (site) -> siteAdapter.site(site).getURL(item.url.replace(/^\//, '')))
+
   item.text ||= item.caption
   $item.addClass(item.size or 'thumbnail')
-  $item.append "<img class='#{item.size or 'thumbnail'}' src='#{item.url}'> <p>#{resolve.resolveLinks(item.text)}</p>" 
+  console.log('image alternates', $item, alternates($item))
+  $item.append "<img class='#{item.size or 'thumbnail'}' src='#{item.url}'> <p>#{resolve.resolveLinks(item.text)}</p>"
+  img = $item.find('img')
+  img.data('sites', alternates($item))
+  img.on('error', () ->
+    sites = $( this ).data('sites')
+    site = sites.shift()
+    $( this ).data('sites', sites)
+    $( this ).attr('src', site )
+    if sites.length is 0
+      $( this ).off('error')
+    )
 
 bind = ($item, item) ->
   # This only really works once the images have been rendered, so we know where we are...
@@ -115,38 +138,32 @@ editor = (spec) ->
     if item.text = $item.find('textarea').val()
       item.size = $item.find('#size-select').val() ? 'thumbnail'
       if newImage
-        # create thumbnail
-        item.url = await resizeImage(imageDataURL, item.size)
-        # archive image, but not if drop url
-        if not item.source
-          console.info('new image, no source')
-          archiveImage = await resizeImage(imageDataURL, 'archive')
-          extension = filename.slice((Math.max(0, filename.lastIndexOf(".")) or Infinity) + 1)
-          console.log('extension', filename, extension)
-          archiveFilename = md5(imageDataURL) + '.' + extension
-          await fetch(archiveImage)
+        # archive image
+        archiveImage = await resizeImage(imageDataURL, 'archive')
+        archiveFilename = md5(imageDataURL) + '.jpg'
+        await fetch(archiveImage)
+        .then (response) ->
+          response.blob()
+        .then (blob) ->
+          file = new File(
+            [blob],
+            archiveFilename,
+            { type: blob.type }
+          )
+          form = new FormData()
+          form.append 'assets', '/plugins/image'
+          form.append 'uploads[]', file, file.name
+          fetch('/plugin/assets/upload', {
+            method: 'POST',
+            body: form
+          })
           .then (response) ->
-            response.blob()
-          .then (blob) ->
-            file = new File(
-              [blob],
-              archiveFilename,
-              { type: blob.type }
-            )
-            form = new FormData()
-            form.append 'assets', '/plugins/image'
-            form.append 'uploads[]', file, file.name
-            fetch('/plugin/assets/upload', {
-              method: 'POST',
-              body: form
-            })
-            .then (response) ->
-              if response.ok
-                item.source = "/assets/plugins/image/" + archiveFilename
-            .catch (err) ->
-              console.log('image archive failed (save)', err)
+            if response.ok
+              item.url = "/assets/plugins/image/" + archiveFilename
           .catch (err) ->
-            console.log('image archive failed', err)
+            console.log('image archive failed (save)', err)
+        .catch (err) ->
+          console.log('image archive failed', err)
 
 
 
@@ -240,27 +257,20 @@ editor = (spec) ->
   # from https://web.archive.org/web/20140327091827/http://www.benknowscode.com/2014/01/resizing-images-in-browser-using-canvas.html
   # Patrick Oswald version from comment, coffeescript and further simplification for wiki
 
-  resizeImage = (dataURL, tSize) ->
-    console.log('resize ', tSize)
+  resizeImage = (dataURL) ->
     src = new Image
     cW = undefined
     cH = undefined
     # target sizes
-    sizes = new Map([
-      ['thumbnail', {tW: 183, tH: 103}],
-      ['wide', {tW: 419, tH: 236}],
-      ['archive', {tW: 1024, tH: 576}]
-      ])
-    if sizes.has(tSize)
-      {tW, tH} = sizes.get(tSize)
-    else
-      tW = 500
-      tH = 300
+
+    tW = 1920
+    tH = 1080
+    
     # image quality
     imageQuality = 0.5
 
     smallEnough = (img) ->
-      img.width <= tW or img.height <= tH
+      img.width <= tW and img.height <= tH
 
     new Promise (resolve) ->
       src.src = dataURL
@@ -273,7 +283,7 @@ editor = (spec) ->
       # determine size for first squeeze
       return if smallEnough src
 
-      oversize = Math.max 1, Math.min cW/tW, cH/tH
+      oversize = Math.max 1, cW/tW, cH/tH
       iterations = Math.floor Math.log2 oversize
       prescale = oversize / 2**iterations
 
