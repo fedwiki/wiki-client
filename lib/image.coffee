@@ -34,9 +34,8 @@ emit = ($item, item) ->
 
   item.text ||= item.caption
   $item.addClass(item.size or 'thumbnail')
-  console.log('image alternates', $item, alternates($item))
   $item.append "<img class='#{item.size or 'thumbnail'}' src='#{item.url}'> <p>#{resolve.resolveLinks(item.text)}</p>"
-  img = $item.find('img')
+  img = $item.children('img').first()
   img.data('sites', alternates($item))
   img.on('error', () ->
     sites = $( this ).data('sites')
@@ -46,6 +45,11 @@ emit = ($item, item) ->
     if sites.length is 0
       $( this ).off('error')
     )
+  if isOwner
+    img.on('load', () ->
+      if $( this ).attr('src') isnt item.url
+        console.log('image from elsewhere', item.url, $( this ).attr('src'))
+      )
 
 bind = ($item, item) ->
   # This only really works once the images have been rendered, so we know where we are...
@@ -67,7 +71,7 @@ bind = ($item, item) ->
       # somehow test for continued existnace? Maybe register an error handler?
       item.source
     else
-      item.url
+      $item.children('img').first().attr('src')
     dialogTitle = (item.text||'').replace /\[\[([^\]]+)\]\]/gi, ''
       .replace /\[((http|https|ftp):.*?) (.*?)\]/gi, ''
       .replace /\<.*?\>/gi, ''
@@ -166,14 +170,6 @@ editor = (spec) ->
           console.log('image archive failed', err)
 
 
-
-          console.info('archiveName', archiveFilename)
-
-          
-      else if item.size isnt original.size
-        # create new thumbnail
-        console.info('create new thumbnail - TODO')
-
       plugin.do $item.empty(), item
       return if item.text is original.text and item.size is original.size
       if item.hasOwnProperty('caption')
@@ -195,14 +191,15 @@ editor = (spec) ->
     size: item.size ? ''
   }
 
-  # add something so we can detect if the item is unchanged
-
-  if !newImage
-    imageDataURL = item.url
+  if newImage
+    imgPossibleSize = await imageSize(imageDataURL)
+    imgURL = imageDataURL
+  else
+    console.info('!newImage:', {$item, item})
+    imgPossibleSize = if $item.children('img').first()[0].naturalWidth > 415 then 'wide' else 'thumbnail'
+    imgURL = $item.children('img').first().attr('src')
     imageCaption = item.text ||= item.caption
   
-
-  imgPossibleSize = await imageSize(imageDataURL)
   if item.size
     imgCurrentSize = item.size
   else
@@ -213,7 +210,7 @@ editor = (spec) ->
   $item.addClass(imgCurrentSize)
 
   $imageEditor = $ """
-    <img class='#{imgCurrentSize}' src='#{imageDataURL}'>
+    <img class='#{imgCurrentSize}' src='#{imgURL}'>
     <textarea>#{escape imageCaption}</textarea>
     """
   
@@ -241,13 +238,6 @@ editor = (spec) ->
       
       )
 
-### MAYBE TODO: option to archive new images to web3.storage
-  if newImage and imgSize is "wide"
-    $('#image-options').append """
-    <label>Archive Image:</label>
-    <input id="web3APIKey" type="text" placeholder="Web3.Storage API token">
-    """
- ###
 
   $item.focusout focusoutHandler
     .bind 'keydown', keydownHandler  
