@@ -196,6 +196,27 @@ footer {
   width: 100%;
 }
 
+/* image overlay */
+
+div.image {
+  position: relative;
+}
+
+.image .overlay {
+  width: 16px;
+  height: 16px;
+  position: relative;
+  bottom: 22px;
+  right: 2px;  /* or -2px without float */
+  float: right;
+  opacity: 0;
+  transition: .7s ease;
+}
+
+.image:hover .overlay {
+  opacity: 1;
+}
+
 /* image plugin editor */
 
 .imageEditing #image-options {
@@ -505,7 +526,7 @@ textarea {
 .revision {
   position: relative;
   font-size: 24px;
-  color: rgba(128,32,16,0.7); #7b2106
+  color: rgba(128,32,16,0.7); /* #7b2106 */
   font-weight: bold; }
 
 .revision span {
@@ -516,6 +537,7 @@ textarea {
   text-align: center;
   top: -40px;
   right: 10px;
+  transform: rotate(-15deg);
   -webkit-transform: rotate(-15deg);
   -moz-transform: rotate(-15deg);
 

@@ -48,7 +48,20 @@ emit = ($item, item) ->
   if isOwner
     img.on('load', () ->
       if $( this ).attr('src') isnt item.url
-        console.log('image from elsewhere', item.url, $( this ).attr('src'))
+        imgHost = new URL($( this )[0].src).hostname
+        flagURL = siteAdapter.site(imgHost).flag()
+        overlay = document.createElement('a')
+        overlay.setAttribute('href', '#')
+        overlay.setAttribute('title', 'fork this image')
+        flag = document.createElement('img')
+        flag.setAttribute('src', flagURL)
+        flag.setAttribute('class', 'overlay')
+        overlay.append(flag)
+        if $( this )[0].nextSibling
+          $( this )[0].parentNode.insertBefore(overlay, $( this )[0].nextSibling)
+        else
+          $( this )[0].parentNode.appendChild(overlay)
+        console.log('overlay in place', this)
       )
 
 bind = ($item, item) ->
