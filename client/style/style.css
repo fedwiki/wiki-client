@@ -202,7 +202,7 @@ div.image {
   position: relative;
 }
 
-.image .overlay {
+.image img.overlay {
   width: 16px;
   height: 16px;
   position: relative;
@@ -213,7 +213,7 @@ div.image {
   transition: .7s ease;
 }
 
-.image:hover .overlay {
+.image:hover img.overlay {
   opacity: 1;
 }
 

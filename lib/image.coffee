@@ -53,6 +53,7 @@ emit = ($item, item) ->
         overlay = document.createElement('a')
         overlay.setAttribute('href', '#')
         overlay.setAttribute('title', 'fork this image')
+        overlay.setAttribute('class', 'overlay')
         flag = document.createElement('img')
         flag.setAttribute('src', flagURL)
         flag.setAttribute('class', 'overlay')
@@ -61,7 +62,35 @@ emit = ($item, item) ->
           $( this )[0].parentNode.insertBefore(overlay, $( this )[0].nextSibling)
         else
           $( this )[0].parentNode.appendChild(overlay)
-        console.log('overlay in place', this)
+        $( flag ).on('click', (e) ->
+          e.preventDefault()
+          imageNode = e.target.parentNode.previousSibling
+          archiveFilename = new URL(imageNode.src).pathname.split('/').pop()
+          await fetch(imageNode.src)
+          .then (response) ->
+            response.blob()
+          .then (blob) ->
+            file = new File(
+              [blob],
+              archiveFilename,
+              { type: blob.type }
+            )
+            form = new FormData()
+            form.append 'assets', '/plugins/image'
+            form.append 'uploads[]', file, file.name
+            fetch('/plugin/assets/upload', {
+              method: 'POST',
+              body: form
+            })
+            .then (response) ->
+              if response.ok
+                $( flag ).off('click')
+                overlay.parentNode.removeChild(overlay)
+            .catch (err) ->
+              console.log('image archive failed (save)', err)
+          .catch (err) ->
+            console.log('image archive failed', err)
+        )
       )
 
 bind = ($item, item) ->
@@ -208,7 +237,6 @@ editor = (spec) ->
     imgPossibleSize = await imageSize(imageDataURL)
     imgURL = imageDataURL
   else
-    console.info('!newImage:', {$item, item})
     imgPossibleSize = if $item.children('img').first()[0].naturalWidth > 415 then 'wide' else 'thumbnail'
     imgURL = $item.children('img').first().attr('src')
     imageCaption = item.text ||= item.caption
@@ -289,8 +317,6 @@ editor = (spec) ->
       oversize = Math.max 1, cW/tW, cH/tH
       iterations = Math.floor Math.log2 oversize
       prescale = oversize / 2**iterations
-
-      console.info({ oversize, iterations, prescale })
 
       cW = Math.round(cW / prescale)
       cH = Math.round(cH / prescale)
