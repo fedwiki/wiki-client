@@ -256,7 +256,9 @@ $ ->
         $page.attr('id', $page.attr('id').replace(/_rev\d+$/,''))
         state.setUrl()
         for p,i in $('.page')
-          if $(p).data('key') != $page.data('key') and $(p).attr('id') == $page.attr('id') and $(p).attr('site') == $page.attr('site')
+          if $(p).data('key') != $page.data('key') and 
+             $(p).attr('id') == $page.attr('id') and 
+             $(p).data('site') in [undefined, null, 'view', 'origin', 'local', 'recycler', location.host]
             $(p).addClass('ghost')
         pageHandler.put $page, action
 
