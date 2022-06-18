@@ -49,12 +49,12 @@ bind = ->
       totalPages = Object.values(neighborhood.sites).reduce ((sum, site) -> 
         try
           if site.sitemapRequestInflight
-            return 0
+            return sum
           else
-            return site.sitemap.length
+            return sum + site.sitemap.length
         catch error
           console.log('failed in new neighbour done', site, error)
-          return 0
+          return sum
         ), 0
       $('.searchbox .pages').text "#{totalPages} pages"
     .delegate '.neighbor img', 'click', (e) ->
