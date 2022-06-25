@@ -36,6 +36,8 @@ emit = ($item, item) ->
   $item.addClass(item.size or 'thumbnail')
   $item.append "<img class='#{item.size or 'thumbnail'}' src='#{item.url}'> <p>#{resolve.resolveLinks(item.text)}</p>"
   img = $item.children('img').first()
+  img.attr('width', item.width) if item.width
+  img.attr('height', item.height) if item.height
   img.data('sites', alternates($item))
   img.on('error', () ->
     sites = $( this ).data('sites')
@@ -183,6 +185,8 @@ editor = (spec) ->
     $item.unbind()
     if item.text = $item.find('textarea').val()
       item.size = $item.find('#size-select').val() ? 'thumbnail'
+      item.width = $item.children('img')[0].width
+      item.height = $item.children('img')[0].height
       if newImage
         # archive image
         archiveImage = await resizeImage(imageDataURL, 'archive')
