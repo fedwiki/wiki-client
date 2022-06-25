@@ -10,7 +10,6 @@ editor = require './editor'
 synopsis = require './synopsis'
 drop = require './drop'
 active = require './active'
-image = require './image'
 
 escape = (line) ->
   line
@@ -108,18 +107,7 @@ bind = ($item, item) ->
   addRemoteImage = (url) ->
     # give some feedback, in case this is going to take a while...
     document.documentElement.style.cursor = 'wait'
-    ###
-    fetchRemoteImage(url)
-      .then (dataURL) ->
-        resizeImage dataURL
-      .then (resizedImageURL) ->
-        document.documentElement.style.cursor = 'default'
-        item.type = 'image'
-        item.url = resizedImageURL
-        item.source = url
-        item.caption ||= "Remote image"
-        syncEditAction()
-    ###
+
     fetch(url)
       .then (response) ->
         if response.ok
@@ -133,7 +121,7 @@ bind = ($item, item) ->
         reader.readAsDataURL(imageBlob)
         reader.onload = (loadEvent) ->
           imageDataURL = loadEvent.target.result
-          image.editor({ imageDataURL, filename: imageFileName, imageSourceURL: url, imageCaption: "Remote image [#{url} source]", $item, item })
+          window.plugins['image'].editor({ imageDataURL, filename: imageFileName, imageSourceURL: url, imageCaption: "Remote image [#{url} source]", $item, item })
 
 
   addRemoteSvg = (url) ->
@@ -171,15 +159,7 @@ bind = ($item, item) ->
           reader.onload = (loadEvent) ->
             console.log('upload file', file)
             imageDataURL = loadEvent.target.result
-            image.editor({ imageDataURL, filename: file.name, imageCaption: "Uploaded image" , $item, item})
-###             
-            resizeImage loadEvent.target.result
-            .then (resizedImageURL) ->
-              item.type = 'image'
-              item.url = resizedImageURL
-              item.caption ||= "Uploaded image"
-              syncEditAction() 
-###
+            window.plugins['image'].editor({ imageDataURL, filename: file.name, imageCaption: "Uploaded image" , $item, item})
           reader.readAsDataURL(file)
       else if majorType == "text"
         reader.onload = (loadEvent) ->
@@ -247,83 +227,5 @@ arrayToJson = (array) ->
     obj
   (rowToObject row for row in array)
 
-###
-fetchRemoteImage = (url) ->
-  arrayBufferToBase64 = (buffer) ->
-    binary = ''
-    bytes = [].slice.call(new Uint8Array(buffer))
-    bytes.forEach((b) -> binary += String.fromCharCode(b));
-    return window.btoa(binary);
-
-  fetch(url)
-    .then (response) ->
-      if response.ok
-        return response
-      throw new Error('Unable to fetch image')
-    .then (response) ->
-      response.arrayBuffer()
-        .then (buffer) ->
-          imgStr = 'data:image/jpeg;base64,'
-          imgStr += arrayBufferToBase64(buffer)
-          return imgStr
-    
-    .catch (error) ->
-      console.log 'Unable to fetch remote image'
-###   
-
-###
-# from https://web.archive.org/web/20140327091827/http://www.benknowscode.com/2014/01/resizing-images-in-browser-using-canvas.html
-# Patrick Oswald version from comment, coffeescript and further simplification for wiki
-
-resizeImage = (dataURL) ->
-  src = new Image
-  cW = undefined
-  cH = undefined
-  # target size
-  tW = 500
-  tH = 300
-  # image quality
-  imageQuality = 0.5
-
-  smallEnough = (img) ->
-    img.width <= tW or img.height <= tH
-
-  new Promise (resolve) ->
-    src.src = dataURL
-    src.onload = ->
-      resolve()
-  .then () ->
-    cW = src.naturalWidth
-    cH = src.naturalHeight
-  .then () ->
-    # determine size for first squeeze
-    return if smallEnough src
-
-    oversize = Math.max 1, Math.min cW/tW, cH/tH
-    iterations = Math.floor Math.log2 oversize
-    prescale = oversize / 2**iterations
-
-    cW = Math.round(cW / prescale)
-    cH = Math.round(cH / prescale)
-
-  .then () ->
-    new Promise (resolve) ->
-      tmp = new Image
-      tmp.src = src.src
-      tmp.onload = ->
-        if smallEnough tmp
-          return resolve dataURL  
-        canvas = document.createElement('canvas')
-        canvas.width = cW
-        canvas.height = cH
-        context = canvas.getContext('2d')
-        context.drawImage tmp, 0, 0, cW, cH
-        dataURL = canvas.toDataURL('image/jpeg', imageQuality)
-        cW /= 2
-        cH /= 2
-        tmp.src = dataURL
-  .then ->
-    return dataURL
-###
 
 module.exports = {emit, bind}

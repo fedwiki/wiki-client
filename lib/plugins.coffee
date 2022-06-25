@@ -7,6 +7,6 @@ window.plugins =
   reference: plugin.wrap('reference', require './reference')
   factory: plugin.wrap('factory', require './factory')
   paragraph: plugin.wrap('paragraph', require './paragraph')
-  image: plugin.wrap('image', require './image')
+  #image: plugin.wrap('image', require './image')
   future: plugin.wrap('future', require './future')
   importer: plugin.wrap('importer', require './importer')
