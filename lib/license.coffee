@@ -28,6 +28,7 @@ authors = (page, site) ->
   list = []
   for action in page.journal.slice(0).reverse()
     site = action.site if action.site?
+    site = action.attribution.site if action.attribution?.site?
     unless action.type is 'fork' or done[site]?
       siteURL = wiki.site(site).getDirectURL("")
       siteFlag = wiki.site(site).flag()
