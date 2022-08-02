@@ -258,6 +258,13 @@ $ ->
           action.site = pageObject.getRemoteSite()
         if $page.data('rev')?
           $page.find('.revision').remove()
+        if $page.hasClass('ghost') and $page.find('h1').text().trim() != pageObject.getTitle()
+          newtitle = $page.find('h1').text().trim()
+          action.title = newtitle
+          $page.attr('id',asSlug(newtitle))
+          pageObject.setTitle(newtitle)
+          $page.find('h1 .title').removeAttr('contenteditable')
+
         $page.removeClass 'ghost'
         $page.attr('id', $page.attr('id').replace(/_rev\d+$/,''))
         state.setUrl()

@@ -235,7 +235,7 @@ emitHeader = ($header, $page, pageObject) ->
       <span>
         <a href="#{pageObject.siteLineup()}" target="#{remote}">
           <img src="#{wiki.site(remote).flag()}" height="32px" class="favicon"></a>
-        #{resolve.escape pageObject.getTitle()}
+        <span class="title">#{resolve.escape pageObject.getTitle()}</span>
       </span>
     </h1>
   """
@@ -420,6 +420,9 @@ rebuildPage = (pageObject, $page) ->
     initDragging $page
     initMerging $page
     initAddButton $page
+    if $page.hasClass('ghost')
+      $page.find('h1 .title').attr('contenteditable',true)
+
   promise
 
 buildPage = (pageObject, $page) ->
