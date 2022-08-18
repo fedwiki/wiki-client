@@ -260,9 +260,8 @@ $ ->
           $page.find('.revision').remove()
         if $page.hasClass('ghost') and $page.find('h1').text().trim() != pageObject.getTitle()
           newtitle = $page.find('h1').text().trim()
-          action.title = newtitle
           $page.attr('id',asSlug(newtitle))
-          pageObject.setTitle(newtitle)
+          pageObject.setCreateTitle(newtitle)
           $page.find('h1 .title').removeAttr('contenteditable')
 
         $page.removeClass 'ghost'

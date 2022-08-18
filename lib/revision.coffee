@@ -38,8 +38,6 @@ apply = (page, action) ->
       add after, item
     when 'remove'
       remove()
-    when 'fork'
-      page.title = action.title if action.title?
 
   page.journal ||= []
   if action.fork

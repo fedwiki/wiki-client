@@ -58,6 +58,9 @@ newPage = (json, site) ->
   isRecycler = ->
     site == 'recycler'
 
+  isCreateEditable = ->
+    page.journal && page.journal.length == 1 && page.journal[0].type == 'create'
+
   getRemoteSite = (host = null) ->
     if isRemote() then site else host
 
@@ -87,6 +90,10 @@ newPage = (json, site) ->
 
   setTitle = (title) ->
     page.title = title
+
+  setCreateTitle = (title) ->
+    page.title = title
+    page.journal[0].item.title = title
 
   getRevision = ->
     page.journal.length-1
@@ -218,6 +225,6 @@ newPage = (json, site) ->
     isCreate = (action) -> action.type == 'create'
     page.journal.reverse().find(isCreate)
 
-  {getRawPage, getContext, isPlugin, isRemote, isLocal, isRecycler, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, getLinks, setTitle, getRevision, getDate, getTimestamp, getSynopsis, addItem, getItem, addParagraph, seqItems, seqActions, become, siteLineup, merge, apply, getCreate}
+  {getRawPage, getContext, isPlugin, isRemote, isLocal, isRecycler, isCreateEditable, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, getLinks, setTitle, setCreateTitle, getRevision, getDate, getTimestamp, getSynopsis, addItem, getItem, addParagraph, seqItems, seqActions, become, siteLineup, merge, apply, getCreate}
 
 module.exports = {newPage, asSlug, asTitle, pageEmitter}
