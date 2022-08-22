@@ -171,15 +171,59 @@ footer {
 .image {
   overflow: auto;   /* clearfix hack */
   float: right;
-  margin-left: 0.4em;
+  margin-left: 1.4px;
   margin-bottom: 0.4em;
   background: #eeeeee;
-  padding: 0.8em;
-  width: 42%;
- }
+  padding: 11.2px;
+  width: 183px;
+}
 
-.image .thumbnail {
-  width: 100%; }
+.image.wide {
+  width: 100%;
+  margin-left: 0em;
+  padding: 0em;
+  padding-bottom: 0.8em;
+  float: none;
+}
+
+.image.left {
+  float: left;
+  margin-left: 0em;
+  margin-right: 2.8px;
+}
+
+.image :is(.thumbnail, .wide) {
+  width: 100%;
+}
+
+/* image overlay */
+
+div.image {
+  position: relative;
+}
+
+.image img.overlay {
+  width: 16px;
+  height: 16px;
+  position: relative;
+  bottom: 22px;
+  right: 2px;  /* or -2px without float */
+  float: right;
+  opacity: 0;
+  transition: .7s ease;
+}
+
+.image:hover img.overlay {
+  opacity: 1;
+}
+
+/* image plugin editor */
+
+.imageEditing #image-options {
+  margin-left: 4px;
+}
+
+/* end image plugin editor */
 
 .backlinks {
   width: 420px;
@@ -212,7 +256,6 @@ footer {
 /*  margin-top: 2px; */
   clear: both;
   background-color: #eeeeee;
-  overflow: auto;
   padding: 1px;
 }
 
@@ -406,10 +449,17 @@ div.pending-remove.page {
   position: relative;
 }
 
-.factory,
-textarea {
+.factory {
   font-size: inherit;
   width: 100%;
+  min-height: 150px;
+}
+
+textarea {
+  font-size: inherit;
+  margin-left: 2px;
+  resize: vertical;
+  width: calc(100% - 12px);
   min-height: 150px; }
 
 .clickable:hover {
@@ -420,6 +470,11 @@ textarea {
     width: 1%;
     margin: 8px;
     padding: 0; }
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #ccc #eee;
 }
 
 ::-webkit-scrollbar {
@@ -471,7 +526,7 @@ textarea {
 .revision {
   position: relative;
   font-size: 24px;
-  color: rgba(128,32,16,0.7); #7b2106
+  color: rgba(128,32,16,0.7); /* #7b2106 */
   font-weight: bold; }
 
 .revision span {
@@ -482,6 +537,7 @@ textarea {
   text-align: center;
   top: -40px;
   right: 10px;
+  transform: rotate(-15deg);
   -webkit-transform: rotate(-15deg);
   -moz-transform: rotate(-15deg);
 

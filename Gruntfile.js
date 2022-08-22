@@ -58,7 +58,7 @@ module.exports = function (grunt) {
         src: ['./client.coffee'],
         dest: 'client/client.max.js',
         options: {
-          transform: [['coffeeify', {transpile: {presets: ['@babel/preset-env']}}]],
+          transform: [['coffeeify', {transpile: {presets: ['@babel/preset-env'], plugins: ['@babel/plugin-transform-runtime']}}]],
           browserifyOptions: {
             extensions: ".coffee"
           }
@@ -71,7 +71,7 @@ module.exports = function (grunt) {
         src: ['./testclient.coffee'],
         dest: 'client/test/testclient.js',
         options: {
-          transform: [['coffeeify', {transpile: {presets: ['@babel/preset-env']}}]],
+          transform: [['coffeeify', {transpile: {presets: ['@babel/preset-env'], plugins: ['@babel/plugin-transform-runtime']}}]],
           browserifyOptions: {
             extensions: ".coffee"
           }

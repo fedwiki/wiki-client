@@ -61,12 +61,23 @@ handleDrop = (evt, ui, originalIndex, originalOrder) ->
   $sourcePage = $item.data('pageElement')
   sourceIsReadOnly = $sourcePage.hasClass('ghost') || $sourcePage.hasClass('remote')
 
+  unless $sourcePage.hasClass('ghost')
+    dragAttribution = {
+      page: $sourcePage.data().data['title']
+    }
+    if $sourcePage.data().site?
+      dragAttribution['site'] = $sourcePage.data().siteLineup
+
   $destinationPage = $item.parents('.page:first')
   destinationIsGhost = $destinationPage.hasClass('ghost')
 
   moveWithinPage = equals($sourcePage, $destinationPage)
   moveBetweenDuplicatePages = not moveWithinPage and \
     $sourcePage.attr('id') == $destinationPage.attr('id')
+
+  removedTo = {
+    page: $destinationPage.data().data['title']
+  }
 
   if destinationIsGhost or moveBetweenDuplicatePages
     $(evt.target).sortable('cancel')
@@ -88,14 +99,14 @@ handleDrop = (evt, ui, originalIndex, originalOrder) ->
     $('.shadow-copy').removeClass('shadow-copy')
       .data($item.data()).attr({'data-id': $item.attr('data-id')})
   else
-    pageHandler.put $sourcePage, {id: item.id, type: 'remove'}
+    pageHandler.put $sourcePage, {id: item.id, type: 'remove', removedTo: removedTo}
   # Either way, record the add to the new page
   $item.data 'pageElement', $destinationPage
   $before = $item.prev('.item')
   before = getItem($before)
   item = aliasItem $destinationPage, $item, item
   pageHandler.put $destinationPage,
-                  {id: item.id, type: 'add', item, after: before?.id}
+                  {id: item.id, type: 'add', item, after: before?.id, attribution: dragAttribution }
   $('.shadow-copy').remove()
   $item.empty()
   $before.after($item)
