@@ -66,7 +66,7 @@ handleDrop = (evt, ui, originalIndex, originalOrder) ->
       page: $sourcePage.data().data['title']
     }
     if $sourcePage.data().site?
-      dragAttribution['site'] = $sourcePage.data().siteLineup
+      dragAttribution['site'] = $sourcePage.data().site
 
   $destinationPage = $item.parents('.page:first')
   destinationIsGhost = $destinationPage.hasClass('ghost')
