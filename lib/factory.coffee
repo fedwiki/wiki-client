@@ -183,6 +183,9 @@ bind = ($item, item) ->
           lastModified: file.lastModified
 
   $item.dblclick (e) ->
+    
+    return unless $('.editEnable').is(':visible')
+
     if e.shiftKey
       editor.textEditor $item, item, {field: 'prompt'}
     else
