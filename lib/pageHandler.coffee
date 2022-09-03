@@ -145,6 +145,12 @@ pushToServer = ($page, pagePutInfo, action) ->
         addToJournal $page.find('.journal'), action
         if action.type == 'fork'
           wiki.local.delete $page.attr('id')
+        if action.type != 'fork' and action.fork
+          # implicit fork, probably only affects image plugin
+          if action.item.type is 'image'
+            index = $page.find('.item').index($page.find('#' + action.item.id).context)
+            wiki.renderFrom index
+
 
 pageHandler.put = ($page, action) ->
 
