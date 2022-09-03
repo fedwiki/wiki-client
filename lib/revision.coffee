@@ -40,6 +40,9 @@ apply = (page, action) ->
       remove()
 
   page.journal ||= []
+  if action.fork
+    # implicit fork
+    page.journal.push({type: 'fork', site: action.fork })
   page.journal.push action
 
 create = (revIndex, data) ->
