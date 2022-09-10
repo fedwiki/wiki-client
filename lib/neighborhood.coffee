@@ -220,12 +220,16 @@ neighborhood.search = (searchQuery)->
       else
         titleBoost = 10
         contentBoost = 1
-      searchResult = neighborInfo.siteIndex.search searchQuery,
-        boost:
-          title: titleBoost
-          content: contentBoost
-        prefix: true
-        combineWith: 'AND'
+      try
+        searchResult = neighborInfo.siteIndex.search searchQuery,
+          boost:
+            title: titleBoost
+            content: contentBoost
+          prefix: true
+          combineWith: 'AND'
+      catch error
+        console.error('search index error', neighborSite, searchQuery, error)
+        searchResult = []
       searchResult.forEach (result) ->
         tick 'finds'
         finds.push
