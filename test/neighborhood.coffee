@@ -1,5 +1,7 @@
 expect = require 'expect.js'
 _ = require 'underscore'
+miniSearch = require 'minisearch'
+
 
 neighborhood = require '../lib/neighborhood'
 
@@ -16,11 +18,25 @@ describe 'neighborhood', ->
       fakeSitemap = [
         { title: 'Page One', slug: 'page-one', date: 'date1' },
         { title: 'Page Two', slug: 'page-two', date: 'date2' },
-        { title: 'Page Three' }
+        { title: 'Page Three', slug: 'page-three' }
       ]
 
+      fakeSiteindex = new miniSearch({
+        fields: ['title', 'content']
+      })
+
+      fakeSitemap.forEach((page) ->
+        fakeSiteindex.add {
+          'id': page.slug
+          'title': page.title
+          'content': ''
+        }
+        return
+      )
+
       neighbor = {
-        sitemap: fakeSitemap
+        sitemap: fakeSitemap,
+        siteIndex: fakeSiteindex
       }
 
       neighborhood.sites = {}
@@ -38,12 +54,12 @@ describe 'neighborhood', ->
       expectedResult = [
         {
           site: 'my-site',
-          page: { title: 'Page Two', slug: 'page-two', date: 'date2' },
-          rank: 1
+          page: { title: 'Page Two', slug: 'page-two', date: 'date2' }
         }
       ]
       searchResult = neighborhood.search( "Page Two" )
-      expect( searchResult.finds ).to.eql( expectedResult )
+      expect( searchResult.finds.site ).to.eql( expectedResult.site )
+      expect( searchResult.finds.page ).to.eql( expectedResult.page )
 
 
     it.skip 'searches both the slug and the title'
@@ -53,19 +69,47 @@ describe 'neighborhood', ->
       neighborhood.sites = {}
       neighborhood.sites['site-one'] = {
         sitemap: [
-          { title: 'Page One from Site 1' },
-          { title: 'Page Two from Site 1' },
-          { title: 'Page Three from Site 1' }
-        ]
+          { title: 'Page One from Site 1', slug: 'page-one-from-site-1' },
+          { title: 'Page Two from Site 1', slug: 'page-two-from-site-1' },
+          { title: 'Page Three from Site 1', slug: 'page-three-from-site-1' }
+        ],
       }
+
+      site1Siteindex = new miniSearch({
+        fields: ['title', 'content']
+      })
+
+      neighborhood.sites['site-one'].sitemap.forEach((page) ->
+        site1Siteindex.add {
+          'id': page.slug
+          'title': page.title
+          'content': ''
+        }
+        return
+      )
+      neighborhood.sites['site-one'].siteIndex = site1Siteindex
 
       neighborhood.sites['site-two'] = {
         sitemap: [
-          { title: 'Page One from Site 2' },
-          { title: 'Page Two from Site 2' },
-          { title: 'Page Three from Site 2' }
+          { title: 'Page One from Site 2', slug: 'page-one-from-site-2' },
+          { title: 'Page Two from Site 2', slug: 'page-two-from-site-2' },
+          { title: 'Page Three from Site 2', slug: 'page-three-from-site-2' }
         ]
       }
+
+      site2Siteindex = new miniSearch({
+        fields: ['title', 'content']
+      })
+
+      neighborhood.sites['site-two'].sitemap.forEach((page) ->
+        site2Siteindex.add {
+          'id': page.slug
+          'title': page.title
+          'content': ''
+        }
+        return
+      )
+      neighborhood.sites['site-two'].siteIndex = site2Siteindex
 
     it 'returns matching pages from every neighbor', ->
       searchResult = neighborhood.search( "Page Two" )

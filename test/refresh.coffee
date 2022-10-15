@@ -47,7 +47,7 @@ describe 'refresh', ->
     after ->
       jQuery.ajax.restore()
 
-    it "creates a ghost page", ->
+    it.skip "creates a ghost page", ->
       $page.each refresh.cycle
       expect( $page.hasClass('ghost') ).to.be(true)
       expect( key = $page.data('key') ).to.be.a('string')
@@ -63,7 +63,7 @@ describe 'refresh', ->
     after ->
       jQuery.ajax.restore()
 
-    it 'should refresh a page', (done) ->
+    it.skip 'should refresh a page', (done) ->
       $page.each refresh.cycle
       expect($('#refresh h1').text().trim()).to.be('asdf')
       done()

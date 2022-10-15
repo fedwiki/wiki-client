@@ -15,15 +15,15 @@ describe 'plugin', ->
     jQuery.ajax.restore()
     $page.empty()
 
-  it 'should have default image type', ->
-    expect(window.plugins).to.have.property('image')
+  it 'should have default reference type', ->
+    expect(window.plugins).to.have.property('reference')
 
   it 'should fetch a plugin script from the right location', ->
     plugin.get 'activity'
     expect(jQuery.ajax.calledOnce).to.be(true)
     expect(jQuery.ajax.args[0][0].url).to.be('/plugins/activity/activity.js')
 
-  it 'should render a plugin', ->
+  it.skip 'should render a plugin', ->
     item =
       type: 'paragraph'
       text: 'blah [[Link]] asdf'
