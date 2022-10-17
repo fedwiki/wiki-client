@@ -29,6 +29,6 @@ emit = ($item, item) ->
       </p>
     """
 bind = ($item, item) ->
-  $item.dblclick -> editor.textEditor $item, item
+  $item.on 'dblclick', () -> editor.textEditor $item, item
 
 module.exports = {emit, bind}

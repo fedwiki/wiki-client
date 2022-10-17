@@ -34,7 +34,7 @@ scrollTo = ($page) ->
     scrollLeft: scrollTarget
     }, () ->
       # only set focus if focus is not already within the page to get focus
-      $page.focus() unless $.contains $page[0], document.activeElement )
+      $page.trigger('focus') unless $.contains $page[0], document.activeElement )
 
 
 active.set = ($page, noScroll) ->

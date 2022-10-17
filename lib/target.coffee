@@ -14,16 +14,16 @@ consumed = null
 
 bind = ->
   $(document)
-    .keydown (e) -> startTargeting e if e.keyCode == 16
-    .keyup (e) -> stopTargeting e if e.keyCode == 16
+    .on 'keydown', (e) -> startTargeting e if e.keyCode == 16
+    .on 'keyup', (e) -> stopTargeting e if e.keyCode == 16
   $('.main')
-    .delegate '.item', 'mouseenter', enterItem
-    .delegate '.item', 'mouseleave', leaveItem
-    .delegate '.action', 'mouseenter', enterAction
-    .delegate '.action', 'mouseleave', leaveAction
-    .delegate '.page', 'align-item', alignItem
-    .delegate '.backlinks .remote', 'mouseenter', enterBacklink
-    .delegate '.backlinks .remote', 'mouseleave', leaveBacklink
+    .on 'mouseenter', '.item', enterItem
+    .on 'mouseleave', '.item', leaveItem
+    .on 'mouseenter', '.action', enterAction
+    .on 'mouseleave', '.action', leaveAction
+    .on 'align-item', '.page', alignItem
+    .on 'mouseenter', '.backlinks .remote', enterBacklink
+    .on 'mouseleave', '.backlinks .remote', leaveBacklink
 
 
 startTargeting = (e) ->

@@ -168,7 +168,7 @@ plugin.emit = (div, item, done=->) ->
       </div>
     """
     if item.text?
-      div.find('.error').dblclick (e) ->
+      div.find('.error').on 'dblclick', (e) ->
         wiki.textEditor div, item
     div.find('button').on 'click', ->
       wiki.dialog ex.toString(), """

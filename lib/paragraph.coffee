@@ -17,7 +17,7 @@ emit = ($item, item) ->
     $item.append "<p>#{resolve.resolveLinks(text)}</p>" if text.match /\S/
 
 bind = ($item, item) ->
-  $item.dblclick (e) ->
+  $item.on 'dblclick', (e) ->
     if e.shiftKey
       item.type = type(item.text)
       itemz.replaceItem $item, 'paragraph', item

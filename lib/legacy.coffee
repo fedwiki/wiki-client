@@ -46,7 +46,7 @@ $ ->
   LEFTARROW = 37
   RIGHTARROW = 39
 
-  $(document).keydown (event) ->
+  $(document).on "keydown", (event) ->
     direction = switch event.which
       when LEFTARROW then -1
       when RIGHTARROW then +1
@@ -57,7 +57,7 @@ $ ->
         active.set(pages.eq(newIndex))
     if (event.ctrlKey || event.metaKey) and event.which == 83 #ctrl-s for search
       event.preventDefault()
-      $('input.search').focus()
+      $('input.search').trigger 'focus'
 
 # HANDLERS for jQuery events
 
@@ -172,22 +172,22 @@ $ ->
         state.setUrl()
         state.debugStates()
 
-    .delegate '.show-page-license', 'click', (e) ->
+    .on 'click', '.show-page-license', (e) ->
       e.preventDefault()
       $page = $(this).parents('.page')
       title = $page.find('h1').text().trim()
       dialog.open "License for #{title}", license.info($page)
 
-    .delegate '.show-page-source', 'click', (e) ->
+    .on 'click', '.show-page-source', (e) ->
       e.preventDefault()
       $page = $(this).parents('.page')
       page = lineup.atKey($page.data('key')).getRawPage()
       dialog.open "JSON for #{page.title}",  $('<pre/>').text(JSON.stringify(page, null, 2))
 
-    .delegate '.page', 'click', (e) ->
+    .on 'click', '.page', (e) ->
       active.set this unless $(e.target).is("a")
 
-    .delegate '.internal', 'click', (e) ->
+    .on 'click', '.internal', (e) ->
       $link = $(e.target)
       title = $link.text() or $link.data 'pageName'
       # ensure that name is a string (using string interpolation)
@@ -195,7 +195,7 @@ $ ->
       pageHandler.context = $(e.target).attr('title').split(' => ')
       finishClick e, title
 
-    .delegate 'img.remote', 'click', (e) ->
+    .on 'click', 'img.remote', (e) ->
       # expand to handle click on temporary flag
       if $(e.target).attr('src').startsWith('data:image/png')
         e.preventDefault()
@@ -207,7 +207,7 @@ $ ->
         pageHandler.context = [$(e.target).data('site')]
         finishClick e, name
 
-    .delegate '.revision', 'dblclick', (e) ->
+    .on 'dblclick', '.revision', (e) ->
       e.preventDefault()
       $page = $(this).parents('.page')
       page = lineup.atKey($page.data('key')).getRawPage()
@@ -216,7 +216,7 @@ $ ->
       json = JSON.stringify(action, null, 2)
       dialog.open "Revision #{rev}, #{action.type} action", $('<pre/>').text(json)
 
-    .delegate '.action', 'click', (e) ->
+    .on 'click', '.action', (e) ->
       e.preventDefault()
       $action = $(e.target)
       if $action.is('.fork') and (name = $action.data('slug'))?
@@ -242,6 +242,7 @@ $ ->
       $action.attr('title',util.formatActionTitle(action))
 
     .delegate '.fork-page', 'click', (e) ->
+    .on 'click', '.fork-page', (e) ->
       $page = $(e.target).parents('.page')
       return if $page.find('.future').length
       pageObject = lineup.atKey $page.data('key')
@@ -268,7 +269,7 @@ $ ->
             $(p).addClass('ghost')
         pageHandler.put $page, action
 
-    .delegate 'button.create', 'click', (e) ->
+    .on 'click', 'button.create', (e) ->
       getTemplate $(e.target).data('slug'), (template) ->
         $page = $(e.target).parents('.page:first')
         $page.removeClass 'ghost'
@@ -278,11 +279,11 @@ $ ->
         refresh.rebuildPage pageObject, $page.empty()
         pageHandler.put $page, {type: 'create', id: page.id, item: {title:page.title, story:page.story}}
 
-    .delegate '.score', 'mouseenter mouseleave', (e) ->
+    .on 'mouseenter mouseleave', '.score', (e) ->
       console.log "in .score..."
       $('.main').trigger 'thumb', $(e.target).data('thumb')
 
-    .delegate 'a.search', 'click', (e) ->
+    .on 'click', 'a.search', (e) ->
       $page = $(e.target).parents('.page')
       key = $page.data('key')
       pageObject = lineup.atKey key
@@ -313,13 +314,13 @@ $ ->
       lineup.removeAllAfterKey(key) unless e.shiftKey
       link.showResult resultPage
 
-    .bind 'dragenter', (evt) -> evt.preventDefault()
-    .bind 'dragover', (evt) -> evt.preventDefault()
-    .bind "drop", drop.dispatch
+    .on 'dragenter', (evt) -> evt.preventDefault()
+    .on 'dragover', (evt) -> evt.preventDefault()
+    .on "drop", drop.dispatch
       page: (item) -> link.doInternalLink item.slug, null, item.site
       file: (file) -> readFile file
 
-  $(".provider input").click ->
+  $(".provider input").on 'click', () ->
     $("footer input:first").val $(this).attr('data-provider')
     $("footer form").submit()
 
@@ -343,7 +344,7 @@ $ ->
   $("<span>&nbsp; ☰ </span>")
     .css({"cursor":"pointer"})
     .appendTo('footer')
-    .click ->
+    .on 'click', () ->
       resultPage = newPage()
       resultPage.setTitle "Selected Plugin Pages"
       resultPage.addParagraph """
@@ -366,7 +367,7 @@ $ ->
   $("<span>&nbsp; wiki <span class=editEnable>✔︎</span> &nbsp; </span>")
     .css({"cursor":"pointer"})
     .appendTo('footer')
-    .click ->
+    .on 'click', () ->
       $('.editEnable').toggle()
       $('.page').each ->
         $page = $(this)

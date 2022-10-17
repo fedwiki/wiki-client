@@ -36,11 +36,11 @@ emit = ($item, item) ->
         menu.find('#'+column).append """
           <li><a class="menu" href="#" title="#{info.title}">#{info.name}</a></li>
         """
-    menu.find('a.menu').click (evt)->
+    menu.find('a.menu').on 'click', (evt)->
       pluginName = evt.target.text
       pluginType = pluginName.toLowerCase()
       $item.removeClass('factory').addClass(item.type=pluginType)
-      $item.unbind()
+      $item.off()
       evt.preventDefault()
       active.set $item.parents(".page")
       catalogEntry = window.catalog.find((entry) -> pluginName is entry.name)
@@ -69,7 +69,7 @@ emit = ($item, item) ->
 bind = ($item, item) ->
 
   syncEditAction = ->
-    $item.empty().unbind()
+    $item.empty().off()
     $item.removeClass("factory").addClass(item.type)
     $page = $item.parents('.page:first')
     try
@@ -182,7 +182,7 @@ bind = ($item, item) ->
           fileName: file.fileName
           lastModified: file.lastModified
 
-  $item.dblclick (e) ->
+  $item.on 'dblclick', (e) ->
     
     return unless $('.editEnable').is(':visible')
 
@@ -190,12 +190,12 @@ bind = ($item, item) ->
       editor.textEditor $item, item, {field: 'prompt'}
     else
       $item.removeClass('factory').addClass(item.type = 'paragraph')
-      $item.unbind()
+      $item.off()
       editor.textEditor $item, item
 
-  $item.bind 'dragenter', (evt) -> evt.preventDefault()
-  $item.bind 'dragover', (evt) -> evt.preventDefault()
-  $item.bind "drop", drop.dispatch
+  $item.on 'dragenter', (evt) -> evt.preventDefault()
+  $item.on 'dragover', (evt) -> evt.preventDefault()
+  $item.on "drop", drop.dispatch
     page: addReference
     file: readFile
     video: addVideo

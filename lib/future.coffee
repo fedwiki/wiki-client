@@ -21,7 +21,7 @@ emit = ($item, item) ->
         $item.append """<br><button class="create" data-slug=#{item.slug}>create</button> from #{resolve.resolveLinks "[[#{item.title}]]"}"""
 
 bind = ($item, item) ->
-  $item.find('button.transport').click (e) ->
+  $item.find('button.transport').on 'click', (e) ->
     $item.find('.caption').text 'waiting'
 
     # duplicatingTransport and Templage logic
