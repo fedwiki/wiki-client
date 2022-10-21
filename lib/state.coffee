@@ -57,7 +57,7 @@ state.show = (e) ->
   matching = true
   for name, idx in newPages
     continue if matching and= name is oldPages[idx]
-    console.log 'push', idx, name
+    # console.log 'push', idx, name
     link.showPage(name, newLocs[idx])
 
   state.debugStates()

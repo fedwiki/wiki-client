@@ -106,10 +106,10 @@ $ ->
       reader.readAsText(file)
 
   deletePage = (pageObject, $page) ->
-    console.log 'fork to delete'
+    # console.log 'fork to delete'
     pageHandler.delete pageObject, $page, (err) ->
       return if err?
-      console.log 'server delete successful'
+      # console.log 'server delete successful'
       if pageObject.isRecycler()
         # make recycler page into a ghost
         $page.addClass('ghost')

@@ -62,7 +62,7 @@ emit = ($item, item) ->
     showMenu()
   else
     wiki.origin.get 'system/factories.json', (error, data) ->
-      console.log 'factory', data
+      # console.log 'factory', data
       window.catalog = data
       showMenu()
 
@@ -157,7 +157,7 @@ bind = ($item, item) ->
           reader.readAsText(file)
         else
           reader.onload = (loadEvent) ->
-            console.log('upload file', file)
+            # console.log('upload file', file)
             imageDataURL = loadEvent.target.result
             window.plugins['image'].editor({ imageDataURL, filename: file.name, imageCaption: "Uploaded image" , $item, item})
           reader.readAsDataURL(file)

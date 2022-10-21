@@ -174,7 +174,7 @@ extractPageText = (pageText, currentItem) ->
 
 
 neighborhood.updateIndex = (pageObject, originalStory) ->
-  console.log "updating #{pageObject.getSlug()} in index"
+  # console.log "updating #{pageObject.getSlug()} in index"
   site = location.host
   return unless neighborInfo = neighborhood.sites[site]
 
