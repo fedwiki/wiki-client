@@ -220,7 +220,7 @@ handleHeaderClick = (e) ->
     if prefix is ''
       prefix = window.location.protocol
     newWindow = window.open "#{prefix}//#{crumbs.join '/'}", target
-    newWindow.focus()
+    newWindow.trigger 'focus'
 
 
 emitHeader = ($header, $page, pageObject) ->
