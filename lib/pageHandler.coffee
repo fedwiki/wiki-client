@@ -32,7 +32,7 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
   localBeforeOrigin = {
     get: (slug, done) ->
       wiki.local.get slug, (err, page) ->
-        console.log [err, page]
+        # console.log [err, page]
         if err?
           wiki.origin.get slug, done
         else

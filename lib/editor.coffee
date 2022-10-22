@@ -26,7 +26,7 @@ escape = (string) ->
     .replace(/>/g, '&gt;')
 
 textEditor = ($item, item, option={}) ->
-  console.log 'textEditor', item.id, option
+  # console.log 'textEditor', item.id, option
   enterCount = 0 if item.type is 'markdown'
   return unless $('.editEnable').is(':visible')
 

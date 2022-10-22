@@ -133,7 +133,7 @@ siteAdapter.local = {
     else
       errMsg = {msg: "no page named '#{route}' in browser local storage"}
       done errMsg, null
-      console.log("tried to local fetch a page that isn't local")
+      # console.log("tried to local fetch a page that isn't local")
       Promise.reject(errMsg) unless callback
   put: (route, data, done) ->
     # console.log "wiki.local.put #{route}"
