@@ -155,7 +155,7 @@ spawnEditor = ($page, $before, type, text) ->
 getSelectionPos = ($textarea) ->
   el = $textarea.get(0) # gets DOM Node from from jQuery wrapper
   if document.selection # IE
-    el.trigger 'focus'
+    el.focus()
     sel = document.selection.createRange()
     sel.moveStart 'character', -el.value.length
     iePos = sel.text.length
@@ -172,7 +172,7 @@ setCaretPosition = ($textarea, caretPos) ->
       range.select()
     else # rest of the world
       el.setSelectionRange caretPos, caretPos
-    el.trigger 'focus'
+    el.focus()
 
 # # may want special processing on paste eventually
 # textarea.bind 'paste', (e) ->
