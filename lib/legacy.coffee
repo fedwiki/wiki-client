@@ -170,7 +170,7 @@ $ ->
             firstItemIndex = $('.item').index($($('.page')[index]).find('.item')[0])
         plugin.renderFrom firstItemIndex
         state.setUrl()
-        state.debugStates()
+        state.debugStates() if window.debug
 
     .on 'click', '.show-page-license', (e) ->
       e.preventDefault()

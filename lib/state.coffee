@@ -60,7 +60,7 @@ state.show = (e) ->
     # console.log 'push', idx, name
     link.showPage(name, newLocs[idx])
 
-  state.debugStates()
+  state.debugStates() if window.debug
 
   active.set($('.page').last())
   document.title = lineup.bestTitle()
