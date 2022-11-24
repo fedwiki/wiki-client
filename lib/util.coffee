@@ -29,6 +29,15 @@ util.formatDate = (msSinceEpoch) ->
   sec = (if d.getSeconds() < 10 then "0" else "") + d.getSeconds()
   "#{wk} #{mo} #{day}, #{yr}<br>#{h}:#{mi}:#{sec} #{am}"
 
+util.formatActionTitle = (action) ->
+  title = ''
+  title += "#{action.site}\n" if action.site?
+  title += action.type || 'separator'
+  title += " #{util.formatElapsedTime(action.date)}" if action.date?
+  title += "\nfrom #{action.attribution.page}" if action.attribution?.page?
+  title += "\nto #{action.removedTo.page}" if action.removedTo?.page?
+  return title
+
 util.formatElapsedTime = (msSinceEpoch) ->
   msecs = (new Date().getTime() - msSinceEpoch)
   return "#{Math.floor msecs} milliseconds ago" if (secs = msecs/1000) < 2

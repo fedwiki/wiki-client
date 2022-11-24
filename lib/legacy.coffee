@@ -239,13 +239,7 @@ $ ->
     .delegate '.action', 'mouseenter', (e) ->
       $action = $(e.target)
       action = $action.data().action
-      title = ''
-      title += "#{action.site}\n" if action.site?
-      title += action.type || 'separator'
-      title += " #{util.formatElapsedTime(action.date)}" if action.date?
-      title += "\nfrom #{action.attribution.page}" if action.attribution?.page?
-      title += "\nto #{action.removedTo.page}" if action.removedTo?.page?
-      $action.attr('title',title)
+      $action.attr('title',util.formatActionTitle(action))
 
     .delegate '.fork-page', 'click', (e) ->
       $page = $(e.target).parents('.page')
