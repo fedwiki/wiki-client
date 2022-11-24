@@ -17,6 +17,7 @@ module.exports = ($journal, action) ->
     .text(action.symbol || actionSymbols.symbols[action.type])
     .attr('title',title)
     .attr('data-id', action.id || "0")
+    .attr('data-date', action.date || "0")
     .data('action', action)
   if action.type is 'add' and action.attribution?
     $action.text(actionSymbols.symbols['copyIn'])
