@@ -368,6 +368,17 @@ $ ->
         refresh.rebuildPage pageObject, $page.empty()
   $('.editEnable').toggle() unless isAuthenticated
 
+  $("<span> full <span class=fullEnable>✔︎</span> &nbsp; </span>")
+    .css({"cursor":"pointer"})
+    .appendTo('footer')
+    .click ->
+      $('.fullEnable').toggle()
+      # $('.page').each ->
+      #   $page = $(this)
+      #   pageObject = lineup.atKey $page.data('key')
+      #   refresh.rebuildPage pageObject, $page.empty()
+  $('.fullEnable').toggle() unless window.location.protocol is 'http:'
+
   target.bind()
 
   $ ->
