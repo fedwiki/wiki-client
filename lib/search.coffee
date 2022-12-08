@@ -156,9 +156,6 @@ createSearch = ({neighborhood})->
         "story": deepCopy(resultPage.story)
       },
       "date": Date.now()
-    },{
-      "type": "fork",
-      "date": Date.now()
     }]
     pageObject = newPage resultPage
     link.showResult pageObject
