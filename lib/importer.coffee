@@ -35,7 +35,7 @@ bind = ($item, item) ->
     slug = $(e.target).attr('href')
     $page = $(e.target).parents('.page') unless e.shiftKey
     pageObject = newPage(item.pages[slug])
-    link.showResult pageObject, {$page, rev:pageObject.getRevision()}
+    link.showResult pageObject, {$page}
     false
 
 module.exports = {emit, bind}
