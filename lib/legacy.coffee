@@ -14,6 +14,7 @@ link = require './link'
 target = require './target'
 license = require './license'
 plugin = require './plugin'
+util = require './util'
 
 asSlug = require('./page').asSlug
 newPage = require('./page').newPage
@@ -234,6 +235,11 @@ $ ->
           .each (_i, e) ->
             refresh.cycle $(e)
         active.set($('.page').last())
+
+    .delegate '.action', 'mouseenter', (e) ->
+      $action = $(e.target)
+      action = $action.data().action
+      $action.attr('title',util.formatActionTitle(action))
 
     .delegate '.fork-page', 'click', (e) ->
       $page = $(e.target).parents('.page')

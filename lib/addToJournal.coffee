@@ -7,16 +7,11 @@ actionSymbols = require './actionSymbols'
 
 module.exports = ($journal, action) ->
   $page = $journal.parents('.page:first')
-  title = ''
-  title += "#{action.site}\n" if action.site?
-  title += action.type || 'separator'
-  title += " #{util.formatElapsedTime(action.date)}" if action.date?
-  title += "\nfrom #{action.attribution.page}" if action.attribution?.page?
-  title += "\nto #{action.removedTo.page}" if action.removedTo?.page?
   $action = $("""<a href="#" /> """).addClass("action").addClass(action.type || 'separator')
     .text(action.symbol || actionSymbols.symbols[action.type])
-    .attr('title',title)
+    .attr('title',util.formatActionTitle(action))
     .attr('data-id', action.id || "0")
+    .attr('data-date', action.date || "0")
     .data('action', action)
   if action.type is 'add' and action.attribution?
     $action.text(actionSymbols.symbols['copyIn'])
