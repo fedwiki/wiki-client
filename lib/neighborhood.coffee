@@ -62,6 +62,7 @@ populateSiteInfoFor = (site,neighborInfo)->
           # update the index as well
           refreshIndex(site, neighborInfo)
         updateDelay = boundedDelay(Date.now() - lastModified)
+        neighborInfo.nextCheck = Date.now() + updateDelay
         console.log('delay for ', site, (updateDelay / 60000))
         transition site, 'fetch', 'done'
         delay updateDelay

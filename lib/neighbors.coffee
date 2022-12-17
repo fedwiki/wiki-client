@@ -6,6 +6,7 @@
 link = require './link'
 wiki = require './wiki'
 neighborhood = require './neighborhood'
+util = require './util'
 
 sites = null
 totalPages = 0
@@ -27,6 +28,26 @@ flag = (site) ->
 inject = (neighborhood) ->
   sites = neighborhood.sites
 
+formatNeighborTitle = (site) ->
+  console.log('formatTitle', { site, sites, neighborhood })
+  title = ''
+  title += "#{site}\n"
+  try
+    pageCount = sites[site].sitemap.length
+  catch error
+    pageCount = 0
+  try
+    if sites[site].sitemap.some(hasLinks)
+      title += "#{pageCount} pages with 2-way links\n"
+    else
+      title += "#{pageCount} pages\n"
+  catch error
+    console.info '+++ sitemap not valid for ', site
+  title += "Updated #{util.formatElapsedTime(sites[site].lastModified)}"
+  title += ", next refresh #{util.formatDelay(sites[site].nextCheck)}" if sites[site].nextCheck - Date.now() > 0
+  return title
+  
+
 bind = ->
   $neighborhood = $('.neighborhood')
   $('body')
@@ -36,16 +57,7 @@ bind = ->
       try
         pageCount = sites[site].sitemap.length
       catch error
-        pageCount = 0
-      img = $(""".neighborhood .neighbor[data-site="#{site}"]""").find('img')
-      try
-        if sites[site].sitemap.some(hasLinks)
-          img.attr('title', "#{site}\n #{pageCount} pages with 2-way links")
-        else
-          img.attr('title', "#{site}\n #{pageCount} pages")
-      catch error
-        console.info '+++ sitemap not valid for ', site
-        sites[site].sitemap = []
+        pageCount = 0      
       totalPages = Object.values(neighborhood.sites).reduce ((sum, site) -> 
         try
           if site.sitemapRequestInflight
@@ -57,6 +69,11 @@ bind = ->
           return sum
         ), 0
       $('.searchbox .pages').text "#{totalPages} pages"
+    .on 'mouseenter', '.neighbor', (e) ->
+      console.log('mouse enter (e)' , e)
+      $neighbor = $(e.currentTarget)
+      site = $neighbor.data().site
+      $neighbor.find('img:first').attr('title', formatNeighborTitle(site))
     .delegate '.neighbor img', 'click', (e) ->
       # add handling refreshing neighbor that has failed
       if $(e.target).parent().hasClass('fail')
