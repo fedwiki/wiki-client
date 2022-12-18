@@ -37,7 +37,7 @@ populateSiteInfoFor = (site,neighborInfo)->
     return ms
 
   refreshMap = (site, neighborInfo) ->
-    console.log('time to refresh map', site)
+    console.log('refreshing', site)
     neighborInfo.sitemapRequestInflight = true
     sitemapURL = wiki.site(site).getURL('system/sitemap.json')
 
@@ -45,9 +45,12 @@ populateSiteInfoFor = (site,neighborInfo)->
       .then (response) ->
         neighborInfo.sitemapRequestInflight = false
         if response.ok
+          lastModified = Date.parse(response.headers.get('last-modified'))
+          if isNaN(lastModified)
+            lastModified = 0
           return {
             sitemap: await response.json(),
-            lastModified: Date.parse(response.headers.get('last-modified'))
+            lastModified: lastModified
             }
         transition site, 'fetch', 'fail'
         wiki.site(site).refresh () ->
