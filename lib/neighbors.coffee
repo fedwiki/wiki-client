@@ -16,7 +16,6 @@ hasLinks = (element) -> element.hasOwnProperty('links')
 
 flag = (site) ->
   # status class progression: .wait, .fetch, .fail or .done
-  console.log 'neighbor - flag'
   """
     <span class="neighbor" data-site="#{site}">
       <div class="wait">
@@ -29,7 +28,6 @@ inject = (neighborhood) ->
   sites = neighborhood.sites
 
 formatNeighborTitle = (site) ->
-  console.log('formatTitle', { site, sites, neighborhood })
   title = ''
   title += "#{site}\n"
   try
@@ -70,7 +68,6 @@ bind = ->
         ), 0
       $('.searchbox .pages').text "#{totalPages} pages"
     .on 'mouseenter', '.neighbor', (e) ->
-      console.log('mouse enter (e)' , e)
       $neighbor = $(e.currentTarget)
       site = $neighbor.data().site
       $neighbor.find('img:first').attr('title', formatNeighborTitle(site))

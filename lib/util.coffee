@@ -50,7 +50,6 @@ util.formatElapsedTime = (msSinceEpoch) ->
 
 util.formatDelay = (msSinceEpoch) ->
   msecs = (msSinceEpoch - Date.now())
-  console.log('util.formatDelay', msSinceEpoch, msecs)
   return "in #{Math.floor msecs} milliseconds" if (secs = msecs/1000) < 2
   return "in #{Math.floor secs} seconds" if (mins = secs/60) < 2
   return "in #{Math.floor mins} minutes" if (hrs = mins/60) < 2
