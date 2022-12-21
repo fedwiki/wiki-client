@@ -26,7 +26,7 @@ populateSiteInfoFor = (site,neighborInfo)->
 
   boundedDelay = (ms) ->
     minDelay = 60000      # 1 minute
-    maxDelay = 86400000   # 1 day
+    maxDelay = 43200000   # 12 hours
 
     if ms > maxDelay
       return maxDelay
@@ -64,7 +64,7 @@ populateSiteInfoFor = (site,neighborInfo)->
           $('body').trigger 'new-neighbor-done', site
           # update the index as well
           refreshIndex(site, neighborInfo)
-        updateDelay = boundedDelay((Date.now() - lastModified) / 4 )
+        updateDelay = boundedDelay(Math.floor((Date.now() - lastModified) / 4 ))
         neighborInfo.nextCheck = Date.now() + updateDelay
         console.log('delay for ', site, (updateDelay / 60000))
         transition site, 'fetch', 'done'
