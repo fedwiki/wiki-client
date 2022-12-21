@@ -14,6 +14,9 @@ page = require './page'
 escapeRegExp = (string) ->
   string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
+deepCopy = (object) ->
+  JSON.parse JSON.stringify object
+
 # From reference.coffee
 emit = ($item, item) ->
   slug = item.slug
@@ -126,22 +129,36 @@ createSearch = ({neighborhood})->
       return
     $('.incremental-search').remove()
     tally = searchResults.tally
-    resultPage = newPage()
-    resultPage.setTitle "Search for '#{searchQuery}'"
-    resultPage.addParagraph """
+    resultPage = {}
+    resultPage.title = "Search for '#{searchQuery}'"
+    resultPage.story = []
+    resultPage.story.push({
+      'type': 'paragraph'
+      'id': random.itemId()
+      'text': """
         String '#{searchQuery}' found on #{tally.finds||'none'} of #{tally.pages||'no'} pages from #{tally.sites||'no'} sites.
         Text matched on #{tally.title||'no'} titles, #{tally.text||'no'} paragraphs, and #{tally.slug||'no'} slugs.
         Elapsed time #{tally.msec} milliseconds.
-    """
+    """ })
     for result in searchResults.finds
-      resultPage.addItem
+      resultPage.story.push({
         "type": "reference"
         "site": result.site
         "slug": result.page.slug
         "title": result.page.title
         "text": result.page.synopsis || ''
+      })
 
-    link.showResult resultPage
+    resultPage.journal = [{
+      "type": "create",
+      "item": {
+        "title": resultPage.title,
+        "story": deepCopy(resultPage.story)
+      },
+      "date": Date.now()
+    }]
+    pageObject = newPage resultPage
+    link.showResult pageObject
 
 
   {
