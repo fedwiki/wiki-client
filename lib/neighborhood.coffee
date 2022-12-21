@@ -11,6 +11,9 @@ neighborhood.sites = {}
 nextAvailableFetch = 0
 nextFetchInterval = 500
 
+delay = (ms) ->
+  return new Promise((resolve) -> setTimeout(resolve, ms))
+
 populateSiteInfoFor = (site,neighborInfo)->
   return if neighborInfo.sitemapRequestInflight
   neighborInfo.sitemapRequestInflight = true
@@ -21,19 +24,61 @@ populateSiteInfoFor = (site,neighborInfo)->
       .removeClass(from)
       .addClass(to)
 
-  fetchMap = ->
-    transition site, 'wait', 'fetch'
-    wiki.site(site).get 'system/sitemap.json', (err, data) ->
-      neighborInfo.sitemapRequestInflight = false
-      if !err
-        neighborInfo.sitemap = data
-        transition site, 'fetch', 'done'
-        $('body').trigger 'new-neighbor-done', site
-      else
+  boundedDelay = (ms) ->
+    minDelay = 60000      # 1 minute
+    maxDelay = 43200000   # 12 hours
+
+    if ms > maxDelay
+      return maxDelay
+
+    if ms < minDelay
+      return minDelay
+    
+    return ms
+
+  refreshMap = (site, neighborInfo) ->
+    console.log('refreshing', site)
+    neighborInfo.sitemapRequestInflight = true
+    sitemapURL = wiki.site(site).getURL('system/sitemap.json')
+
+    fetch(sitemapURL)
+      .then (response) ->
+        neighborInfo.sitemapRequestInflight = false
+        if response.ok
+          lastModified = Date.parse(response.headers.get('last-modified'))
+          if isNaN(lastModified)
+            lastModified = 0
+          return {
+            sitemap: await response.json(),
+            lastModified: lastModified
+            }
         transition site, 'fetch', 'fail'
         wiki.site(site).refresh () ->
           # empty function
+        throw new Error('Unable to fetch sitemap')
+      .then (processed) ->
+        { sitemap, lastModified } = processed
+        if lastModified > neighborInfo.lastModified
+          neighborInfo.sitemap = sitemap
+          neighborInfo.lastModified = lastModified
+          $('body').trigger 'new-neighbor-done', site
+          # update the index as well
+          refreshIndex(site, neighborInfo)
+        updateDelay = boundedDelay(Math.floor((Date.now() - lastModified) / 4 ))
+        neighborInfo.nextCheck = Date.now() + updateDelay
+        console.log('delay for ', site, (updateDelay / 60000))
+        transition site, 'fetch', 'done'
+        delay updateDelay
+          .then () ->
+            transition site, 'done', 'fetch'
+            refreshMap site, neighborInfo
+        return
+      .catch (e) ->
+        console.log(site, e)
+        transition site, 'fetch', 'fail'
+        return
 
+  refreshIndex = (site, neighborInfo) ->
     # we use `wiki.site(site).getIndex` as we want the serialized index as a string.
     wiki.site(site).getIndex 'system/site-index.json', (err, data) ->
       if !err
@@ -46,6 +91,12 @@ populateSiteInfoFor = (site,neighborInfo)->
           console.log 'error loading index - not a valid index', site
       else
         console.log 'error loading index', site, err
+
+
+  fetchMap = ->
+    transition site, 'wait', 'fetch'
+    neighborInfo.lastModified = 0
+    refreshMap site, neighborInfo
 
   now = Date.now()
   if now > nextAvailableFetch
