@@ -236,12 +236,11 @@ $ ->
             refresh.cycle $(e)
         active.set($('.page').last())
 
-    .delegate '.action', 'mouseenter', (e) ->
+    .on 'mouseenter', '.action', (e) ->
       $action = $(e.target)
       action = $action.data().action
       $action.attr('title',util.formatActionTitle(action))
 
-    .delegate '.fork-page', 'click', (e) ->
     .on 'click', '.fork-page', (e) ->
       $page = $(e.target).parents('.page')
       return if $page.find('.future').length
