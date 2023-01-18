@@ -173,49 +173,36 @@ extractPageText = (pageText, currentItem) ->
   pageText
 
 
-neighborhood.updateIndex = (pageObject, originalStory) ->
+neighborhood.updateIndex = (pageObject) ->
   console.log "updating #{pageObject.getSlug()} in index"
   site = location.host
   return unless neighborInfo = neighborhood.sites[site]
-
-  originalText = originalStory.reduce( extractPageText, '')
 
   slug = pageObject.getSlug()
   title = pageObject.getTitle()
   rawStory = pageObject.getRawPage().story
   newText = rawStory.reduce( extractPageText, '')
 
-  # try remove original page from index
-  try
-    neighborInfo.siteIndex.remove {
+  if neighborInfo.siteIndex.has(slug)
+    neighborInfo.siteIndex.replace {
       'id': slug
       'title': title
-      'content': originalText
+      'content': newText
     }
-  catch err
-    # swallow error, if the page was not in index
-    console.log "removing #{slug} from index failed", err unless err.message.includes('not in the index')
-
-  neighborInfo.siteIndex.add {
-    'id': slug
-    'title': title
-    'content': newText
-  }
+  else
+    neighborInfo.siteIndex.add {
+      'id': slug
+      'title': title
+      'content': newText
+    }
 
 neighborhood.deleteFromIndex = (pageObject) ->
   site = location.host
   return unless neighborInfo = neighborhood.sites[site]
 
   slug = pageObject.getSlug()
-  title = pageObject.getTitle()
-  rawStory = pageObject.getRawPage().story
-  pageText = rawStory.reduce(extractPageText, '')
   try
-    neighborInfo.siteIndex.remove {
-      'id': slug
-      'title': title
-      'content': pageText
-    }
+    neighborInfo.siteIndex.discard(slug)
   catch err
     # swallow error, if the page was not in index
     console.log "removing #{slug} from index failed", err unless err.message.includes('not in the index')
