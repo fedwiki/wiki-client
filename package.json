@@ -1,6 +1,6 @@
 {
   "name": "wiki-client",
-  "version": "0.24.2",
+  "version": "0.24.3",
   "description": "Federated Wiki - Client-side Javascript",
   "keywords": [
     "wiki",
@@ -49,9 +49,9 @@
     "grunt-git-authors": "^3.2.0",
     "grunt-mocha-test": "^0.13.2",
     "grunt-retire": "^1.0.3",
-    "minisearch": "^5.0.0",
-    "mocha": "^9.2.1",
-    "sinon": "^11.1.2"
+    "minisearch": "^6.0.0",
+    "mocha": "^10.2.0",
+    "sinon": "^15.0.1"
   },
   "license": "MIT",
   "repository": {

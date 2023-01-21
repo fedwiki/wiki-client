@@ -127,29 +127,22 @@ pushToServer = ($page, pagePutInfo, action) ->
   if action.type == 'fork'
     bundle.item = deepCopy pageObject.getRawPage()
 
-  # we need the original page so we can update the index
-  wiki.origin.get "#{pagePutInfo.slug}.json", (err, originalPage) ->
+  wiki.origin.put pagePutInfo.slug, bundle, (err) ->
     if err
-      originalStory = []
+      action.error = { type: err.type, msg: err.msg, response: err.xhr.responseText}
+      pushToLocal $page, pagePutInfo, action
     else
-      originalStory = originalPage.story or []
-
-    wiki.origin.put pagePutInfo.slug, bundle, (err) ->
-      if err
-        action.error = { type: err.type, msg: err.msg, response: err.xhr.responseText}
-        pushToLocal $page, pagePutInfo, action
-      else
-        pageObject.apply action if pageObject?.apply
-        neighborhood.updateSitemap pageObject
-        neighborhood.updateIndex pageObject, originalStory
-        addToJournal $page.find('.journal'), action
-        if action.type == 'fork'
-          wiki.local.delete $page.attr('id')
-        if action.type != 'fork' and action.fork
-          # implicit fork, probably only affects image plugin
-          if action.item.type is 'image'
-            index = $page.find('.item').index($page.find('#' + action.item.id).context)
-            wiki.renderFrom index
+      pageObject.apply action if pageObject?.apply
+      neighborhood.updateSitemap pageObject
+      neighborhood.updateIndex pageObject
+      addToJournal $page.find('.journal'), action
+      if action.type == 'fork'
+        wiki.local.delete $page.attr('id')
+      if action.type != 'fork' and action.fork
+        # implicit fork, probably only affects image plugin
+        if action.item.type is 'image'
+          index = $page.find('.item').index($page.find('#' + action.item.id).context)
+          wiki.renderFrom index
 
 
 pageHandler.put = ($page, action) ->

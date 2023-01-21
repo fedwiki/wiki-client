@@ -163,7 +163,7 @@ extractPageText = (pageText, currentItem) ->
           # really need to extract text from the markdown, but for now just remove link brackets, urls...
           pageText += ' ' + currentItem.text.replace /\[{2}|\[(?:[\S]+)|\]{1,2}|\\n/g, ' '
         when 'html'
-          pageText += ' ' + currentItem.text.replace /<[^>]*>/g, ''
+          pageText += ' ' + currentItem.text.replace /<[^\>]*>?/g, ''
         else
           if currentItem.text?
             for line in currentItem.text.split /\r\n?|\n/
@@ -173,49 +173,36 @@ extractPageText = (pageText, currentItem) ->
   pageText
 
 
-neighborhood.updateIndex = (pageObject, originalStory) ->
-  # console.log "updating #{pageObject.getSlug()} in index"
+neighborhood.updateIndex = (pageObject) ->
+  console.log "updating #{pageObject.getSlug()} in index"
   site = location.host
   return unless neighborInfo = neighborhood.sites[site]
-
-  originalText = originalStory.reduce( extractPageText, '')
 
   slug = pageObject.getSlug()
   title = pageObject.getTitle()
   rawStory = pageObject.getRawPage().story
   newText = rawStory.reduce( extractPageText, '')
 
-  # try remove original page from index
-  try
-    neighborInfo.siteIndex.remove {
+  if neighborInfo.siteIndex.has(slug)
+    neighborInfo.siteIndex.replace {
       'id': slug
       'title': title
-      'content': originalText
+      'content': newText
     }
-  catch err
-    # swallow error, if the page was not in index
-    console.log "removing #{slug} from index failed", err unless err.message.includes('not in the index')
-
-  neighborInfo.siteIndex.add {
-    'id': slug
-    'title': title
-    'content': newText
-  }
+  else
+    neighborInfo.siteIndex.add {
+      'id': slug
+      'title': title
+      'content': newText
+    }
 
 neighborhood.deleteFromIndex = (pageObject) ->
   site = location.host
   return unless neighborInfo = neighborhood.sites[site]
 
   slug = pageObject.getSlug()
-  title = pageObject.getTitle()
-  rawStory = pageObject.getRawPage().story
-  pageText = rawStory.reduce(extractPageText, '')
   try
-    neighborInfo.siteIndex.remove {
-      'id': slug
-      'title': title
-      'content': pageText
-    }
+    neighborInfo.siteIndex.discard(slug)
   catch err
     # swallow error, if the page was not in index
     console.log "removing #{slug} from index failed", err unless err.message.includes('not in the index')
