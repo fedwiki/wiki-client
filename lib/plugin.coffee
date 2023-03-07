@@ -135,6 +135,9 @@ plugin.wrap = (name, p) ->
   return p
 
 plugin.get = plugin.getPlugin = (name, callback) ->
+  if window.pluginSuccessor[name]
+    wiki.log('plugin successor', name, window.pluginSuccessor[name])
+    name = window.pluginSuccessor[name] 
   return loadingScripts[name].then(callback) if loadingScripts[name]
   loadingScripts[name] = new Promise (resolve, _reject) ->
     return resolve(window.plugins[name]) if window.plugins[name]

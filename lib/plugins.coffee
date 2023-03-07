@@ -10,3 +10,8 @@ window.plugins =
   #image: plugin.wrap('image', require './image')
   future: plugin.wrap('future', require './future')
   importer: plugin.wrap('importer', require './importer')
+
+# mapping between old plugins and their successor
+window.pluginSuccessor =
+  federatedWiki: 'reference'
+  mathjax: 'math'
