@@ -51,7 +51,7 @@ textEditor = ($item, item, option={}) ->
     if (e.ctrlKey || e.metaKey) and e.which == 77 #ctrl-m for menu
       e.preventDefault()
       $item.removeClass(item.type).addClass(item.type = 'factory')
-      $textarea.ftrigger 'focusout'
+      $textarea.trigger 'focusout'
       return false
 
     # provides automatic new paragraphs on enter and concatenation on backspace
