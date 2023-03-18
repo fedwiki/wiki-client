@@ -77,8 +77,8 @@ textEditor = ($item, item, option={}) ->
         if item.type is 'paragraph' or (item.type is 'markdown' and enterCount is 2)
           $page = $item.parents('.page')
           text = $textarea.val()
-          prefix = text.substring 0, sel.start
-          suffix = text.substring(sel.end)
+          prefix = text.substring(0, sel.start).trim()
+          suffix = text.substring(sel.end).trim()
           if prefix is ''
             $textarea.val(suffix)
             $textarea.trigger 'focusout'
