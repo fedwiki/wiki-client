@@ -13,10 +13,17 @@ module.exports = state = {}
 state.inject = (link_) ->
   link = link_
 
+state.fromDOM = () ->
+  # [{site, slug},...]
+  slugs = state.pagesInDom()
+  sites = state.locsInDom()
+  slugs.map (slug, idx) ->
+    {site: sites[idx], slug: slug}
+
 state.fromLocation = (location) ->
   # [{site, slug},...]
   hash = new URLSearchParams(location.hash.substring(1))
-  intent = (hash.get("stat") || location.pathname)
+  intent = (hash.get("sfw") || location.pathname)
     .replace(/^\//,'')
   toSiteSlug = (acc, item, idx) ->
     if idx % 2 == 0
@@ -32,19 +39,12 @@ state.fromLocation = (location) ->
   else
     [{site: "view", slug: "welcome-visitors"}]
 
-state.fromDOM = () ->
-  # [{site, slug},...]
-  slugs = state.pagesInDom()
-  sites = state.locsInDom()
-  slugs.map (slug, idx) ->
-    {site: sites[idx], slug: slug}
-
 toURL = (siteSlugs) ->
   combine = (url, item) -> "#{url}/#{item.site}/#{item.slug}"
   intent = siteSlugs.reduce(combine, "")
   url = new URL(location)
   if !!url.hash or url.pathname == '/'
-    url.hash = "stat=#{intent.replace(/^\//,'')}"
+    url.hash = "sfw=#{intent.replace(/^\//,'')}"
   else
     url.pathname = intent
   url
