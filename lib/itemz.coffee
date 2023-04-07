@@ -37,7 +37,7 @@ createItem = ($page, $before, item) ->
 
 replaceItem = ($item, type, item) ->
   newItem = $.extend({}, item)
-  $item.empty().unbind()
+  $item.empty().off()
   $item.removeClass(type).addClass(newItem.type)
   $page = $item.parents('.page:first')
   try

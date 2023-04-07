@@ -54,7 +54,7 @@ createSearch = ({neighborhood})->
         .css('left', "#{offset.left}px")
         .css('bottom', "#{offset.top + $('.searchbox').height()}px")
         .addClass('incremental-search')
-        .delegate '.internal', 'click', (e) ->
+        .on 'click', '.internal', (e) ->
           e.target = $(e.target).parent()[0] if e.target.nodeName == 'SPAN'
           name = $(e.target).data 'pageName'
           # ensure that name is a string (using string interpolation)
@@ -62,7 +62,7 @@ createSearch = ({neighborhood})->
           pageHandler.context = $(e.target).attr('title').split(' => ')
           finishClick e, name
 
-        .delegate 'img.remote', 'click', (e) ->
+        .on 'click', 'img.remote', (e) ->
           # expand to handle click on temporary flag
           if $(e.target).attr('src').startsWith('data:image/png')
             e.preventDefault()
@@ -124,7 +124,7 @@ createSearch = ({neighborhood})->
   performSearch = (searchQuery)->
     searchResults = neighborhood.search(searchQuery)
     if searchResults.finds && searchResults.finds.length == 1
-      $('.incremental-search').find('.internal').click()
+      $('.incremental-search').find('.internal').trigger 'click'
       $('.incremental-search').remove()
       return
     $('.incremental-search').remove()

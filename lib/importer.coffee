@@ -31,7 +31,7 @@ emit = ($item, item) ->
   """
 
 bind = ($item, item) ->
-  $item.find('a').click (e) ->
+  $item.find('a').on 'click', (e) ->
     slug = $(e.target).attr('href')
     $page = $(e.target).parents('.page') unless e.shiftKey
     pageObject = newPage(item.pages[slug])

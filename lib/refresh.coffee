@@ -354,8 +354,8 @@ renderPageIntoPageElement = (pageObject, $page) ->
   $page.data("data", pageObject.getRawPage())
   $page.data("site", pageObject.getRemoteSite()) if pageObject.isRemote()
 
-  console.log '.page keys ', ($(each).data('key') for each in $('.page'))
-  console.log 'lineup keys', lineup.debugKeys()
+  # console.log '.page keys ', ($(each).data('key') for each in $('.page'))
+  # console.log 'lineup keys', lineup.debugKeys()
 
   resolve.resolutionContext = pageObject.getContext()
 

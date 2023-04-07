@@ -1,4 +1,3 @@
-console.log "Window Name: " + window.name
 window.name = window.location.host
 
 window.wiki = require './lib/wiki'

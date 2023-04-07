@@ -71,7 +71,7 @@ bind = ->
       $neighbor = $(e.currentTarget)
       site = $neighbor.data().site
       $neighbor.find('img:first').attr('title', formatNeighborTitle(site))
-    .delegate '.neighbor img', 'click', (e) ->
+    .on 'click', '.neighbor img', (e) ->
       # add handling refreshing neighbor that has failed
       if $(e.target).parent().hasClass('fail')
         $(e.target).parent().removeClass('fail').addClass('wait')

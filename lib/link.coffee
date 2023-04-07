@@ -45,7 +45,7 @@ showResult = (pageObject, options={}) ->
   active.set($('.page').last())
 
 pageEmitter.on 'show', (page) ->
-  console.log 'pageEmitter handling', page
+  # console.log 'pageEmitter handling', page
   showResult page
 
 module.exports = {createPage, doInternalLink, showPage, showResult}

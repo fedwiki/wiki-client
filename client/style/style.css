@@ -157,12 +157,6 @@ footer {
   min-width: 40px;
 }
 
-.story code {
-  background: rgba(0,0,0,0.04);
-  padding: 0.2em 0.4em;
-  border-radius: 3px;
-}
-
 .story blockquote {
   margin-left: 0;
   padding: 0 10px;

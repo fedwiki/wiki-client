@@ -43,7 +43,7 @@ getScript = plugin.getScript = (url, callback = () ->) ->
 plugin.renderFrom = (notifIndex) ->
   $items = $(".item").slice(notifIndex)
   
-  console.log "notifIndex", notifIndex, "about to render", $items.toArray()
+  # console.log "notifIndex", notifIndex, "about to render", $items.toArray()
   promise = Promise.resolve()
   emitNextItem = (itemElems) ->
     return promise if itemElems.length == 0
@@ -98,11 +98,11 @@ bind = (name, pluginBind) ->
       deps = []
       consumes.forEach (consuming) ->
         producers = $(".item:lt(#{index})").filter(consuming)
-        console.log(name, "consumes", consuming)
-        console.log(producers, "produce", consuming)
+        # console.log(name, "consumes", consuming)
+        # console.log(producers, "produce", consuming)
         if not producers or producers.length == 0
           console.log 'warn: no items in lineup that produces', consuming
-        console.log("there are #{producers.length} instances of #{consuming}")
+        # console.log("there are #{producers.length} instances of #{consuming}")
         producers.each (_i, el) ->
           page_key = $(el).parents('.page').data('key')
           item_id = $(el).attr('data-id')
@@ -171,7 +171,7 @@ plugin.emit = (div, item, done=->) ->
       </div>
     """
     if item.text?
-      div.find('.error').dblclick (e) ->
+      div.find('.error').on 'dblclick', (e) ->
         wiki.textEditor div, item
     div.find('button').on 'click', ->
       wiki.dialog ex.toString(), """

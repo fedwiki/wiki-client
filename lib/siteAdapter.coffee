@@ -99,7 +99,7 @@ findAdapterQ = queue( (task, done) ->
 
 findAdapter = (site, done) ->
   routeStore.getItem(site).then (value) ->
-    console.log "findAdapter: ", site, value
+    # console.log "findAdapter: ", site, value
     if !value?
       findAdapterQ.push {site: site}, (prefix) ->
         sitePrefix[site] = prefix
@@ -125,7 +125,7 @@ siteAdapter.local = {
   get: (route, callback) ->
     done = (err, value) -> if (callback) then callback(err, value)
 
-    console.log "wiki.local.get #{route}"
+    # console.log "wiki.local.get #{route}"
     if page = localStorage.getItem(route.replace(/\.json$/,''))
       parsedPage = JSON.parse page
       done null, parsedPage
@@ -133,14 +133,14 @@ siteAdapter.local = {
     else
       errMsg = {msg: "no page named '#{route}' in browser local storage"}
       done errMsg, null
-      console.log("tried to local fetch a page that isn't local")
+      # console.log("tried to local fetch a page that isn't local")
       Promise.reject(errMsg) unless callback
   put: (route, data, done) ->
-    console.log "wiki.local.put #{route}"
+    # console.log "wiki.local.put #{route}"
     localStorage.setItem(route, JSON.stringify(data))
     done()
   delete: (route) ->
-    console.log "wiki.local.delete #{route}"
+    # console.log "wiki.local.delete #{route}"
     localStorage.removeItem route
 }
 
@@ -150,7 +150,7 @@ siteAdapter.origin = {
   getDirectURL: (route) -> "/#{route}"
   get: (route, callback) ->
     done = (err, value) -> if (callback) then callback(err, value)
-    console.log "wiki.origin.get #{route}"
+    # console.log "wiki.origin.get #{route}"
     $.ajax
       type: 'GET'
       dataType: 'json'
@@ -159,7 +159,7 @@ siteAdapter.origin = {
       error: (xhr, type, msg) -> done {msg, xhr}, null
   getIndex: (route, callback) ->
     done = (err, value) -> if (callback) then callback(err, value)
-    console.log "wiki.origin.get #{route}"
+    # console.log "wiki.origin.get #{route}"
     $.ajax
       type: 'GET'
       dataType: 'text'
@@ -167,7 +167,7 @@ siteAdapter.origin = {
       success: (page) -> done null, page
       error: (xhr, type, msg) -> done {msg, xhr}, null
   put: (route, data, done) ->
-    console.log "wiki.orgin.put #{route}"
+    # console.log "wiki.orgin.put #{route}"
     $.ajax
       type: 'PUT'
       url: "/page/#{route}/action"
@@ -176,7 +176,7 @@ siteAdapter.origin = {
       success: () -> done null
       error: (xhr, type, msg) -> done {xhr, type, msg}
   delete: (route, done) ->
-    console.log "wiki.origin.delete #{route}"
+    # console.log "wiki.origin.delete #{route}"
     $.ajax
       type: 'DELETE'
       url: "/#{route}"
@@ -190,7 +190,7 @@ siteAdapter.recycler = {
   getDirectURL: (route) -> "/recycler/#{route}"
   get: (route, callback) ->
     done = (err, value) -> if (callback) then callback(err, value)
-    console.log "wiki.recycler.get #{route}"
+    # console.log "wiki.recycler.get #{route}"
     $.ajax
       type: 'GET'
       dataType: 'json'
@@ -198,7 +198,7 @@ siteAdapter.recycler = {
       success: (page) -> done null, page
       error: (xhr, type, msg) -> done {msg, xhr}, null
   delete: (route, done) ->
-    console.log "wiki.recycler.delete #{route}"
+    # console.log "wiki.recycler.delete #{route}"
     $.ajax
       type: 'DELETE'
       url: "/recycler/#{route}"
@@ -211,7 +211,7 @@ siteAdapter.site = (site) ->
   return siteAdapter.recycler if site is 'recycler'
 
   createTempFlag = (site) ->
-    console.log "creating temp flag for #{site}"
+    # console.log "creating temp flag for #{site}"
     myCanvas = document.createElement('canvas')
     myCanvas.width = 32
     myCanvas.height = 32

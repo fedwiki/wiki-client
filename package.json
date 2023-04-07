@@ -27,7 +27,7 @@
   "dependencies": {
     "async": "^3.2.1",
     "localforage": "^1.7.3",
-    "underscore": "^1.9.2"
+    "underscore": "^1.13.6"
   },
   "scripts": {
     "test": "grunt mochaTest"
@@ -62,6 +62,6 @@
     "url": "https://github.com/fedwiki/wiki-client/issues"
   },
   "engines": {
-    "node": ">=8.x"
+    "node": ">=16.x"
   }
 }

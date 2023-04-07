@@ -26,7 +26,7 @@ escape = (string) ->
     .replace(/>/g, '&gt;')
 
 textEditor = ($item, item, option={}) ->
-  console.log 'textEditor', item.id, option
+  # console.log 'textEditor', item.id, option
   enterCount = 0 if item.type is 'markdown'
   return unless $('.editEnable').is(':visible')
 
@@ -34,12 +34,12 @@ textEditor = ($item, item, option={}) ->
 
     if e.which == 27 #esc for save
       e.preventDefault()
-      $textarea.focusout()
+      $textarea.trigger 'focusout'
       return false
 
     if (e.ctrlKey || e.metaKey) and e.which == 83 #ctrl-s for save
       e.preventDefault()
-      $textarea.focusout()
+      $textarea.trigger 'focusout'
       return false
 
     if (e.ctrlKey || e.metaKey) and e.which == 73 #ctrl-i for information
@@ -51,7 +51,7 @@ textEditor = ($item, item, option={}) ->
     if (e.ctrlKey || e.metaKey) and e.which == 77 #ctrl-m for menu
       e.preventDefault()
       $item.removeClass(item.type).addClass(item.type = 'factory')
-      $textarea.focusout()
+      $textarea.trigger 'focusout'
       return false
 
     # provides automatic new paragraphs on enter and concatenation on backspace
@@ -77,15 +77,15 @@ textEditor = ($item, item, option={}) ->
         if item.type is 'paragraph' or (item.type is 'markdown' and enterCount is 2)
           $page = $item.parents('.page')
           text = $textarea.val()
-          prefix = text.substring 0, sel.start
-          suffix = text.substring(sel.end)
+          prefix = text.substring(0, sel.start).trim()
+          suffix = text.substring(sel.end).trim()
           if prefix is ''
             $textarea.val(suffix)
-            $textarea.focusout()
+            $textarea.trigger 'focusout'
             spawnEditor($page, $item.prev(), item.type, prefix)
           else
             $textarea.val(prefix)
-            $textarea.focusout()
+            $textarea.trigger 'focusout'
             spawnEditor($page, $item, item.type, suffix)
           return false
       else
@@ -93,7 +93,7 @@ textEditor = ($item, item, option={}) ->
 
   focusoutHandler = ->
     $item.removeClass 'textEditing'
-    $textarea.unbind()
+    $textarea.off()
     $page = $item.parents('.page:first')
     if item[option.field||'text'] = $textarea.val()
       # Remove output and source styling as type may have changed.
@@ -117,11 +117,11 @@ textEditor = ($item, item, option={}) ->
 
   return if $item.hasClass 'textEditing'
   $item.addClass 'textEditing'
-  $item.unbind()
+  $item.off()
   original = item[option.field||'text'] ? ''
   $textarea = $("<textarea>#{escape original}#{escape option.suffix ? ''}</textarea>")
-    .focusout focusoutHandler
-    .bind 'keydown', keydownHandler
+    .on 'focusout', focusoutHandler
+    .on 'keydown', keydownHandler
   $item.html $textarea
   if option.caret
     setCaretPosition $textarea, option.caret
@@ -130,7 +130,7 @@ textEditor = ($item, item, option={}) ->
     #scrolls to bottom of text area
     $textarea.scrollTop($textarea[0].scrollHeight - $textarea.height())
   else
-    $textarea.focus()
+    $textarea.trigger 'focus'
 
 spawnEditor = ($page, $before, type, text) ->
   item =

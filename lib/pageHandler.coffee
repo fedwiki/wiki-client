@@ -32,7 +32,7 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
   localBeforeOrigin = {
     get: (slug, done) ->
       wiki.local.get slug, (err, page) ->
-        console.log [err, page]
+        # console.log [err, page]
         if err?
           wiki.origin.get slug, done
         else
@@ -57,7 +57,7 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
 
   adapter.get "#{slug}.json", (err, page) ->
     if !err
-      console.log 'got', site, page
+      # console.log 'got', site, page
       page = revision.create rev, page if rev
       whenGotten newPage(page, site)
     else
@@ -161,14 +161,14 @@ pageHandler.put = ($page, action) ->
     local: $page.hasClass('local')
   }
   forkFrom = pagePutInfo.site
-  console.log 'pageHandler.put', action, pagePutInfo
+  # console.log 'pageHandler.put', action, pagePutInfo
 
   # detect when fork to local storage
   if pageHandler.useLocalStorage()
     if pagePutInfo.site?
-      console.log 'remote => local'
+      # console.log 'remote => local'
     else if !pagePutInfo.local
-      console.log 'origin => local'
+      # console.log 'origin => local'
       action.site = forkFrom = location.host
     # else if !pageFromLocalStorage(pagePutInfo.slug)
     #   console.log ''
@@ -205,8 +205,8 @@ pageHandler.put = ($page, action) ->
     pushToServer($page, pagePutInfo, action)
 
 pageHandler.delete = (pageObject, $page, done) ->
-  console.log 'delete server-side'
-  console.log 'pageObject:', pageObject
+  # console.log 'delete server-side'
+  # console.log 'pageObject:', pageObject
   if pageObject.isRecycler()
     wiki.recycler.delete "#{pageObject.getSlug()}.json", (err) ->
       more = ->
