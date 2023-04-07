@@ -5,7 +5,6 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-git-authors');
-  grunt.loadNpmTasks('grunt-retire');
 
   // N.B. The development build includes paths in the mapfile, at the browserify step, that are not accessable
   //      from the browser.
@@ -42,11 +41,6 @@ module.exports = function (grunt) {
         "David Turnbull <dturnbull@gmail.com>",
         "Austin King <shout@ozten.com>"
       ]
-    },
-
-    retire: {
-      js: ['client/js/*.js'],
-      options: {}
     },
 
     // tidy-up before we start the build
