@@ -75,7 +75,7 @@ bind = ->
       # add handling refreshing neighbor that has failed
       if $(e.target).parent().hasClass('fail')
         $(e.target).parent().removeClass('fail').addClass('wait')
-        site = $(e.target).attr('title')
+        site = $(e.target).attr('title').split('\n')[0]
         wiki.site(site).refresh () ->
           console.log 'about to retry neighbor'
           neighborhood.retryNeighbor(site)
