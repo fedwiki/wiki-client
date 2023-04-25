@@ -41,8 +41,9 @@ formatNeighborTitle = (site) ->
       title += "#{pageCount} pages\n"
   catch error
     console.info '+++ sitemap not valid for ', site
-  title += "Updated #{util.formatElapsedTime(sites[site].lastModified)}"
-  title += ", next refresh #{util.formatDelay(sites[site].nextCheck)}" if sites[site].nextCheck - Date.now() > 0
+  if sites[site].lastModified != 0
+    title += "Updated #{util.formatElapsedTime(sites[site].lastModified)}"
+    title += ", next refresh #{util.formatDelay(sites[site].nextCheck)}" if sites[site].nextCheck - Date.now() > 0
   return title
   
 
