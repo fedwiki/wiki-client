@@ -41,8 +41,9 @@ formatNeighborTitle = (site) ->
       title += "#{pageCount} pages\n"
   catch error
     console.info '+++ sitemap not valid for ', site
-  title += "Updated #{util.formatElapsedTime(sites[site].lastModified)}"
-  title += ", next refresh #{util.formatDelay(sites[site].nextCheck)}" if sites[site].nextCheck - Date.now() > 0
+  if sites[site].lastModified != 0
+    title += "Updated #{util.formatElapsedTime(sites[site].lastModified)}"
+    title += ", next refresh #{util.formatDelay(sites[site].nextCheck)}" if sites[site].nextCheck - Date.now() > 0
   return title
   
 
@@ -75,7 +76,7 @@ bind = ->
       # add handling refreshing neighbor that has failed
       if $(e.target).parent().hasClass('fail')
         $(e.target).parent().removeClass('fail').addClass('wait')
-        site = $(e.target).attr('title')
+        site = $(e.target).attr('title').split('\n')[0]
         wiki.site(site).refresh () ->
           console.log 'about to retry neighbor'
           neighborhood.retryNeighbor(site)
