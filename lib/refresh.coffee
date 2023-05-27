@@ -447,16 +447,18 @@ newFuturePage = (title, create) ->
       'text': 'We could not find this page in the expected context.'
       'title': title
       'create': create
+      'context': pageHandler.context.filter((c) -> !['view', 'origin', 'local'].includes(c))
     pageObject.addItem
       'type': 'paragraph'
       'text': "We did find the page in your current neighborhood."
     pageObject.addItem hit for hit in hits
   else
-     pageObject.addItem
+    pageObject.addItem
       'type': 'future'
       'text': 'We could not find this page.'
       'title': title
       'create': create
+      'context': pageHandler.context.filter((c) -> !['view', 'origin', 'local'].includes(c))
   pageObject
 
 cycle = ($page) ->
