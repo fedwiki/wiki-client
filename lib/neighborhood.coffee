@@ -37,9 +37,12 @@ populateSiteInfoFor = (site,neighborInfo)->
     return ms
 
   refreshMap = (site, neighborInfo) ->
-    console.log('refreshing', site)
     neighborInfo.sitemapRequestInflight = true
     sitemapURL = wiki.site(site).getURL('system/sitemap.json')
+
+    if sitemapURL is ''
+      transition site, 'fetch', 'fail'
+      return
 
     fetch(sitemapURL)
       .then (response) ->
