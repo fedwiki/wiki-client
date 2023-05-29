@@ -67,6 +67,7 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
         else
           whenNotGotten()
       else
+        url = adapter.getDirectURL(pageInformation.slug)
         text = """
           The page handler has run into problems with this request.
           <pre class=error>#{JSON.stringify pageInformation}</pre>
