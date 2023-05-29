@@ -61,7 +61,7 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
       page = revision.create rev, page if rev
       whenGotten newPage(page, site)
     else
-      if (err.xhr.status == 404) or (err.xhr.status == 0)
+      if ([403, 404].includes(err.xhr.status) ) or (err.xhr.status == 0)
         if localContext.length > 0
           recursiveGet( {pageInformation, whenGotten, whenNotGotten, localContext} )
         else
