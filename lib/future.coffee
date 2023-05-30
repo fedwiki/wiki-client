@@ -12,44 +12,51 @@ emit = ($item, item) ->
 
   $item.append """#{item.text}"""
 
-  if isSecureContext
-    if item.context? and item.context.length > 0
-      offerPages = []
-      item.context.forEach (c) ->
-        if wiki.neighborhood[c].lastModified is 0
-          slug = wiki.asSlug(item.title)
-          offerPages.push """
-            <p>
-              <img class='remote'
-                src='#{wiki.site(c).flag()}' 
-                title="#{c}">
-              <a class='internal' 
-                href='http://#{c}/#{slug}.html' 
-                target='_blank'>#{c}</a>
-            </p>
-          """
-      $item.append """
-        <div>
-          <p>Some remote wiki could not be reached.
-            Clicking on tilted flags in the neighborhood bar will retry connecting.
-            If any are not tilted when they stop spinning, retrying link might find the page you're looking for.</p>
-        </div>
-        <div>
-          <p>Try accessing directly on the remote wiki, will open a new tab.</p>
-          #{offerPages.join('\n')}
-        </div>
-      """
-      
-      altContext = document.URL.replace(/^https/, 'http').replace(/\/\w+\/[\w-]+$/, '')
-      $item.append """
-        <div>
-          <p>If the page is accessible directly, open the <a href="#{altContext}" target="_blank">lineup</a> using http, 
-          opens in a new tab. Then clicking the link there that led you here.</p>
-        </div>
-        <div>
+  if isSecureContext and !isOwner
+    $item.append """
+      <div>
+        <p>If this is your wiki, you are not logged in.</p>
+      </div>
+    """
+
+  if item.context? and item.context.length > 0
+    offerPages = []
+    item.context.forEach (c) ->
+      if wiki.neighborhood[c].lastModified is 0
+        slug = wiki.asSlug(item.title)
+        offerPages.push """
           <p>
-        </div>
-      """
+            <img class='remote'
+              src='#{wiki.site(c).flag()}' 
+              title="#{c}">
+            <a class='internal' 
+              href='http://#{c}/#{slug}.html' 
+              target='_blank'>#{c}</a>
+          </p>
+        """
+    $item.append """
+      <div>
+        <p>Some remote wiki could not be reached.
+          Clicking on tilted flags in the neighborhood bar will retry connecting.
+          If any are not tilted when they stop spinning, retrying link might find the page you're looking for.</p>
+      </div>
+      <div>
+        <p>Try accessing directly on the remote wiki, will open a new tab.</p>
+        #{offerPages.join('\n')}
+      </div>
+    """
+      
+  if isSecureContext
+    altContext = document.URL.replace(/^https/, 'http').replace(/\/\w+\/[\w-]+$/, '')
+    $item.append """
+      <div>
+        <p>If the page is accessible directly, open the <a href="#{altContext}" target="_blank">lineup</a> using http, 
+        opens in a new tab. Then clicking the link there that led you here.</p>
+      </div>
+      <div>
+        <p>
+      </div>
+    """
 
   $item.append """<button class="create">create</button> new blank page"""
 
