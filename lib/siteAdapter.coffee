@@ -70,10 +70,13 @@ findAdapterQ = queue( (task, done) ->
   if sitePrefix[site]?
     done sitePrefix[site]
 
-  testURL = "//#{site}/favicon.png"
+  if site.split('.').at(-1) is 'localhost'
+    testURL = "http://#{site}/favicon.png"
+  else
+    testURL = "//#{site}/favicon.png"
   testWikiSite testURL, (->
-    sitePrefix[site] = "//#{site}"
-    done "//#{site}"
+    sitePrefix[site] = testURL.slice(0,-12)
+    done testURL.slice(0,-12)
   ), ->
     switch location.protocol
       when 'http:'
