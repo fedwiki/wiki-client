@@ -12,12 +12,22 @@ emit = ($item, item) ->
 
   $item.append """#{item.text}"""
 
-  if isSecureContext and !isOwner
-    $item.append """
-      <div>
-        <p>If this is your wiki, you are not logged in.</p>
-      </div>
-    """
+  $item.append """<br><br><button class="create">create</button> new blank page"""
+
+  if transport = item.create?.source?.transport
+    $item.append """<br><button class="transport" data-slug=#{item.slug}>create</button> transport from #{transport}"""
+    $item.append "<p class=caption> unavailable</p>"
+    $.get '//localhost:4020', ->
+      $item.find('.caption').text 'ready'
+
+  if (info = neighborhood.sites[location.host])? and info.sitemap?
+    for localPage in info.sitemap
+      if localPage.slug.match /-template$/
+        $item.append """<br><button class="create" data-slug=#{localPage.slug}>create</button> from #{resolve.resolveLinks "[[#{localPage.title}]]"}"""
+
+  $item.append """
+    <p>Some possible places to look for this page, if it exists.</p>
+  """
 
   if item.context? and item.context.length > 0
     offerPages = []
@@ -34,42 +44,26 @@ emit = ($item, item) ->
               target='_blank'>#{c}</a>
           </p>
         """
-    $item.append """
-      <div>
-        <p>Some remote wiki could not be reached.
-          Clicking on tilted flags in the neighborhood bar will retry connecting.
-          If any are not tilted when they stop spinning, retrying link might find the page you're looking for.</p>
-      </div>
-      <div>
-        <p>Try accessing directly on the remote wiki, will open a new tab.</p>
-        #{offerPages.join('\n')}
-      </div>
-    """
+    if offerPages.length > 0
+      $item.append """
+        <div>
+          <p>Try on remote wiki where it was expected to be found, opens in a new tab.</p>
+          #{offerPages.join('\n')}
+        </div>
+      """
       
   if isSecureContext
     altContext = document.URL.replace(/^https/, 'http').replace(/\/\w+\/[\w-]+$/, '')
+    altLinkText = if altContext.length > 55 then altContext.substring(0,55)+'...' else altContext
     $item.append """
       <div>
-        <p>If the page is accessible directly, open the <a href="#{altContext}" target="_blank">lineup</a> using http, 
-        opens in a new tab. Then clicking the link there that led you here.</p>
+        <p>Try opening lineup using http, opens in a new tab.</p>
+        <p><a href="#{altContext}" target="_blank"><img class='remote' src='/favicon.png' title='#{location.host}'> #{altLinkText}</a>.</p>
       </div>
       <div>
         <p>
       </div>
     """
-
-  $item.append """<button class="create">create</button> new blank page"""
-
-  if transport = item.create?.source?.transport
-    $item.append """<br><button class="transport" data-slug=#{item.slug}>create</button> transport from #{transport}"""
-    $item.append "<p class=caption> unavailable</p>"
-    $.get '//localhost:4020', ->
-      $item.find('.caption').text 'ready'
-
-  if (info = neighborhood.sites[location.host])? and info.sitemap?
-    for item in info.sitemap
-      if item.slug.match /-template$/
-        $item.append """<br><button class="create" data-slug=#{item.slug}>create</button> from #{resolve.resolveLinks "[[#{item.title}]]"}"""
 
 bind = ($item, item) ->
   $item.find('button.transport').on 'click', (e) ->
