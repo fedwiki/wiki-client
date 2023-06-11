@@ -25,9 +25,12 @@ emit = ($item, item) ->
       if localPage.slug.match /-template$/
         $item.append """<br><button class="create" data-slug=#{localPage.slug}>create</button> from #{resolve.resolveLinks "[[#{localPage.title}]]"}"""
 
-  $item.append """
-    <p>Some possible places to look for this page, if it exists.</p>
-  """
+  if (item.context? and item.context.length > 0) or (isSecureContext and !location.hostname.endsWith('localhost'))
+    $item.append """
+      <p>Some possible places to look for this page, if it exists.</p>
+    """
+
+  offerAltLineup = true
 
   if item.context? and item.context.length > 0
     offerPages = []
@@ -51,8 +54,17 @@ emit = ($item, item) ->
           #{offerPages.join('\n')}
         </div>
       """
+    else
+      offerAltLineup = false
+      $item.append """
+        <div>
+          <p>None of the expected places were unreachable.</p>
+        </div>
+      """
+  else
+    offerAltLineup = false
       
-  if isSecureContext
+  if isSecureContext and offerAltLineup and !location.hostname.endsWith('localhost')
     altContext = document.URL.replace(/^https/, 'http').replace(/\/\w+\/[\w-]+$/, '')
     altLinkText = if altContext.length > 55 then altContext.substring(0,55)+'...' else altContext
     $item.append """
