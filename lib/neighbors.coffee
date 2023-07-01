@@ -64,7 +64,6 @@ bind = ->
           else
             return sum + site.sitemap.length
         catch error
-          console.log('failed in new neighbour done', site, error)
           return sum
         ), 0
       $('.searchbox .pages').text "#{totalPages} pages"

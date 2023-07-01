@@ -444,19 +444,21 @@ newFuturePage = (title, create) ->
   if hits.length > 0
     pageObject.addItem
       'type': 'future'
-      'text': 'We could not find this page in the expected context.'
+      'text': 'We could not find this page where it was expected.'
       'title': title
       'create': create
+      'context': pageHandler.context.filter((c) -> !['view', 'origin', 'local'].includes(c))
     pageObject.addItem
       'type': 'paragraph'
-      'text': "We did find the page in your current neighborhood."
+      'text': "We did find possible duplicate in the current neighborhood."
     pageObject.addItem hit for hit in hits
   else
-     pageObject.addItem
+    pageObject.addItem
       'type': 'future'
       'text': 'We could not find this page.'
       'title': title
       'create': create
+      'context': pageHandler.context.filter((c) -> !['view', 'origin', 'local'].includes(c))
   pageObject
 
 cycle = ($page) ->
