@@ -33,10 +33,10 @@
     "test": "grunt mochaTest"
   },
   "devDependencies": {
-    "@babel/core": "^7.8.3",
-    "@babel/plugin-transform-runtime": "^7.17.10",
-    "@babel/preset-env": "^7.8.3",
-    "@babel/runtime": "^7.17.9",
+    "@babel/core": "^7.22.9",
+    "@babel/plugin-transform-runtime": "^7.22.9",
+    "@babel/preset-env": "^7.22.9",
+    "@babel/runtime": "^7.22.6",
     "coffeeify": "^3.0.1",
     "coffeescript": "^2.5.0",
     "expect.js": "^0.3.1",
