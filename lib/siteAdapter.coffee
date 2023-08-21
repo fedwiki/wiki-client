@@ -348,7 +348,7 @@ siteAdapter.site = (site) ->
           url: url
           xhrFields: { withCredentials: useCredentials }
           success: (data, code, xhr) ->
-            if data.title is 'Login Required' and !url.includes('login-required') and credentialsNeeded[site] isnt true
+            if ((route is 'system/sitemap.json' and Array.isArray(data) and data[0] is 'Login Required') or data.title is 'Login Required') and !url.includes('login-required') and credentialsNeeded[site] isnt true
               credentialsNeeded[site] = true
               getContent route, (err, page) ->
                 if !err
