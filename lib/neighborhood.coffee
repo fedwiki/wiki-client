@@ -38,48 +38,34 @@ populateSiteInfoFor = (site,neighborInfo)->
 
   refreshMap = (site, neighborInfo) ->
     neighborInfo.sitemapRequestInflight = true
-    sitemapURL = wiki.site(site).getURL('system/sitemap.json')
 
-    if sitemapURL is ''
-      transition site, 'fetch', 'fail'
-      return
-
-    fetch(sitemapURL)
-      .then (response) ->
-        neighborInfo.sitemapRequestInflight = false
-        if response.ok
-          lastModified = Date.parse(response.headers.get('last-modified'))
-          if isNaN(lastModified)
-            lastModified = 0
-          return {
-            sitemap: await response.json(),
-            lastModified: lastModified
-            }
+    wiki.site(site).get 'system/sitemap.json', (err, gotData) ->
+      { data, lastModified } = gotData
+      neighborInfo.sitemapRequestInflight = false
+      if err
         transition site, 'fetch', 'fail'
         wiki.site(site).refresh () ->
           # empty function
         throw new Error('Unable to fetch sitemap')
-      .then (processed) ->
-        { sitemap, lastModified } = processed
-        if lastModified > neighborInfo.lastModified
-          neighborInfo.sitemap = sitemap
-          neighborInfo.lastModified = lastModified
-          $('body').trigger 'new-neighbor-done', site
-          # update the index as well
-          refreshIndex(site, neighborInfo)
-        updateDelay = boundedDelay(Math.floor((Date.now() - lastModified) / 4 ))
-        neighborInfo.nextCheck = Date.now() + updateDelay
-        console.log('delay for ', site, (updateDelay / 60000))
-        transition site, 'fetch', 'done'
-        delay updateDelay
-          .then () ->
-            transition site, 'done', 'fetch'
-            refreshMap site, neighborInfo
-        return
-      .catch (e) ->
-        console.log(site, e)
-        transition site, 'fetch', 'fail'
-        return
+      
+      if isNaN lastModified
+        lastModified = 0
+        
+      if lastModified > neighborInfo.lastModified
+        neighborInfo.sitemap = data
+        neighborInfo.lastModified = lastModified
+        $('body').trigger 'new-neighbor-done', site
+        refreshIndex(site, neighborInfo)
+
+      updateDelay = boundedDelay(Math.floor((Date.now() - lastModified) / 4 ))
+      neighborInfo.nextCheck = Date.now() + updateDelay
+      console.log('delay for ', site, (updateDelay / 60000))
+      transition site, 'fetch', 'done'
+
+      delay updateDelay
+        .then () ->
+          transition site, 'done', 'fetch'
+          refreshMap site, neighborInfo
 
   refreshIndex = (site, neighborInfo) ->
     # we use `wiki.site(site).getIndex` as we want the serialized index as a string.

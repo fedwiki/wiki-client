@@ -158,7 +158,11 @@ siteAdapter.origin = {
       type: 'GET'
       dataType: 'json'
       url: "/#{route}"
-      success: (page) -> done null, page
+      success: (page, code, xhr) ->
+        if route is 'system/sitemap.json'
+          done null, { data: page, lastModified: Date.parse(xhr.getResponseHeader('Last-Modified') )}
+        else
+          done null, page
       error: (xhr, type, msg) -> done {msg, xhr}, null
   getIndex: (route, callback) ->
     done = (err, value) -> if (callback) then callback(err, value)
@@ -343,8 +347,8 @@ siteAdapter.site = (site) ->
           dataType: 'json'
           url: url
           xhrFields: { withCredentials: useCredentials }
-          success: (data) ->
-            if data.title is 'Login Required' and !url.includes('login-required') and credentialsNeeded[site] isnt true
+          success: (data, code, xhr) ->
+            if ((route is 'system/sitemap.json' and Array.isArray(data) and data[0] is 'Login Required') or data.title is 'Login Required') and !url.includes('login-required') and credentialsNeeded[site] isnt true
               credentialsNeeded[site] = true
               getContent route, (err, page) ->
                 if !err
@@ -354,7 +358,10 @@ siteAdapter.site = (site) ->
                   credentialsNeeded[site] = false
                   done err, page
             else
-              done null, data
+              if route is 'system/sitemap.json'
+                done null, { data, lastModified: Date.parse(xhr.getResponseHeader('Last-Modified')) }
+              else
+                done null, data
               Promise.resolve(data) unless callback
           error: (xhr, type, msg) ->
             done {msg, xhr}, null

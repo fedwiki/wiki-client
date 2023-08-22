@@ -34,8 +34,9 @@ preLoadEditors = (catalog) ->
     )
 
 wiki.origin.get 'system/factories.json', (error, data) ->
-  window.catalog = data
-  preLoadEditors data
+  if Array.isArray(data)
+    window.catalog = data
+    preLoadEditors data
 
 $ ->
   dialog.emit()
