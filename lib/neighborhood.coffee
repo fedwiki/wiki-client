@@ -40,13 +40,14 @@ populateSiteInfoFor = (site,neighborInfo)->
     neighborInfo.sitemapRequestInflight = true
 
     wiki.site(site).get 'system/sitemap.json', (err, gotData) ->
-      { data, lastModified } = gotData
       neighborInfo.sitemapRequestInflight = false
       if err
         transition site, 'fetch', 'fail'
         wiki.site(site).refresh () ->
           # empty function
         throw new Error('Unable to fetch sitemap')
+
+      { data, lastModified } = gotData
       
       if isNaN lastModified
         lastModified = 0
