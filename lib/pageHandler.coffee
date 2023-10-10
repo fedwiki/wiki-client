@@ -128,6 +128,10 @@ pushToServer = ($page, pagePutInfo, action) ->
   if action.type == 'fork'
     bundle.item = deepCopy pageObject.getRawPage()
 
+  if action.fork
+    # include original page in implicit forks
+    bundle.forkPage = deepCopy pageObject.getRawPage()
+
   wiki.origin.put pagePutInfo.slug, bundle, (err) ->
     if err
       action.error = { type: err.type, msg: err.msg, response: err.xhr.responseText}
