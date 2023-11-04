@@ -125,11 +125,7 @@ pushToServer = ($page, pagePutInfo, action) ->
   # bundle rawPage which server will strip out
   bundle = deepCopy(action)
   pageObject = lineup.atKey $page.data('key')
-  if action.type == 'fork'
-    bundle.item = deepCopy pageObject.getRawPage()
-
-  if action.fork
-    # include original page in implicit forks
+  if action.fork or action.type is 'fork'
     bundle.forkPage = deepCopy pageObject.getRawPage()
 
   wiki.origin.put pagePutInfo.slug, bundle, (err) ->
