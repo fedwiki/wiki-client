@@ -73,6 +73,7 @@ handleDrop = (evt, ui, originalIndex, originalOrder) ->
 
   moveWithinPage = equals($sourcePage, $destinationPage)
   moveBetweenDuplicatePages = not moveWithinPage and \
+    not evt.shiftKey and \
     $sourcePage.attr('id') == $destinationPage.attr('id')
 
   removedTo = {
