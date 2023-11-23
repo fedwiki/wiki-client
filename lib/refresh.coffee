@@ -73,6 +73,7 @@ handleDrop = (evt, ui, originalIndex, originalOrder) ->
 
   moveWithinPage = equals($sourcePage, $destinationPage)
   moveBetweenDuplicatePages = not moveWithinPage and \
+    not evt.shiftKey and \
     $sourcePage.attr('id') == $destinationPage.attr('id')
 
   removedTo = {
@@ -123,7 +124,7 @@ changeMouseCursor = (e, ui) ->
   moveBetweenDuplicatePages = not moveWithinPage and \
     $sourcePage.attr('id') == $destinationPage.attr('id')
   copying = sourceIsReadOnly or (e.shiftKey and not moveWithinPage)
-  if destinationIsGhost or moveBetweenDuplicatePages
+  if destinationIsGhost or (moveBetweenDuplicatePages and not e.shiftKey)
     $('body').css('cursor', 'no-drop')
     $('.shadow-copy').hide()
   else if copying
