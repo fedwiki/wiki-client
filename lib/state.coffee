@@ -13,26 +13,67 @@ module.exports = state = {}
 state.inject = (link_) ->
   link = link_
 
+state.fromDOM = () ->
+  # [{site, slug},...]
+  slugs = state.pagesInDom()
+  sites = state.locsInDom()
+  slugs.map (slug, idx) ->
+    {site: sites[idx], slug: slug}
+
+state.fromLocation = (location) ->
+  # [{site, slug},...]
+  hash = new URLSearchParams(location.hash.substring(1))
+  intent = (hash.get("sfw") || location.pathname)
+    .replace(/^\//,'')
+  toSiteSlug = (acc, item, idx) ->
+    if idx % 2 == 0
+      acc.push({site: item})
+    else
+      acc[acc.length-1].slug = item
+    acc
+  parts = intent.split('/')
+  if parts.length % 2 == 0
+    parts.reduce(toSiteSlug, [])
+  else if parts.length == 1 and parts[0].endsWith(".html")
+    [{site: "view", slug: parts[0].replace(/\.html$/,'')}]
+  else
+    [{site: "view", slug: "welcome-visitors"}]
+
+toURL = (siteSlugs) ->
+  combine = (url, item) -> "#{url}/#{item.site}/#{item.slug}"
+  intent = siteSlugs.reduce(combine, "")
+  url = new URL(location)
+  if !!url.hash or url.pathname == '/'
+    url.hash = "sfw=#{intent.replace(/^\//,'')}"
+  else
+    url.pathname = intent
+  url
+
+unchanged = (url, location) ->
+  loc = new URL(location)
+  url.pathname == loc.pathname and
+    url.search == loc.search and
+    url.hash == loc.hash
+
 state.pagesInDom = ->
   $.makeArray $(".page").map (_, el) -> el.id
 
 state.urlPages = ->
-  (i for i in $(location).attr('pathname').split('/') by 2)[1..]
+  state.fromLocation(location).map((it) -> it.slug)
 
 state.locsInDom = ->
   $.makeArray $(".page").map (_, el) ->
     $(el).data('site') or 'view'
 
 state.urlLocs = ->
-  (j for j in $(location).attr('pathname').split('/')[1..] by 2)
+  state.fromLocation(location).map((it) -> it.site)
 
 state.setUrl = ->
   document.title = lineup.bestTitle()
   if history and history.pushState
-    locs = state.locsInDom()
-    pages = state.pagesInDom()
-    url = ("/#{locs?[idx] or 'view'}/#{page}" for page, idx in pages).join('')
-    unless url is $(location).attr('pathname')
+    siteSlugs = state.fromDOM()
+    url = toURL(siteSlugs)
+    unless unchanged(url, location)
       history.pushState(null, null, url)
 
 state.debugStates = () ->
@@ -45,7 +86,7 @@ state.show = (e) ->
   oldLocs = state.locsInDom()
   newLocs = state.urlLocs()
 
-  return if (!location.pathname or location.pathname is '/')
+  return if !location.hash and (!location.pathname or location.pathname is '/')
 
   matching = true
   for name, idx in oldPages
@@ -73,3 +114,11 @@ state.first = ->
   for urlPage, idx in firstUrlPages when urlPage not in oldPages
     link.createPage(urlPage, firstUrlLocs[idx]) unless urlPage is ''
 
+state.syncDomWithLocation = ->
+  main = ""
+  for {site, slug} in state.fromLocation(location)
+    dataSite = ""
+    if site != "view"
+      dataSite = """data-site="#{site}" """
+    main += """<div id="#{slug}" #{dataSite}class="page"></div>\n"""
+  $('section.main').html(main)

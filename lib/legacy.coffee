@@ -39,6 +39,8 @@ wiki.origin.get 'system/factories.json', (error, data) ->
     preLoadEditors data
 
 $ ->
+  state.syncDomWithLocation()
+
   dialog.emit()
 
 # FUNCTIONS used by plugins and elsewhere
