@@ -5,6 +5,7 @@
 # that highlighting can be immediate when requested.
 
 targeting = false
+$item = null
 item = null
 itemElem = null
 action = null
@@ -28,10 +29,13 @@ bind = ->
 
 startTargeting = (e) ->
   targeting = e.shiftKey
-  if targeting
+  if targeting and $item
     $('.emit').addClass('highlight')
     if id = item || action
       $("[data-id=#{id}]").addClass('target')
+      key = ($page = $(this).parents('.page:first')).data('key')
+      place = $item.offset().top
+      $('.page').trigger('align-item', {key, id:item, place})
     if itemElem
       consumed = itemElem.consuming
       if consumed
@@ -79,6 +83,7 @@ leaveItem = (e) ->
     $('.item, .action').removeClass('target')
     $('.item').removeClass('consumed')
   item = null
+  $item = null
   itemElem = null
 
 
