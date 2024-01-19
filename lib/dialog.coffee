@@ -1,19 +1,18 @@
-# Dialog manages a single <div> that is used to present a
-# jQuery UI dialog used for detail display, usually on
-# double click.
-
-resolve = require './resolve'
-
-$dialog = null
-
-emit = ->
-  $dialog = $('<div></div>')
-    .html('This dialog will show every time!')
-    .dialog { autoOpen: false, title: 'Basic Dialog', height: 600, width: 800 }
+# Dialog manages a single popup window that is used to present a
+# dialog used for detail display, usually on double click.
 
 open = (title, html) ->
-  $dialog.html html
-  $dialog.dialog "option", "title", resolve.resolveLinks(title)
-  $dialog.dialog 'open'
+  body = html
+  if typeof html is 'object'
+    body = html[0].outerHTML
 
-module.exports = {emit, open}
+  dialogWindow = window.open('/dialog/#', 'dialog', 'popup,height=600,width=800')
+
+  if dialogWindow.location.pathname isnt '/dialog/'
+    # this will only happen when popup is first opened.
+    dialogWindow.addEventListener 'load', (event) ->
+      dialogWindow.postMessage({ title, body }, window.origin)
+  else
+    dialogWindow.postMessage({ title, body }, window.origin)
+
+module.exports = { open }
