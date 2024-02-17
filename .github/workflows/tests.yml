@@ -14,13 +14,14 @@ jobs:
       matrix:
         # Releases https://github.com/nodejs/release#release-schedule
         node-version:
-          - 18.x # LTS
-          - 19.x # Current
+          - 18.x # Maintenance
+          - 20.x # LTS
+          - 21.x # Current
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
