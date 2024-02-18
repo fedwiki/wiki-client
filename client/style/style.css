@@ -11,6 +11,11 @@ pre.error {
 a {
   text-decoration: none; }
 
+/* highlight links that have slug starting or ending with a `-`, a space in the page title */
+a[href^='/-'], a[href$='-.html'] {
+  text-decoration: wavy underline crimson;
+}
+
 a img {
   border: 0; }
 
