@@ -11,8 +11,8 @@ pre.error {
 a {
   text-decoration: none; }
 
-/* highlight links that have slug starting or ending with a `-`, a space in the page title */
-a.spaced {
+/* highlight links that have title starting or ending with a space. */
+body:has(#security>a>i.fa-lock-open) a.spaced {
   text-decoration: wavy underline crimson;
 }
 
