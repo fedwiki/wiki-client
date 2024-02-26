@@ -13,7 +13,7 @@ emit = ($item, item) ->
   $item.append """#{item.text}"""
   proposedSlug = $item.parents('.page:first')[0].id
   if wiki.asSlug(item.title) isnt proposedSlug
-    $item.append "<p>The title for for new page has spaces at the beginning and/or the end.</p>"
+    $item.append "<p>The proposed title has spaces at the beginning, the end, or both. You will want to fix that before creating a new page.</p>"
   else
     $item.append """<br><br><button class="create">create</button> new blank page"""
 
