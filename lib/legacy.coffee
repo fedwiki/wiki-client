@@ -39,7 +39,6 @@ wiki.origin.get 'system/factories.json', (error, data) ->
     preLoadEditors data
 
 $ ->
-  dialog.emit()
 
 # FUNCTIONS used by plugins and elsewhere
 
