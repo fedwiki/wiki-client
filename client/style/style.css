@@ -11,6 +11,11 @@ pre.error {
 a {
   text-decoration: none; }
 
+/* highlight links that have title starting or ending with a space. */
+body:has(footer span[style=""]) a.spaced {
+  text-decoration: wavy underline crimson;
+}
+
 a img {
   border: 0; }
 

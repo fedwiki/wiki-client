@@ -38,8 +38,9 @@ resolve.resolveLinks = (string, sanitize=escape) ->
 
   internal = (match, name) ->
     slug = asSlug name
+    styling = if name is name.trim() then 'internal' else 'internal spaced'
     if slug.length
-      stash """<a class="internal" href="/#{slug}.html" data-page-name="#{slug}" title="#{resolve.resolutionContext.join(' => ')}">#{escape name}</a>"""
+      stash """<a class="#{styling}" href="/#{slug}.html" data-page-name="#{slug}" title="#{resolve.resolutionContext.join(' => ')}">#{escape name}</a>"""
     else
       match
 

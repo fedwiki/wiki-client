@@ -17,6 +17,15 @@ describe 'wiki', ->
         expect(s).to.contain 'href="/world.html"'
       it 'should have data-page-name', ->
         expect(s).to.contain 'data-page-name="world"'
+    
+    describe 'internal links with space', ->
+      s = wiki.resolveLinks "hello [[ world]]"
+      it 'should be class spaced', ->
+        expect(s).to.contain 'class="internal spaced"'
+      it 'should relative reference html', ->
+        expect(s).to.contain 'href="/-world.html"'
+      it 'should have data-page-name', ->
+        expect(s).to.contain 'data-page-name="-world"'
 
     describe 'external links', ->
       s = wiki.resolveLinks "hello [http://world.com?foo=1&bar=2 world]"
