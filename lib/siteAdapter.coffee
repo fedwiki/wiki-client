@@ -70,7 +70,7 @@ findAdapterQ = queue( (task, done) ->
   if sitePrefix[site]?
     done sitePrefix[site]
 
-  if site.split('.').at(-1) is 'localhost'
+  if site.split('.').at(-1).split(':')[0] is 'localhost'
     testURL = "http://#{site}/favicon.png"
   else
     testURL = "//#{site}/favicon.png"
