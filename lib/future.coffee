@@ -13,7 +13,7 @@ emit = ($item, item) ->
   $item.append """#{item.text}"""
   proposedSlug = $item.parents('.page:first')[0].id
   if wiki.asSlug(item.title) isnt proposedSlug
-    $item.append "<p style='font-weight: 500;'>Page titles with leading/trailing spaces can not be used to create a new page.</p>"
+    $item.append "<p style='font-weight: 500;'>Page titles with leading/trailing spaces cannot be used to create a new page.</p>"
   else
     $item.append """<br><br><button class="create">create</button> new blank page"""
 
