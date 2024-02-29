@@ -143,14 +143,15 @@ neighborhood.listNeighbors = ()->
 
 # Page Search
 
-extractPageText = (pageText, currentItem) ->
+extractPageText = (pageText, currentItem, currentIndex) ->
   try
     if currentItem.text?
       switch currentItem.type
         when 'paragraph', 'markdown', 'html', 'reference'
-          noLinks += ' ' + currentItem.text.replace /\[{2}|\[(?:[\S]+)|\]{1,2}/g, ''
+          noLinks = ' ' + currentItem.text.replace /\[{2}|\[(?:[\S]+)|\]{1,2}/g, ''
           # strip out all tags.
-          pageText = noLinks.replace(/<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g, ' ')
+          pageText += noLinks.replace(/<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g, ' ')
+        else
           if currentItem.text?
             for line in currentItem.text.split /\r\n?|\n/
               pageText += ' ' + line.replace /\[{2}|\[(?:[\S]+)|\]{1,2}/g, '' unless line.match /^[A-Z]+[ ].*/
