@@ -187,7 +187,7 @@ plugin.emit = (div, item, done=->) ->
               <li> Has its code been tested?
             </ul>
             <p> Developers may open debugging tools and retry the plugin.</p>
-            <button class="retry">retry</button>
+            <button class="retry">retry</button>  <button class="close">close</button>
             <p> Learn more
               <a class="external" target="_blank" rel="nofollow"
               href="http://plugins.fed.wiki.org/about-plugins.html"
@@ -196,7 +196,7 @@ plugin.emit = (div, item, done=->) ->
                 <img src="/images/external-link-ltr-icon.png">
               </a>
             </p>
-            <p><i>To close this dialog, press ESCAPE key or click outside this dialog.</i></p>
+           
           </dialog>
         """
       dialog = div[0].querySelector('dialog')
@@ -204,6 +204,8 @@ plugin.emit = (div, item, done=->) ->
         if evt.target is dialog
           dialog.close()
       dialog.showModal()
+      $('.close').on 'click', ->
+        dialog.close()
       $('.retry').on 'click', ->
         if script.emit.length > 2
           script.emit div, item, ->
