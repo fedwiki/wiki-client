@@ -178,6 +178,7 @@ plugin.emit = (div, item, done=->) ->
       if not div[0].querySelector('dialog')
         div.append """
           <dialog>
+            <h3>#{ex.toString()}</h3>
             <p> This "#{item.type}" plugin won't show.</p>
             <ul>
               <li> Is it available on this server?
