@@ -32,6 +32,7 @@ util.formatActionTitle = (action) ->
   title = ''
   title += "#{action.site}\n" if action.site?
   title += action.type || 'separator'
+  title += " rename" if action.type == 'fork' and action.title?
   title += " #{util.formatElapsedTime(action.date)}" if action.date?
   title += "\nfrom #{action.attribution.page}" if action.attribution?.page?
   title += "\nto #{action.removedTo.page}" if action.removedTo?.page?
