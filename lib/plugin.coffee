@@ -174,24 +174,39 @@ plugin.emit = (div, item, done=->) ->
       div.find('.error').on 'dblclick', (e) ->
         wiki.textEditor div, item
     div.find('button').on 'click', ->
-      wiki.dialog ex.toString(), """
-        <p> This "#{item.type}" plugin won't show.</p>
-        <li> Is it available on this server?
-        <li> Is its markup correct?
-        <li> Can it find necessary data?
-        <li> Has network access been interrupted?
-        <li> Has its code been tested?
-        <p> Developers may open debugging tools and retry the plugin.</p>
-        <button class="retry">retry</button>
-        <p> Learn more
-          <a class="external" target="_blank" rel="nofollow"
-          href="http://plugins.fed.wiki.org/about-plugins.html"
-          title="http://plugins.fed.wiki.org/about-plugins.html">
-            About Plugins
-            <img src="/images/external-link-ltr-icon.png">
-          </a>
-        </p>
-      """
+      # only append dialog if not already done.
+      if not div[0].querySelector('dialog')
+        div.append """
+          <dialog>
+            <h3>#{ex.toString()}</h3>
+            <p> This "#{item.type}" plugin won't show.</p>
+            <ul>
+              <li> Is it available on this server?
+              <li> Is its markup correct?
+              <li> Can it find necessary data?
+              <li> Has network access been interrupted?
+              <li> Has its code been tested?
+            </ul>
+            <p> Developers may open debugging tools and retry the plugin.</p>
+            <button class="retry">retry</button>  <button class="close">close</button>
+            <p> Learn more
+              <a class="external" target="_blank" rel="nofollow"
+              href="http://plugins.fed.wiki.org/about-plugins.html"
+              title="http://plugins.fed.wiki.org/about-plugins.html">
+                About Plugins
+                <img src="/images/external-link-ltr-icon.png">
+              </a>
+            </p>
+           
+          </dialog>
+        """
+      dialog = div[0].querySelector('dialog')
+      dialog.addEventListener 'click', (evt) ->
+        if evt.target is dialog
+          dialog.close()
+      dialog.showModal()
+      $('.close').on 'click', ->
+        dialog.close()
       $('.retry').on 'click', ->
         if script.emit.length > 2
           script.emit div, item, ->
