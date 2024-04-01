@@ -423,7 +423,9 @@ rebuildPage = (pageObject, $page) ->
   promise
 
 buildPage = (pageObject, $page) ->
-  $page.data('key', lineup.addPage(pageObject))
+  pageKey =lineup.addPage(pageObject)
+  $page.data('key', pageKey)
+  $page.get(0).dataset.key = pageKey
   rebuildPage(pageObject, $page)
 
 newFuturePage = (title, create) ->
