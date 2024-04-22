@@ -142,6 +142,7 @@ createSearch = ({neighborhood})->
     """ })
     for result in searchResults.finds
       resultPage.story.push({
+        "id": random.itemId()
         "type": "reference"
         "site": result.site
         "slug": result.page.slug
