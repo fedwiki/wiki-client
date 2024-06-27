@@ -420,7 +420,8 @@ rebuildPage = (pageObject, $page) ->
     initDragging $page
     initMerging $page
     initAddButton $page
-    if $page.hasClass('ghost') && pageObject.isCreateEditable()
+    isRev = $page.attr('id').match /_rev/
+    if $page.hasClass('ghost') && !isRev && pageObject.isCreateEditable()
       $page.find('h1 .title').attr('contenteditable',true)
 
   promise
