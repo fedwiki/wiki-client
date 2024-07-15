@@ -17,14 +17,9 @@ escape = (s) ->
 # define loadScript that allows fetching a script.
 # see example in http://api.jquery.com/jQuery.getScript/
 
-loadScript = (url, options) ->
+loadScript = (url) ->
   console.log("loading url:", url)
-  options = $.extend(options or {},
-    dataType: "script"
-    cache: true
-    url: url
-  )
-  $.ajax options
+  import(url)
 
 scripts = []
 loadingScripts = {}
@@ -33,10 +28,10 @@ getScript = plugin.getScript = (url, callback = () ->) ->
     callback()
   else
     loadScript url
-      .done ->
+      .then ->
         scripts.push url
         callback()
-      .fail (_jqXHR, _textStatus, err) ->
+      .catch (err) ->
         console.log('getScript: Failed to load:', url, err)
         callback()
 
