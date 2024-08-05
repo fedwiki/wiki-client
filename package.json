@@ -48,9 +48,9 @@
     "grunt-contrib-watch": "^1.0.0",
     "grunt-git-authors": "^3.2.0",
     "grunt-mocha-test": "^0.13.2",
-    "minisearch": "^6.0.0",
+    "minisearch": "^7.1.0",
     "mocha": "^10.2.0",
-    "sinon": "^17.0.0"
+    "sinon": "^18.0.0"
   },
   "license": "MIT",
   "repository": {
