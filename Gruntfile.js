@@ -49,27 +49,15 @@ module.exports = function (grunt) {
     browserify: {
       // build the client that we will include in the package
       packageClient: {
-        src: ['./client.coffee'],
-        dest: 'client/client.max.js',
-        options: {
-          transform: [['coffeeify', {transpile: {presets: [[ '@babel/preset-env', { "exclude": ["proposal-dynamic-import"]}]], plugins: ['@babel/plugin-transform-runtime']}}]],
-          browserifyOptions: {
-            extensions: ".coffee"
-          }
-        }
+        src: ['./client.js'],
+        dest: 'client/client.max.js'
       },
       // build for local development version of the client will go here (once mapfile issues are resolved)
 
       // build the browser testclient
       testClient: {
-        src: ['./testclient.coffee'],
-        dest: 'client/test/testclient.js',
-        options: {
-          transform: [['coffeeify', {transpile: {presets: [[ '@babel/preset-env', { "exclude": ["proposal-dynamic-import"]}]], plugins: ['@babel/plugin-transform-runtime']}}]],
-          browserifyOptions: {
-            extensions: ".coffee"
-          }
-        }
+        src: ['./testclient.js'],
+        dest: 'client/test/testclient.js'
       }
     },
 
@@ -96,25 +84,24 @@ module.exports = function (grunt) {
     mochaTest: {
       test: {
         options: {
-          reporter: 'spec',
-          require: 'coffeescript/register'
+          reporter: 'spec'
         },
         src: [
-          'test/util.coffee',
-          'test/random.coffee',
-          'test/page.coffee',
-          'test/lineup.coffee',
-          'test/drop.coffee',
-          'test/revision.coffee',
-          'test/resolve.coffee',
-          'test/wiki.coffee'
+          'test/util.js',
+          'test/random.js',
+          'test/page.js',
+          'test/lineup.js',
+          'test/drop.js',
+          'test/revision.js',
+          'test/resolve.js',
+          'test/wiki.js'
         ]
       }
     },
 
     watch: {
       all: {
-        files: ['test/*.coffee', 'lib/*.coffee', '*.coffee'],
+        files: ['test/*.js', 'lib/*.js', '*.js'],
         tasks: ['build']
       }
     }
