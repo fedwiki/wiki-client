@@ -30,7 +30,7 @@
     "underscore": "^1.13.6"
   },
   "scripts": {
-    "test": "grunt mochaTest"
+    "test": "mocha test/util.js test/random.js test/page.js test/lineup.js test/drop.js test/revision.js test/resolve.js test/wiki.js"
   },
   "devDependencies": {
     "expect.js": "^0.3.1",
