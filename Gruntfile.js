@@ -5,6 +5,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-git-authors');
+  grunt.loadNpmTasks('grunt-eslint');
 
   // N.B. The development build includes paths in the mapfile, at the browserify step, that are not accessable
   //      from the browser.
@@ -104,6 +105,12 @@ module.exports = function (grunt) {
         files: ['test/*.js', 'lib/*.js', '*.js'],
         tasks: ['build']
       }
+    },
+    eslint: {
+      options: {
+      },
+//      target: ['test/*.js', 'lib/*.js', '*.js'],
+      target: ['lib/*.js'],
     }
   });
 
