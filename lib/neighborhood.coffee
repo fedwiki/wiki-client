@@ -164,7 +164,7 @@ extractPageText = (pageText, currentItem, currentIndex) ->
         when 'paragraph', 'markdown', 'html', 'reference', 'image', 'pagefold', 'math', 'mathjax', 'code'
           pageText += extractItemText currentItem.text
         when 'audio', 'video', 'frame'
-          pageText += extractItemText(item.text.split(/\r\n?|\n/)
+          pageText += extractItemText(currentItem.text.split(/\r\n?|\n/)
             .map((line) ->
               firstWord = line.split(/\p{White_Space}/u)[0]
               if firstWord.startsWith('http') or firstWord.toUpperCase() is firstWord or firstWord.startsWith('//')
