@@ -26,11 +26,16 @@
   ],
   "dependencies": {
     "async": "^3.2.1",
+    "esbuild": "^0.23.1",
+    "esbuild-loader": "^4.2.2",
+    "events": "^3.3.0",
     "localforage": "^1.7.3",
-    "underscore": "^1.13.6"
+    "underscore": "^1.13.6",
+    "url": "^0.11.4"
   },
   "scripts": {
-    "test": "mocha test/util.js test/random.js test/page.js test/lineup.js test/drop.js test/revision.js test/resolve.js test/wiki.js"
+    "test": "mocha test/util.js test/random.js test/page.js test/lineup.js test/drop.js test/revision.js test/resolve.js test/wiki.js",
+    "build": "esbuild --bundle --sourcemap --target=chrome58,firefox57 --outdir=outdir client.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
@@ -38,14 +43,6 @@
     "eslint-plugin-jquery": "^1.5.1",
     "expect.js": "^0.3.1",
     "globals": "^15.9.0",
-    "grunt": "^1.6.1",
-    "grunt-browserify": "^6.0.0",
-    "grunt-contrib-clean": "^2.0.0",
-    "grunt-contrib-uglify": "^5.0.1",
-    "grunt-contrib-watch": "^1.0.0",
-    "grunt-eslint": "^25.0.0",
-    "grunt-git-authors": "^3.2.0",
-    "grunt-mocha-test": "^0.13.2",
     "minisearch": "^7.1.0",
     "mocha": "^10.2.0",
     "sinon": "^18.0.0"
