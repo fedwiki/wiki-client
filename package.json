@@ -30,6 +30,7 @@
     "esbuild-loader": "^4.2.2",
     "events": "^3.3.0",
     "localforage": "^1.7.3",
+    "mocha": "^10.7.3",
     "underscore": "^1.13.6",
     "url": "^0.11.4"
   },
@@ -44,7 +45,6 @@
     "expect.js": "^0.3.1",
     "globals": "^15.9.0",
     "minisearch": "^7.1.0",
-    "mocha": "^10.2.0",
     "sinon": "^18.0.0"
   },
   "license": "MIT",
