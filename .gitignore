@@ -8,15 +8,9 @@
 node_modules
 npm-debug.log
 
-# ignore build directory - used while building with grunt
-build
 
-# ignore generated javascript - recreated by running grunt
-test/*.js
-test/*.map
+# ignore generated javascript - recreated by running build
 client/client.js
-client/client.*.js
-client/client.map
-client/client.*.map
+client/client.js.map
 client/test/testclient.js
 client/test/testclient.map
