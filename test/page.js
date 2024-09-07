@@ -25,7 +25,7 @@ describe('page', function() {
         return `//${site}/${route}`;
       }
     });
-    return global.wiki = wiki;
+    globalThis.wiki = wiki;
   });
 
   describe('newly created', function() {
