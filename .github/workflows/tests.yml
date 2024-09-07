@@ -16,7 +16,7 @@ jobs:
         node-version:
           - 18.x # Maintenance
           - 20.x # LTS
-          - 21.x # Current
+          - 22.x # Current
 
     steps:
       - uses: actions/checkout@v4
