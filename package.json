@@ -35,6 +35,9 @@
     "runtests": "npm run build:test && ((sleep 1; open 'http://localhost:3000/runtests.html')&) && echo '\nBrowser will open to run tests.' && serve client",
     "update-authors": "node scripts/update-authors.js"
   },
+  "dependencies": {
+    "underscore": "^1.13.6"
+  },
   "devDependencies": {
     "async": "^3.2.1",
     "esbuild": "^0.23.1",
@@ -44,8 +47,7 @@
     "minisearch": "^7.1.0",
     "mocha": "^10.2.0",
     "serve": "^14.2.3",
-    "sinon": "^18.0.0",
-    "underscore": "^1.13.6"
+    "sinon": "^18.0.0"
   },
   "license": "MIT",
   "repository": {
