@@ -24,7 +24,6 @@
       "url": "https://rodwell.me"
     }
   ],
-  "dependencies": {},
   "scripts": {
     "build": "npm run build:client && npm run build:test",
     "build:client": "npm run clean:client; node --no-warnings scripts/build-client.mjs",
@@ -33,17 +32,19 @@
     "clean:client": "rm client/client.js client/client.js.map meta-client.json",
     "clean:test": "rm client/test/testclient.js",
     "test": "mocha test/util.js test/random.js test/page.js test/lineup.js test/drop.js test/revision.js test/resolve.js test/wiki.js",
-    "runtests": "npm run build:test && ((sleep 1; open 'http://localhost:3000/runtests.html')&) && echo '\nBrowser will open to run tests.' && serve client"
+    "runtests": "npm run build:test && ((sleep 1; open 'http://localhost:3000/runtests.html')&) && echo '\nBrowser will open to run tests.' && serve client",
+    "update-authors": "node scripts/update-authors.js"
   },
   "devDependencies": {
+    "async": "^3.2.1",
     "esbuild": "^0.23.1",
     "expect.js": "^0.3.1",
+    "grunt-git-authors": "^3.2.0",
+    "localforage": "^1.7.3",
     "minisearch": "^7.1.0",
     "mocha": "^10.2.0",
     "serve": "^14.2.3",
     "sinon": "^18.0.0",
-    "async": "^3.2.1",
-    "localforage": "^1.7.3",
     "underscore": "^1.13.6"
   },
   "license": "MIT",
