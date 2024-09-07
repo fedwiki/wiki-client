@@ -24,26 +24,27 @@
       "url": "https://rodwell.me"
     }
   ],
-  "dependencies": {
+  "dependencies": {},
+  "scripts": {
+    "build": "npm run build:client && npm run build:test",
+    "build:client": "npm run clean:client; node --no-warnings scripts/build-client.mjs",
+    "build:test": "npm run clean:test; node scripts/build-testclient.mjs",
+    "clean": "npm run clean:client; npm run clean:test",
+    "clean:client": "rm client/client.js client/client.js.map meta-client.json",
+    "clean:test": "rm client/test/testclient.js",
+    "test": "mocha test/util.js test/random.js test/page.js test/lineup.js test/drop.js test/revision.js test/resolve.js test/wiki.js",
+    "runtests": "npm run build:test && ((sleep 1; open 'http://localhost:3000/runtests.html')&) && echo '\nBrowser will open to run tests.' && serve client"
+  },
+  "devDependencies": {
+    "esbuild": "^0.23.1",
+    "expect.js": "^0.3.1",
+    "minisearch": "^7.1.0",
+    "mocha": "^10.2.0",
+    "serve": "^14.2.3",
+    "sinon": "^18.0.0",
     "async": "^3.2.1",
     "localforage": "^1.7.3",
     "underscore": "^1.13.6"
-  },
-  "scripts": {
-    "test": "mocha test/util.js test/random.js test/page.js test/lineup.js test/drop.js test/revision.js test/resolve.js test/wiki.js"
-  },
-  "devDependencies": {
-    "expect.js": "^0.3.1",
-    "grunt": "^1.0.1",
-    "grunt-browserify": "^6.0.0",
-    "grunt-contrib-clean": "^2.0.0",
-    "grunt-contrib-uglify": "^5.0.1",
-    "grunt-contrib-watch": "^1.0.0",
-    "grunt-git-authors": "^3.2.0",
-    "grunt-mocha-test": "^0.13.2",
-    "minisearch": "^7.1.0",
-    "mocha": "^10.2.0",
-    "sinon": "^18.0.0"
   },
   "license": "MIT",
   "repository": {
@@ -54,6 +55,6 @@
     "url": "https://github.com/fedwiki/wiki-client/issues"
   },
   "engines": {
-    "node": ">=16.x"
+    "node": ">=18.x"
   }
 }
