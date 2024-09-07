@@ -25,7 +25,7 @@
     }
   ],
   "scripts": {
-    "build": "npm run build:client && npm run build:test",
+    "build": "npm run test && npm run build:client && npm run build:test",
     "build:client": "npm run clean:client; node --no-warnings scripts/build-client.mjs",
     "build:test": "npm run clean:test; node scripts/build-testclient.mjs",
     "clean": "npm run clean:client; npm run clean:test",
