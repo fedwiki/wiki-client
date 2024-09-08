@@ -36,14 +36,14 @@
     "update-authors": "node scripts/update-authors.js"
   },
   "dependencies": {
+    "async": "^3.2.1",
+    "localforage": "^1.7.3",
     "underscore": "^1.13.6"
   },
   "devDependencies": {
-    "async": "^3.2.1",
     "esbuild": "^0.23.1",
     "expect.js": "^0.3.1",
     "grunt-git-authors": "^3.2.0",
-    "localforage": "^1.7.3",
     "minisearch": "^7.1.0",
     "mocha": "^10.2.0",
     "serve": "^14.2.3",
