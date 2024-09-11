@@ -13,4 +13,4 @@ npm-debug.log
 client/client.js
 client/client.js.map
 client/test/testclient.js
-client/test/testclient.map
+client/test/testclient.js.map
