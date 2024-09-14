@@ -12,6 +12,7 @@ npm-debug.log
 build
 
 # ignore generated javascript - recreated by running grunt
+outdir/*
 test/*.js
 test/*.map
 client/client.js
