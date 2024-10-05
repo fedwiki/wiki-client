@@ -31,3 +31,6 @@ i2p-lbt <lbt@i2pmail.org>
 Andrew Ettinger <andrew@skoobistudios.com>
 Joshua Benuck <joshua_benuck@yahoo.com>
 Eric Dobbs <eric@dobbse.net>
+Andrew Shell <andrew@andrewshell.org>
+Matthew B. Gray <code@matthew.nz>
+decaffeinate <paul.rodwell@btinternet.com>

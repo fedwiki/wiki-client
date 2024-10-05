@@ -72,7 +72,7 @@ describe('pageHandler.get', function() {
         });
       }
     });
-    return global.wiki = wiki;
+    globalThis.wiki = wiki;
   });
 
   describe('ajax fails', function() {
