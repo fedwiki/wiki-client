@@ -31,4 +31,3 @@ $(function() {
   $('<hr><h2> Testing artifacts:</h2>').appendTo('body');
   return mocha.run();
 });
-
