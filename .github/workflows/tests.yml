@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, decaffeinate ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, decaffeinate ]
 
 jobs:
   build:
@@ -16,7 +16,7 @@ jobs:
         node-version:
           - 18.x # Maintenance
           - 20.x # LTS
-          - 21.x # Current
+          - 22.x # Current
 
     steps:
       - uses: actions/checkout@v4
