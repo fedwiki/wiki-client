@@ -1,10 +1,3 @@
-// TODO: This file was created by bulk-decaffeinate.
-// Sanity-check the conversion and remove this comment.
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
 mocha.setup('bdd');
 
 window.wiki = require('./lib/wiki');
@@ -29,6 +22,5 @@ require('./test/random');
 
 $(function() {
   $('<hr><h2> Testing artifacts:</h2>').appendTo('body');
-  return mocha.run();
+  mocha.run();
 });
-
