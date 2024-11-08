@@ -42,10 +42,14 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  position: absolute;
+/*  position: absolute;*/
   bottom: 60px;
   margin: 0;
-  width: 10000%; }
+/*  width: 10000%; */
+  display: flex;
+  overflow-x: auto;
+  height: calc(100vh - 40px);
+}
 
 footer {
   border-top: 1px solid #3d3c43;
@@ -391,8 +395,9 @@ p.readout {
   margin: 8px;
   /* padding: 0 31px; */
   width: 490px;
+  flex: 0 0 490px;
   background-color: white;
-  height: 100%;
+/*  height: 100%;  */
   overflow: auto;
   box-shadow: 2px 1px 4px rgba(0, 0, 0, 0.2);
   outline: none; }
