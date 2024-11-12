@@ -58,6 +58,6 @@
     "url": "https://github.com/fedwiki/wiki-client/issues"
   },
   "engines": {
-    "node": ">=18.x"
+    "node": ">=23.x"
   }
 }
