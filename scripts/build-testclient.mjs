@@ -6,12 +6,12 @@ const version = packJSON.version
 const now = new Date()
 
 let results = await esbuild.build({
-  entryPoints: ['testclient.js'],
+  entryPoints: ['testclient.cjs'],
   bundle: true,
   banner: {
     js: `/* wiki-client (test) - ${version} - ${now.toUTCString()} */`},
   minify: true,
   sourcemap: true,
   logLevel: 'info',
-  outfile: 'client/test/testclient.js'
+  outfile: 'client/test/testclient.cjs'
 })

@@ -44,20 +44,20 @@ module.exports = function (grunt) {
     },
 
     // tidy-up before we start the build
-    clean: ['build/*', 'client/client.js', 'client/client.map', 'client/client.*.js', 'client/client.*.map', 'client/test/testclient.js'],
+    clean: ['build/*', 'client/client.cjs', 'client/client.map', 'client/client.*.cjs', 'client/client.*.map', 'client/test/testclient.cjs'],
 
     browserify: {
       // build the client that we will include in the package
       packageClient: {
-        src: ['./client.js'],
+        src: ['./client.cjs'],
         dest: 'client/client.max.js'
       },
       // build for local development version of the client will go here (once mapfile issues are resolved)
 
       // build the browser testclient
       testClient: {
-        src: ['./testclient.js'],
-        dest: 'client/test/testclient.js'
+        src: ['./testclient.cjs'],
+        dest: 'client/test/testclient.cjs'
       }
     },
 
@@ -65,7 +65,7 @@ module.exports = function (grunt) {
       packageClient: {
         // uglify the client version for including in the NPM package,
         //   create a map so at least if needed we can get back to the generated javascript
-        //   uglified version is 'client.js', so we don't need changes elsewhere.
+        //   uglified version is 'client.cjs', so we don't need changes elsewhere.
         options: {
           sourceMap: true,
           sourceMapRoot: "/",
@@ -76,7 +76,7 @@ module.exports = function (grunt) {
                   ' * Released under the <%= pkg.license %> license */',
         },
         files: {
-          'client/client.js': ['client/client.max.js']
+          'client/client.cjs': ['client/client.max.cjs']
         }
       }
     },

@@ -6,7 +6,7 @@ const version = packJSON.version
 const now = new Date()
 
 let results = await esbuild.build({
-  entryPoints: ['client.js'],
+  entryPoints: ['client.cjs'],
   bundle: true,
   banner: {
     js: `/* wiki-client - ${version} - ${now.toUTCString()} */`},
@@ -14,7 +14,7 @@ let results = await esbuild.build({
   sourcemap: true,
   logLevel: 'info',
   metafile: true,
-  outfile: 'client/client.js'
+  outfile: 'client/client.cjs'
 })
 
 await fs.writeFile('meta-client.json', JSON.stringify(results.metafile))

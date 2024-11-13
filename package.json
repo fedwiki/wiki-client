@@ -29,9 +29,9 @@
     "build:client": "npm run clean:client; node --no-warnings scripts/build-client.mjs",
     "build:test": "npm run clean:test; node --no-warnings scripts/build-testclient.mjs",
     "clean": "npm run clean:client; npm run clean:test",
-    "clean:client": "rm client/client.js client/client.js.map meta-client.json",
-    "clean:test": "rm client/test/testclient.js",
-    "test": "mocha test/util.js test/random.js test/page.js test/lineup.js test/drop.js test/revision.js test/resolve.js test/wiki.js",
+    "clean:client": "rm client/client.cjs client/client.cjs.map meta-client.json",
+    "clean:test": "rm client/test/testclient.cjs client/test/testclient.cjs.map",
+    "test": "mocha test/util.cjs test/random.cjs test/page.cjs test/lineup.cjs test/drop.cjs test/revision.cjs test/resolve.cjs test/wiki.cjs",
     "runtests": "npm run build:test && ((sleep 1; open 'http://localhost:3000/runtests.html')&) && echo '\nBrowser will open to run tests.' && serve client",
     "update-authors": "node scripts/update-authors.js"
   },
