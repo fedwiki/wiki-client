@@ -5,7 +5,7 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-const refresh = require('../lib/refresh.cjs');
+const refresh = require('../lib/refresh.mjs');
 const lineup = require('../lib/lineup.cjs');
 const mockServer = require('./mockServer.cjs');
 
