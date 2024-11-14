@@ -5,7 +5,7 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-const drop = require('../lib/drop.cjs');
+const drop = require('../lib/drop.mjs');
 const expect = require('expect.js');
 
 // construct mock event objects
