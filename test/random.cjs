@@ -5,25 +5,25 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-const random = require('../lib/random.cjs');
+const {randomByte, randomBytes, itemId } = require('../lib/random.mjs');
 const expect = require('expect.js');
 
 describe('random', function() {
 
   it('should make random bytes', function() {
-    const a = random.randomByte();
+    const a = randomByte();
     expect(a).to.be.a('string');
     return expect(a.length).to.be(2);
   });
 
   it('should make random byte strings', function() {
-    const s = random.randomBytes(4);
+    const s = randomBytes(4);
     expect(s).to.be.a('string');
     return expect(s.length).to.be(8);
   });
 
   return it('should make random item ids', function() {
-    const s = random.itemId();
+    const s = itemId();
     expect(s).to.be.a('string');
     return expect(s.length).to.be(16);
   });
