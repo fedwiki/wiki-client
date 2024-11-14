@@ -8,7 +8,7 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-const {newPage} = require('../lib/page.cjs');
+const {newPage} = require('../lib/page.mjs');
 const revision = require('../lib/revision.cjs');
 const expect = require('expect.js');
 

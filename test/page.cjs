@@ -5,9 +5,7 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-const {
-  newPage
-} = require('../lib/page.cjs');
+const { newPage } = require('../lib/page.mjs');
 const expect = require('expect.js');
 
 

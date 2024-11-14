@@ -6,9 +6,7 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 const lineup = require('../lib/lineup.cjs');
-const {
-  newPage
-} = require('../lib/page.cjs');
+const { newPage } = require('../lib/page.mjs');
 const expect = require('expect.js');
 
 describe('lineup', function() {
