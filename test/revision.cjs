@@ -9,7 +9,7 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 const {newPage} = require('../lib/page.mjs');
-const revision = require('../lib/revision.cjs');
+const { create:revision_create , apply:revision_apply } = require('../lib/revision.mjs');
 const expect = require('expect.js');
 
 // fixture -- create proper pages from model pages
@@ -96,19 +96,19 @@ describe('revision', function() {
 
     it('should create a story', function() {
       let page;
-      revision.apply((page = {}), {type: 'create', item: {story: [{type: 'foo'}]}});
+      revision_apply((page = {}), {type: 'create', item: {story: [{type: 'foo'}]}});
       return expect(page.story).to.eql([{type: 'foo'}]);
   });
 
     it('should add an item', function() {
       let page;
-      revision.apply((page = {}), {type: 'add', item: {type: 'foo'}});
+      revision_apply((page = {}), {type: 'add', item: {type: 'foo'}});
       return expect(page.story).to.eql([{type: 'foo'}]);
   });
 
     it('should edit an item', function() {
       let page;
-      revision.apply((page = {story:[{type:'foo',id:'3456'}]}), {type:'edit', id:'3456',item: {type:'bar',id:'3456'}});
+      revision_apply((page = {story:[{type:'foo',id:'3456'}]}), {type:'edit', id:'3456',item: {type:'bar',id:'3456'}});
       return expect(page.story).to.eql([{type: 'bar', id:'3456'}]);
   });
 
@@ -119,7 +119,7 @@ describe('revision', function() {
           {type:'bar', id:'3456'}
         ]
       };
-      revision.apply(page, {type: 'move', id:'1234', order:['3456','1234']});
+      revision_apply(page, {type: 'move', id:'1234', order:['3456','1234']});
       return expect(page.story).to.eql([{type:'bar', id:'3456'},{type:'foo', id:'1234'}]);
   });
 
@@ -130,7 +130,7 @@ describe('revision', function() {
           {type:'bar', id:'3456'}
         ]
       };
-      revision.apply(page, {type: 'move', id:'3456', order:['3456','1234']});
+      revision_apply(page, {type: 'move', id:'3456', order:['3456','1234']});
       return expect(page.story).to.eql([{type:'bar', id:'3456'},{type:'foo', id:'1234'}]);
   });
 
@@ -141,7 +141,7 @@ describe('revision', function() {
           {type:'bar', id:'3456'}
         ]
       };
-      revision.apply(page, {type:'remove', id:'1234'});
+      revision_apply(page, {type:'remove', id:'1234'});
       return expect(page.story).to.eql([{type:'bar', id:'3456'}]);
   });
 });
@@ -153,13 +153,13 @@ describe('revision', function() {
 
       it('should use create title if present', function() {
         const data = fixture({journal: ['c0123']});
-        const version = revision.create(0, data);
+        const version = revision_create(0, data);
         return expect(version.title).to.eql('Create 1,2,3');
       });
 
       return it('should use existing title if create title absent', function() {
         const data = fixture({title: 'Foo', journal: [{type: 'create', item: {story: []}}]});
-        const version = revision.create(0, data);
+        const version = revision_create(0, data);
         return expect(version.title).to.eql('Foo');
       });
     });
@@ -171,22 +171,22 @@ describe('revision', function() {
 
       it('should do little to an empty page', function() {
         const emptyPage = newPage({}).getRawPage();
-        const version = revision.create(-1, emptyPage);
+        const version = revision_create(-1, emptyPage);
         return expect(newPage(version).getRawPage()).to.eql(emptyPage);
       });
 
       it('should shorten the journal to given revision', function() {
-        const version = revision.create(1, data);
+        const version = revision_create(1, data);
         return expect(version.journal.length).to.be(2);
       });
 
       it('should recreate story on given revision', function() {
-        const version = revision.create(1, data);
+        const version = revision_create(1, data);
         return expectText(version).to.eql(['t1', 't2']);
     });
 
       return it('should accept revision as string', function() {
-        const version = revision.create('1', data);
+        const version = revision_create('1', data);
         return expect(version.journal.length).to.be(2);
       });
     });
@@ -197,14 +197,14 @@ describe('revision', function() {
         it('should place story item on dropped position', function() {
           const data = fixture({
             journal:['c0135','a21','a43']});
-          const version = revision.create(3, data);
+          const version = revision_create(3, data);
           return expectText(version).to.eql(['t1','t2','t3','t4','t5']);
       });
 
         return it('should place story items at the beginning when dropped position is not defined', function() {
           const data = fixture({
             journal:['c0135','a2','a4']});
-          const version = revision.create(3, data);
+          const version = revision_create(3, data);
           return expectText(version).to.eql(['t4','t2','t1','t3','t5']);
       });
     });
@@ -214,14 +214,14 @@ describe('revision', function() {
         it('should replace edited stories item', function() {
           const data = fixture({
             journal:['c012345','e3','e1']});
-          const version = revision.create(3, data);
+          const version = revision_create(3, data);
           return expectText(version).to.eql(['t1edited','t2','t3edited','t4','t5']);
       });
 
         return it('should place item at end if edited item is not found', function() {
           const data = fixture({
             journal:['c012345','e9']});
-          const version = revision.create(2, data);
+          const version = revision_create(2, data);
           return expectText(version).to.eql(['t1','t2','t3','t4','t5','t9edited',]);
       });
     });
@@ -231,21 +231,21 @@ describe('revision', function() {
         it('should move item up', function() {
           const data = fixture({
             journal:['c012345','m414235']});
-          const version = revision.create(2, data);
+          const version = revision_create(2, data);
           return expectText(version).to.eql(['t1','t4','t2','t3','t5']);
       });
 
         it('should move item to top', function() {
           const data = fixture({
             journal:['c012345','m441235']});
-          const version = revision.create(2, data);
+          const version = revision_create(2, data);
           return expectText(version).to.eql(['t4','t1','t2','t3','t5']);
       });
 
         return it('should move item down', function() {
           const data = fixture({
             journal:['c012345','m213425']});
-          const version = revision.create(2, data);
+          const version = revision_create(2, data);
           return expectText(version).to.eql(['t1','t3','t4','t2','t5']);
       });
     });
@@ -253,7 +253,7 @@ describe('revision', function() {
       return describe('deleting items', () => it('should remove the story items', function() {
         const data = fixture({
           journal:['c012345','r4', 'r2']});
-        const version = revision.create(3, data);
+        const version = revision_create(3, data);
         return expectText(version).to.eql(['t1','t3','t5']);
     }));
   });
