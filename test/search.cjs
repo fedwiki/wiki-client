@@ -5,7 +5,7 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-const createSearch = require('../lib/search.cjs');
+const {createSearch} = require('../lib/search.mjs');
 
 describe('search', () => // Can't test for right now, because performing a search
 // does DOM manipulation to build a page, which fails in the test runner. We'd like to isolate that DOM manipulation, but can't right now.
