@@ -108,10 +108,12 @@ Deno.serve(async (req) => {
   const url = new URL(req.url);
   const id = url.searchParams.get('id')
   const type = url.searchParams.get('type')
+  const pos = url.searchParams.get('pos')
   switch(url.pathname) {
     case '/': return reply({body:identifiers()})
     case '/context': return reply({body:context(id)})
     case '/example': return reply({body:example(id,type)})
+    case '/span': return reply({body:span(id,type,pos)})
     default: return reply({status:400})
   }
 });
@@ -125,14 +127,24 @@ function identifiers() {
 }
 function context(id) {
   parseall(name => { if(name==id) count(stack[1].type) })
-  return `<b>${id} ⇒</b><br>` + Object.entries(tally)
+  return `<b>${id} ⇒</b><br>\n` + Object.entries(tally)
     .sort((a,b) => a[1]==b[1] ? (a[0]>b[0] ? 1 : -1) : b[1]-a[1])
     .map(([k,v]) => `${v} <a href="/example?id=${id}&type=${k}">${k}</a><br>`)
     .join("\n")
 }
 function example(id,type) {
-  parseall(name => { if(name==id && stack[1].type==type) count(`${stack.at(-1)} ${stack[1].start}-${stack[1].end}`) })
-  return `<b>${id} ⇒ ${type} ⇒</b><br>` + Object.entries(tally)
-    .map(([k,v]) => `${k}<br>`)
+  const hint = pos => {const [file,start,end] = pos.split('-'); return end-start}
+  parseall(name => { if(name==id && stack[1].type==type) count(`${stack.at(-1)}-${stack[1].start}-${stack[1].end}`) })
+  return `<b>${id} ⇒ ${type} ⇒</b><br>\n` + Object.entries(tally)
+    .map(([k,v]) => `${hint(k)} <a href="/span?id=${id}&type=${type}&pos=${k}">${k}</a><br>`)
     .join("\n")
+}
+function span(id,type,pos) {
+  const [file,start,end] = pos.split('-')
+  const hits = []
+  const omit = (k,v) => k=='type'?v:k=='start'||k=='end'?undefined:v
+  parseall(name => { if(stack[1].start == start && stack[1].end == end) hits.push([stack.at(-1),stack[1]]) })
+  return `<b>${id} ⇒ ${type} ⇒ ${pos} ⇒</b><br>\n` + hits
+    .map(([file,hit]) => `<pre>${JSON.stringify(hit,omit,2)}</pre>`)
+    .join("<hr>\n")
 }
