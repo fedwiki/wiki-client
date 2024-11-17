@@ -7,9 +7,18 @@
 
 // A B S T R A C T   S Y N T A X   T R E E S
 
-const modules = ['page','refresh']
+const sources = await list('../../lib','.js')
+const modules = await list('.','.json')
 const entries = await Promise.all(modules.map(load))
 const trees = Object.fromEntries(entries)
+
+async function list(dir,suffix) {
+  const names = []
+  for await (const file of Deno.readDir(dir))
+    if(file.name.endsWith(suffix))
+      names.push(file.name.split('.')[0]);
+  return names.sort()
+}
 
 async function load(module) {
   const text = await Deno.readTextFile(`${module}.json`)
@@ -64,7 +73,18 @@ const rules = {
   AssignmentPattern({left,right}) {parse(left);parse(right)},
   WhileStatement({test,body}) {parse(test);parse(body)},
   TryStatement({block,handler,finalizer}) {parse(block);parse(handler);parse(finalizer)},
-  CatchClause({param,body}) {parse(param);parse(body)}
+  CatchClause({param,body}) {parse(param);parse(body)},
+
+  EmptyStatement() {},
+  AwaitExpression({argument}) {parse(argument)},
+  ThrowStatement({argument}) {parse(argument)},
+  SwitchStatement({discriminant,cases}) {parse(discriminant); cases.map(parse)},
+  SwitchCase({test,consequent}) {parse(test); consequent.map(parse)},
+  RestElement({argument}) {parse(argument)},
+  ImportExpression({source}) {parse(source)},
+  FunctionDeclaration({id,params,body}) {parse(id),params.map(parse),parse(body)},
+
+  ThisExpression({context}) {parse(context)}
 }
 
 let tally = {}
@@ -74,20 +94,28 @@ function parse(json) {
     const type = json?.type;
     stack.unshift(json); 
     log('PARSING',type);
+
     (rules[type]||fail)(json);
     stack.shift()
   }
 }
-function fail(json) {console.log('FAIL',json?.type,json?.start,Object.keys(json||{}))}
+function fail(json) {
+  const type = json?.type
+  const start = json?.start
+  const keys = Object.keys(json||{})
+  const context = stack[1]
+  console.log('FAIL',{type,start,keys,context})
+}
 
 function parseall(lambda) {
   tally = {}
   doit = lambda
-  stack.push('page'); parse(trees.page); stack.pop()
-  stack.push('refresh'); parse(trees.refresh); stack.pop()
+  for (const module of modules) {
+    stack.push(module)
+    parse(trees[module])
+    stack.pop()
+  }
 }
-
-
 
 
 // I N T E R A C T I V E   E X P L O R E R
@@ -110,13 +138,22 @@ Deno.serve(async (req) => {
   const type = url.searchParams.get('type')
   const pos = url.searchParams.get('pos')
   switch(url.pathname) {
-    case '/': return reply({body:identifiers()})
+    case '/': return reply({body:index()})
+    case '/identifiers': return reply({body:identifiers()})
     case '/context': return reply({body:context(id)})
     case '/example': return reply({body:example(id,type)})
     case '/span': return reply({body:span(id,type,pos)})
     default: return reply({status:400})
   }
 });
+
+function index() {
+  const bullet = name => `● ${name}`
+  return `
+    <a href="/identifiers">identifiers</a><br><br>
+    have:<br>${modules.map(bullet).join("<br>")}<br><br>
+    missing:<br>${sources.filter(s => !modules.includes(s)).map(bullet).join("<br>")}`
+}
 
 function identifiers() {
   parseall(name => count(name))
@@ -136,7 +173,7 @@ function example(id,type) {
   const hint = pos => {const [file,start,end] = pos.split('-'); return end-start}
   parseall(name => { if(name==id && stack[1].type==type) count(`${stack.at(-1)}-${stack[1].start}-${stack[1].end}`) })
   return `<b>${id} ⇒ ${type} ⇒</b><br>\n` + Object.entries(tally)
-    .map(([k,v]) => `${hint(k)} <a href="/span?id=${id}&type=${type}&pos=${k}">${k}</a><br>`)
+    .map(([k,v]) => `<a href="/span?id=${id}&type=${type}&pos=${k}">${k}</a> (${hint(k)})<br>`)
     .join("\n")
 }
 function span(id,type,pos) {
@@ -145,6 +182,14 @@ function span(id,type,pos) {
   const omit = (k,v) => k=='type'?v:k=='start'||k=='end'?undefined:v
   parseall(name => { if(stack[1].start == start && stack[1].end == end) hits.push([stack.at(-1),stack[1]]) })
   return `<b>${id} ⇒ ${type} ⇒ ${pos} ⇒</b><br>\n` + hits
-    .map(([file,hit]) => `<pre>${JSON.stringify(hit,omit,2)}</pre>`)
+    .map(([file,hit]) => `<pre>${expand(JSON.stringify(hit,omit,2))}</pre>`)
     .join("<hr>\n")
 }
+
+function expand(text) {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\*(.+?)\*/g, '<i>$1</i>')
+};
