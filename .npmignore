@@ -1,4 +1,9 @@
-# ignore the build directory
-build
-
-
+coverage
+scripts
+test
+meta-client.json
+eslint.config.json
+.github
+.prettier*
+.vscode
+.zed
