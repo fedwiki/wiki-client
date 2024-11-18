@@ -1,72 +1,74 @@
 body {
-	font-family: ‘Times New Roman’, Georgia, serif;
-	font-size: 12pt;
-	line-height: 1.2;
-	background: white;
-	color: black;
+  font-family:
+    ‘Times New Roman’,
+    Georgia,
+    serif;
+  font-size: 12pt;
+  line-height: 1.2;
+  background: white;
+  color: black;
 }
 
 .main {
-	width: auto;
-	border: 0;
-	margin: 10% 20%;
-	padding: 0;
-	float: none !important;
+  width: auto;
+  border: 0;
+  margin: 10% 20%;
+  padding: 0;
+  float: none !important;
 }
 
 .page {
-	page-break-after: always;
+  page-break-after: always;
 }
 
 .story {
-	text-align: left;
+  text-align: left;
 }
 
 p {
-	orphans:3;
-	widows:2;
+  orphans: 3;
+  widows: 2;
 }
-
 
 img.remote {
-	width: 16px;
-	height: 16px;
+  width: 16px;
+  height: 16px;
 }
 
-A:link, A:visited {
-	background: transparent;
-	color: #111;
-	text-decoration: none;
-	font-weight: 600;
+A:link,
+A:visited {
+  background: transparent;
+  color: #111;
+  text-decoration: none;
+  font-weight: 600;
 }
 
 .story a:link:after,
 .story a:visited:after {
-	content: " (" attr(href) ") ";
-	font-size: 90%;
-	font-weight: 500;
+  content: ' (' attr(href) ') ';
+  font-size: 90%;
+  font-weight: 500;
 }
 
 .backlinks {
-	display: none;
+  display: none;
 }
 
 .journal {
-	display: none;
+  display: none;
 }
 
 .footer {
-	font-size: 10pt;
-	padding-top: 24pt;
-	float: bottom;
-	string-set: Footer self;
+  font-size: 10pt;
+  padding-top: 24pt;
+  float: bottom;
+  string-set: Footer self;
 }
 
 .footer a {
-	text-decoration: none;
+  text-decoration: none;
 }
 
-
 footer {
-	display: none;
+  display: none;
 }
