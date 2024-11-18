@@ -88,7 +88,7 @@ const rules = {
 }
 
 let tally = {}
-function count(it) {tally[it] = (tally[it]||0) +1}
+function count(it) {if(tally.hasOwnProperty(it)) tally[it]++; else tally[it]=1}
 function parse(json) {
   if(json) {
     const type = json?.type;
@@ -150,9 +150,10 @@ Deno.serve(async (req) => {
 function index() {
   const bullet = name => `● ${name}`
   return `
-    <a href="/identifiers">identifiers</a><br><br>
-    have:<br>${modules.map(bullet).join("<br>")}<br><br>
-    missing:<br>${sources.filter(s => !modules.includes(s)).map(bullet).join("<br>")}`
+    <style>td{vertical-align:top;}</style>
+    <a href="/identifiers">identifiers</a><br><br><table><tr>
+    <td>have:<br>${modules.map(bullet).join("<br>")}<br><br>
+    <td>missing:<br>${sources.filter(s => !modules.includes(s)).map(bullet).join("<br>")}</table>`
 }
 
 function identifiers() {
@@ -180,10 +181,47 @@ function span(id,type,pos) {
   const [file,start,end] = pos.split('-')
   const hits = []
   const omit = (k,v) => k=='type'?v:k=='start'||k=='end'?undefined:v
-  parseall(name => { if(stack[1].start == start && stack[1].end == end) hits.push([stack.at(-1),stack[1]]) })
-  return `<b>${id} ⇒ ${type} ⇒ ${pos} ⇒</b><br>\n` + hits
-    .map(([file,hit]) => `<pre>${expand(JSON.stringify(hit,omit,2))}</pre>`)
-    .join("<hr>\n")
+  const result = []
+  parseall(name => {
+    if(stack[1].start == start && stack[1].end == end) {
+      const file = stack.at(-1)
+      const path = stack.slice(0,-1).map(n => n.type).reverse()
+      const hit = stack[2]
+      result.push(`
+        <b>${id} ⇒ ${type} ⇒ ${pos} ⇒</b><br>\n
+        ${path.join("<br>")}<br><br>\n
+        ${sxpr(hit,3)}<br><br>\n
+        <pre>${expand(JSON.stringify(hit,omit,2))}</pre>`)
+    }
+  })
+  return result.join("<br>\n")
+}
+
+function sxpr(obj,deep) {
+  if (obj && deep) {
+    const fields = Object.entries(obj)
+      .filter(([k,v]) => !['start','end','raw','computed','optional','kind'].includes(k))
+      .map(([k,v]) =>
+        k=='type' ? abv(v) :
+        (typeof v == 'string') ? expand(v) :
+        Array.isArray(v) ? `[${v.map(o => sxpr(o,deep-1)).join(" ")}]` :
+        sxpr(v, deep-1))
+      .join(" ")
+    return `(${fields})`
+  } else {
+    if (obj) return elipsis(obj)
+    return `?`
+  }
+}
+
+function abv(type) {
+  return `<span title=${type}>${type.replaceAll(/[a-z]/g,'')}</span>`
+}
+
+function elipsis(obj) {
+  const bytes = (obj.end||0)-(obj.start||0)
+  const dots = '..' + '.'.repeat(Math.floor(Math.log2(bytes||1)))
+  return `(<span title="${bytes} bytes">${dots}</span>)`
 }
 
 function expand(text) {
