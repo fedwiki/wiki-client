@@ -6,12 +6,22 @@ export default [
   pluginJs.configs.recommended,
   {
     files: ['**/*.js'],
-    languageOptions: { sourceType: 'commonjs' },
-  },
-  {
+    ignores: ['test/*.js'],
     languageOptions: {
+      sourceType: 'commonjs',
       globals: {
         wiki: 'writable',
+        ...globals.browser,
+        ...globals.jquery,
+      },
+    },
+  },
+  {
+    files: ['test/*.js'],
+    languageOptions: {
+      sourceType: 'commonjs',
+      globals: {
+        expect: 'readonly',
         ...globals.browser,
         ...globals.jquery,
         ...globals.mocha,
