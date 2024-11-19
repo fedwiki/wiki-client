@@ -122,8 +122,6 @@ function parseall(lambda) {
 
 Deno.serve(async (req) => {
 
-  const plain = "text/plain"
-
   function reply(opts) {
     const status = opts.status || 200
     const body = opts.body || "NOT FOUND"
@@ -143,7 +141,7 @@ Deno.serve(async (req) => {
     case '/context': return reply({body:context(id)})
     case '/formula': return reply({body:formula(id,type)})
     case '/example': return reply({body:example(id,type)})
-    case '/span': return reply({body:span(id,type,pos)})
+    case '/detail': return reply({body:detail(id,type,pos)})
     default: return reply({status:400})
   }
 });
@@ -173,17 +171,20 @@ function context(id) {
 }
 function formula(id,type) {
   const result = []
-  parseall(name => { if(name==id && stack[1].type==type) result.push(sxpr(stack[2],4))})
-  return `<b>${id} ⇒ ${type} ⇒</b><br>\n` + result.sort().join("<br>")
+  parseall(name => { if(name==id && stack[1].type==type) result.push(`${sxpr(stack[2],4)} -- <a href=/detail?id=${id}&type=${type}&pos=${stack.at(-1)}-${stack[1].start}-${stack[1].end}>${stack.at(-1)}</a>`)})
+  return `<b>${id} ⇒ ${type} ⇒</b> ` +
+    `<a href=/example?id=${id}&type=${type}>examples</a><br> \n` +
+    result.sort().join("<br>") +
+    `<br><br>`
 }
 function example(id,type) {
   const hint = pos => {const [file,start,end] = pos.split('-'); return end-start}
   parseall(name => { if(name==id && stack[1].type==type) count(`${stack.at(-1)}-${stack[1].start}-${stack[1].end}`) })
   return `<b>${id} ⇒ ${type} ⇒</b><br>\n` + Object.entries(tally)
-    .map(([k,v]) => `<a href="/span?id=${id}&type=${type}&pos=${k}">${k}</a> (${hint(k)})<br>`)
+    .map(([k,v]) => `<a href="/detail?id=${id}&type=${type}&pos=${k}">${k}</a> (${hint(k)})<br>`)
     .join("\n")
 }
-function span(id,type,pos) {
+function detail(id,type,pos) {
   const [file,start,end] = pos.split('-')
   const hits = []
   const omit = (k,v) => k=='type'?v:k=='start'||k=='end'?undefined:v
@@ -191,12 +192,11 @@ function span(id,type,pos) {
   parseall(name => {
     if(stack[1].start == start && stack[1].end == end) {
       const file = stack.at(-1)
-      const path = stack.slice(0,-1).map(n => n.type).reverse()
+      const path = stack.slice(0,-1).map(n => `<tr><td style="text-align:right;">${n.type}<td>${sxpr(n,3  )}`).reverse()
       const hit = stack[2]
       result.push(`
         <b>${id} ⇒ ${type} ⇒ ${pos} ⇒</b><br>\n
-        ${path.join("<br>")}<br><br>\n
-        ${sxpr(hit,3)}<br><br>\n
+        <table>${path.join("")}</table><br><br>\n
         <pre>${expand(JSON.stringify(hit,omit,2))}</pre>`)
     }
   })
