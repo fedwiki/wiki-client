@@ -3,10 +3,10 @@ import pluginJs from '@eslint/js'
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
+  { ignores: ['client/**'] },
   pluginJs.configs.recommended,
   {
-    files: ['**/*.js'],
-    ignores: ['test/*.js'],
+    files: ['client.js', 'lib/*.js'],
     languageOptions: {
       sourceType: 'commonjs',
       globals: {
@@ -17,14 +17,33 @@ export default [
     },
   },
   {
-    files: ['test/*.js'],
+    files: ['testclient.js', 'test/*.js'],
     languageOptions: {
       sourceType: 'commonjs',
       globals: {
         expect: 'readonly',
+        sinon: 'readonly',
         ...globals.browser,
         ...globals.jquery,
         ...globals.mocha,
+      },
+    },
+  },
+  {
+    files: ['scripts/*.js'],
+    languageOptions: {
+      sourceType: 'commonjs',
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
+  {
+    files: ['scripts/*.mjs'],
+    languageOptions: {
+      sourceType: 'module',
+      globals: {
+        ...globals.node,
       },
     },
   },
