@@ -131,7 +131,7 @@ Deno.serve(async (req) => {
     return new Response(body,{status,headers})
   }
 
-
+  if(!req.url.match(/favicon.ico/)) console.log(new Date().toLocaleTimeString(),req.url)
   if(req.method != 'GET') return reply({status:405,body:"Not Allowed"})
   const url = new URL(req.url);
   const id = url.searchParams.get('id')
@@ -141,6 +141,7 @@ Deno.serve(async (req) => {
     case '/': return reply({body:index()})
     case '/identifiers': return reply({body:identifiers()})
     case '/context': return reply({body:context(id)})
+    case '/formula': return reply({body:formula(id,type)})
     case '/example': return reply({body:example(id,type)})
     case '/span': return reply({body:span(id,type,pos)})
     default: return reply({status:400})
@@ -167,8 +168,13 @@ function context(id) {
   parseall(name => { if(name==id) count(stack[1].type) })
   return `<b>${id} ⇒</b><br>\n` + Object.entries(tally)
     .sort((a,b) => a[1]==b[1] ? (a[0]>b[0] ? 1 : -1) : b[1]-a[1])
-    .map(([k,v]) => `${v} <a href="/example?id=${id}&type=${k}">${k}</a><br>`)
+    .map(([k,v]) => `${v} <a href="/formula?id=${id}&type=${k}">${k}</a><br>`)
     .join("\n")
+}
+function formula(id,type) {
+  const result = []
+  parseall(name => { if(name==id && stack[1].type==type) result.push(sxpr(stack[2],4))})
+  return `<b>${id} ⇒ ${type} ⇒</b><br>\n` + result.sort().join("<br>")
 }
 function example(id,type) {
   const hint = pos => {const [file,start,end] = pos.split('-'); return end-start}
@@ -194,20 +200,21 @@ function span(id,type,pos) {
         <pre>${expand(JSON.stringify(hit,omit,2))}</pre>`)
     }
   })
-  return result.join("<br>\n")
+  return '<style>span:hover{background-color:yellow}</style>'+
+    result.join("<br>\n")
 }
 
-function sxpr(obj,deep) {
+function sxpr(obj,deep,key) {
   if (obj && deep) {
     const fields = Object.entries(obj)
       .filter(([k,v]) => !['start','end','raw','computed','optional','kind'].includes(k))
       .map(([k,v]) =>
         k=='type' ? abv(v) :
         (typeof v == 'string') ? expand(v) :
-        Array.isArray(v) ? `[${v.map(o => sxpr(o,deep-1)).join(" ")}]` :
-        sxpr(v, deep-1))
+        Array.isArray(v) ? `[${v.map(o => sxpr(o,deep-1,k)).join(" ")}]` :
+        sxpr(v, deep-1, k))
       .join(" ")
-    return `(${fields})`
+    return key ? `<span title=${key}>(${fields})</span>` : `(${fields})`
   } else {
     if (obj) return elipsis(obj)
     return `?`
