@@ -129,19 +129,24 @@ Deno.serve(async (req) => {
     return new Response(body,{status,headers})
   }
 
+  const style = '<style> a {text-decoration: none} </style>'
+  const html = text => reply({body:style+text})
+
   if(!req.url.match(/favicon.ico/)) console.log(new Date().toLocaleTimeString(),req.url)
   if(req.method != 'GET') return reply({status:405,body:"Not Allowed"})
   const url = new URL(req.url);
   const id = url.searchParams.get('id')
   const type = url.searchParams.get('type')
   const pos = url.searchParams.get('pos')
+  const depth = url.searchParams.get('depth')
   switch(url.pathname) {
-    case '/': return reply({body:index()})
-    case '/identifiers': return reply({body:identifiers()})
-    case '/context': return reply({body:context(id)})
-    case '/formula': return reply({body:formula(id,type)})
-    case '/example': return reply({body:example(id,type)})
-    case '/detail': return reply({body:detail(id,type,pos)})
+    case '/': return html(index())
+    case '/identifiers': return html(identifiers())
+    case '/context': return html(context(id))
+    case '/formula': return html(formula(id,type))
+    case '/example': return html(example(id,type))
+    case '/detail': return html(detail(pos))
+    case '/similar': return html(similar(pos,depth))
     default: return reply({status:400})
   }
 });
@@ -164,65 +169,86 @@ function identifiers() {
 }
 function context(id) {
   parseall(name => { if(name==id) count(stack[1].type) })
-  return `<b>${id} ⇒</b><br>\n` + Object.entries(tally)
+  return `<b>${id} ⇒</b> <a href=/formula?id=${id}&type=*>all contexts</a><br>\n` + Object.entries(tally)
     .sort((a,b) => a[1]==b[1] ? (a[0]>b[0] ? 1 : -1) : b[1]-a[1])
     .map(([k,v]) => `${v} <a href="/formula?id=${id}&type=${k}">${k}</a><br>`)
     .join("\n")
 }
 function formula(id,type) {
   const result = []
-  parseall(name => { if(name==id && stack[1].type==type) result.push(`${sxpr(stack[2],4)} -- <a href=/detail?id=${id}&type=${type}&pos=${stack.at(-1)}-${stack[1].start}-${stack[1].end}>${stack.at(-1)}</a>`)})
+  const pos = () => `${stack.at(-1)}-${stack[1].start}-${stack[1].end}>${stack.at(-1)}`
+  const src = () => `<a href=/detail?pos=${pos()}</a>`
+  parseall(name => { if(name==id && (type=='*' || stack[1].type==type)) result.push(`<tr><td style="text-align:right;">${src()}:<td>${sxpr(stack[2],4)}`)})
   return `<b>${id} ⇒ ${type} ⇒</b> ` +
     `<a href=/example?id=${id}&type=${type}>examples</a><br> \n` +
-    result.sort().join("<br>") +
+    `<table>${result.sort().join("")}</table>` +
     `<br><br>`
 }
 function example(id,type) {
   const hint = pos => {const [file,start,end] = pos.split('-'); return end-start}
-  parseall(name => { if(name==id && stack[1].type==type) count(`${stack.at(-1)}-${stack[1].start}-${stack[1].end}`) })
+  parseall(name => { if(name==id && (type=='*' || stack[1].type==type)) count(`${stack.at(-1)}-${stack[1].start}-${stack[1].end}`) })
   return `<b>${id} ⇒ ${type} ⇒</b><br>\n` + Object.entries(tally)
-    .map(([k,v]) => `<a href="/detail?id=${id}&type=${type}&pos=${k}">${k}</a> (${hint(k)})<br>`)
+    .map(([k,v]) => `<a href="/detail?pos=${k}">${k}</a> (${hint(k)})<br>`)
     .join("\n")
 }
-function detail(id,type,pos) {
+function detail(pos) {
   const [file,start,end] = pos.split('-')
-  const hits = []
-  const omit = (k,v) => k=='type'?v:k=='start'||k=='end'?undefined:v
   const result = []
   parseall(name => {
     if(stack[1].start == start && stack[1].end == end) {
       const file = stack.at(-1)
-      const path = stack.slice(0,-1).map(n => `<tr><td style="text-align:right;">${n.type}<td>${sxpr(n,3  )}`).reverse()
+      const path = stack.slice(0,-1).map((n,i) => `
+        <tr><td style="text-align:right;">
+          <a title=${file} href=/similar?pos=${pos}&depth=${i}>${n.type}</a>:
+        <td>${sxpr(n,3  )}`).reverse()
       const hit = stack[2]
       result.push(`
-        <b>${id} ⇒ ${type} ⇒ ${pos} ⇒</b><br>\n
+        <b>${pos} ⇒</b><br>\n
         <table>${path.join("")}</table><br><br>\n
         <pre>${expand(JSON.stringify(hit,omit,2))}</pre>`)
     }
   })
   return '<style>span:hover{background-color:yellow}</style>'+
-    result.join("<br>\n")
+    result[0]
+}
+
+function similar(pos,depth) {
+  const [file,start,end] = pos.split('-')
+  let patern
+  parseall(name => {
+    if(stack[1].start == start && stack[1].end == end) {
+      const node = stack[depth]
+      patern = `<pre>${JSON.stringify({file,start,end,depth,type:node.type},null,2)}</pre>` +
+      `<br><br>${sxpr(node,3,'crazy')}` +
+      `<br><br><pre>${JSON.stringify(node,omit,2)}</pre>`
+    }
+  })
+  return patern
 }
 
 function sxpr(obj,deep,key) {
-  if (obj && deep) {
-    const fields = Object.entries(obj)
-      .filter(([k,v]) => !['start','end','raw','computed','optional','kind'].includes(k))
-      .map(([k,v]) =>
-        k=='type' ? abv(v) :
-        (typeof v == 'string') ? expand(v) :
-        Array.isArray(v) ? `[${v.map(o => sxpr(o,deep-1,k)).join(" ")}]` :
-        sxpr(v, deep-1, k))
-      .join(" ")
-    return key ? `<span title=${key}>(${fields})</span>` : `(${fields})`
-  } else {
-    if (obj) return elipsis(obj)
-    return `?`
-  }
+  const link = word => obj.type == 'Identifier' ? `<a href=/context?id=${word}>${word}</a>` : word
+  if (obj) {
+    if(deep) {
+      const fields = Object.entries(obj)
+        .filter(([k,v]) => !['start','end','raw','computed','optional','kind'].includes(k))
+        .map(([k,v]) =>
+          k=='type' ? abv(v) :
+          (typeof v == 'string') ? link(expand(v)) :
+          Array.isArray(v) ? `[${v.map(o => sxpr(o,deep-1,k)).join(" ")}]` :
+          sxpr(v, deep-1, k))
+        .join(" ")
+      return key ? `<span title=${key}>(${(fields)})</span>` : `(${(fields)})`
+    } else return elipsis(obj)
+  } else return `?`
 }
 
 function abv(type) {
   return `<span title=${type}>${type.replaceAll(/[a-z]/g,'')}</span>`
+}
+
+function omit(k,v) {
+  return k=='type'?v:k=='start'||k=='end'?undefined:v
 }
 
 function elipsis(obj) {
