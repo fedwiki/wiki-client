@@ -7,10 +7,7 @@
 
 // A B S T R A C T   S Y N T A X   T R E E S
 
-const sources = await list('../../lib','.js')
-const modules = await list('.','.json')
-const entries = await Promise.all(modules.map(load))
-const trees = Object.fromEntries(entries)
+let trees = await browse(Deno.args[0]||'.','json')
 
 async function list(dir,suffix) {
   const names = []
@@ -20,10 +17,17 @@ async function list(dir,suffix) {
   return names.sort()
 }
 
-async function load(module) {
-  const text = await Deno.readTextFile(`${module}.json`)
+async function load(dir,module) {
+  const text = await Deno.readTextFile(`${dir}/${module}.json`)
   const tree = JSON.parse(text)
   return [module,tree]
+}
+
+async function browse(dir,suffix) {
+  const modules = await list(dir,suffix)
+  const entries = await Promise.all(modules.map(module => load(dir,module)))
+  console.log(entries.map(([module,tree]) => [module,tree.type]))
+  return Object.fromEntries(entries)
 }
 
 
@@ -84,11 +88,14 @@ const rules = {
   ImportExpression({source}) {parse(source)},
   FunctionDeclaration({id,params,body}) {parse(id),params.map(parse),parse(body)},
 
-  ThisExpression({context}) {parse(context)}
+  ThisExpression({context}) {parse(context)},
+
+  DoWhileStatement({test,body}) {parse(test);parse(body)},
+  SequenceExpression({expressions}) {expressions.map(parse)},
 }
 
-let tally = {}
-function count(it) {if(tally.hasOwnProperty(it)) tally[it]++; else tally[it]=1}
+let tally = new Map()
+function count(it) {if(tally.has(it)) tally.set(it, tally.get(it)+1); else tally.set(it,1)}
 function parse(json) {
   if(json) {
     const type = json?.type;
@@ -108,9 +115,9 @@ function fail(json) {
 }
 
 function parseall(lambda) {
-  tally = {}
+  tally = new Map()
   doit = lambda
-  for (const module of modules) {
+  for (const module of Object.keys(trees)) {
     stack.push(module)
     parse(trees[module])
     stack.pop()
@@ -153,23 +160,23 @@ Deno.serve(async (req) => {
 
 function index() {
   const bullet = name => `● ${name}`
+  const modules = Object.keys(trees)
   return `
     <style>td{vertical-align:top;}</style>
-    <a href="/identifiers">identifiers</a><br><br><table><tr>
-    <td>have:<br>${modules.map(bullet).join("<br>")}<br><br>
-    <td>missing:<br>${sources.filter(s => !modules.includes(s)).map(bullet).join("<br>")}</table>`
+    <a href="/identifiers">identifiers</a><br><br>
+    have:<br>${modules.map(bullet).join("<br>")}`
 }
 
 function identifiers() {
   parseall(name => count(name))
-  return Object.entries(tally)
+  return [...tally]
     .sort((a,b) => a[1]==b[1] ? (a[0]>b[0] ? 1 : -1) : b[1]-a[1])
     .map(([k,v]) => `${v} <a href="/context?id=${k}">${k}</a><br>`)
     .join("\n")
 }
 function context(id) {
   parseall(name => { if(name==id) count(stack[1].type) })
-  return `<b>${id} ⇒</b> <a href=/formula?id=${id}&type=*>all contexts</a><br>\n` + Object.entries(tally)
+  return `<b>${id} ⇒</b> <a href=/formula?id=${id}&type=*>all contexts</a><br>\n` + [...tally]
     .sort((a,b) => a[1]==b[1] ? (a[0]>b[0] ? 1 : -1) : b[1]-a[1])
     .map(([k,v]) => `${v} <a href="/formula?id=${id}&type=${k}">${k}</a><br>`)
     .join("\n")
@@ -187,7 +194,7 @@ function formula(id,type) {
 function example(id,type) {
   const hint = pos => {const [file,start,end] = pos.split('-'); return end-start}
   parseall(name => { if(name==id && (type=='*' || stack[1].type==type)) count(`${stack.at(-1)}-${stack[1].start}-${stack[1].end}`) })
-  return `<b>${id} ⇒ ${type} ⇒</b><br>\n` + Object.entries(tally)
+  return `<b>${id} ⇒ ${type} ⇒</b><br>\n` + [...tally]
     .map(([k,v]) => `<a href="/detail?pos=${k}">${k}</a> (${hint(k)})<br>`)
     .join("\n")
 }
