@@ -101,7 +101,6 @@ function parse(json) {
     const type = json?.type;
     stack.unshift(json); 
     log('PARSING',type);
-
     (rules[type]||fail)(json);
     stack.shift()
   }
@@ -136,7 +135,7 @@ Deno.serve(async (req) => {
     return new Response(body,{status,headers})
   }
 
-  const style = '<style> a {text-decoration: none} </style>'
+  const style = '<style> a {text-decoration: none} .hi {background-color:pink} </style>'
   const html = text => reply({body:style+text})
 
   if(!req.url.match(/favicon.ico/)) console.log(new Date().toLocaleTimeString(),req.url)
@@ -206,8 +205,8 @@ function detail(pos) {
       const file = stack.at(-1)
       const path = stack.slice(0,-1).map((n,i) => `
         <tr><td style="text-align:right;">
-          <a title=${file} href=/similar?pos=${pos}&depth=${i}>${n.type}</a>:
-        <td>${sxpr(n,3  )}`).reverse()
+          <a title=${file} href=/similar?pos=${`${file}-${start}-${end}`}&depth=${i}>${n.type}</a>:
+        <td>${sxpr(n,3,null,stack[i-1])}`).reverse()
       const hit = stack[2]
       result.push(`
         <b>${pos} ⇒</b><br>\n
@@ -221,19 +220,28 @@ function detail(pos) {
 
 function similar(pos,depth) {
   const [file,start,end] = pos.split('-')
-  let patern
+
+  let node
   parseall(name => {
     if(stack[1].start == start && stack[1].end == end) {
-      const node = stack[depth]
-      patern = `<pre>${JSON.stringify({file,start,end,depth,type:node.type},null,2)}</pre>` +
-      `<br><br>${sxpr(node,3,'crazy')}` +
-      `<br><br><pre>${JSON.stringify(node,omit,2)}</pre>`
+      node = stack[depth]
     }
   })
-  return patern
+  return `<b>${pos} ⇒ ${node?.type} ⇒ ${depth} ⇒
+    <a href=/similar?pos=${pos}&depth=${+depth+1}>more</a> |
+    <a href=/similar?pos=${pos}&depth=${+depth-1}>less</a></b><br><br>
+    ${sxpr(node,3)}<br>
+     <pre style="border: solid gray 1px; padding: 6px;"">${src(file,node.start,node.end)}</pre><br>
+    <pre>${JSON.stringify(node,omit,2)}</pre>`
 }
 
-function sxpr(obj,deep,key) {
+function src(file,start,end) {
+  const text = Deno.readTextFileSync(`src/${file}.js`)
+  return expand(text.substring(+start,+end))
+}
+
+function sxpr(obj,deep,key,child) {
+  const hilite = obj===child ? 'class="hi"' : ''
   const link = word => obj.type == 'Identifier' ? `<a href=/context?id=${word}>${word}</a>` : word
   if (obj) {
     if(deep) {
@@ -242,12 +250,12 @@ function sxpr(obj,deep,key) {
         .map(([k,v]) =>
           k=='type' ? abv(v) :
           (typeof v == 'string') ? link(expand(v)) :
-          Array.isArray(v) ? `[${v.map(o => sxpr(o,deep-1,k)).join(" ")}]` :
-          sxpr(v, deep-1, k))
+          Array.isArray(v) ? `[${v.map(o => sxpr(o,deep-1,k,child)).join(" ")}]` :
+          sxpr(v, deep-1, k, child))
         .join(" ")
-      return key ? `<span title=${key}>(${(fields)})</span>` : `(${(fields)})`
+      return key ? `<span ${hilite} title=${key}>(${(fields)})</span>` : `(${(fields)})`
     } else return elipsis(obj)
-  } else return `?`
+  } else return `<span title=${obj}>.</span>`
 }
 
 function abv(type) {
