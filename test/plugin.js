@@ -1,9 +1,9 @@
 const plugin = require('../lib/plugin')
-const sinon = require('sinon')
+// const sinon = require('sinon')
 const expect = require('expect.js')
 
 describe('plugin', function () {
-  const fakeDeferred = undefined
+  // const fakeDeferred = undefined
   let $page = null
 
   before(function () {

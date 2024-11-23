@@ -69,7 +69,7 @@ describe('neighborhood', function () {
       expect(searchResult.finds.page).to.eql(expectedResult.page)
     })
 
-    return it.skip('searches both the slug and the title')
+    it.skip('searches both the slug and the title')
   })
 
   describe('more than one neighbor', function () {

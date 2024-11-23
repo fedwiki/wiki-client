@@ -17,7 +17,7 @@ const mockDrop = dataTransfer => ({
 const mockUrl = (type, url) =>
   mockDrop({
     types: [type],
-    getData(spec) {
+    getData() {
       return url
     },
   })
