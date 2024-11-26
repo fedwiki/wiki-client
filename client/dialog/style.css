@@ -10,7 +10,7 @@ body {
 .page {
   margin: 8px;
   outline: none;
-  box-shadow: 2px 1px 4px rgba(0,0,0,0.2);
+  box-shadow: 2px 1px 4px rgba(0, 0, 0, 0.2);
   background: #eee;
   padding: 8px;
   position: absolute;
@@ -26,22 +26,23 @@ p {
 .remote {
   vertical-align: text-top;
   width: 16px;
-  height: 16px
+  height: 16px;
 }
 a {
   text-decoration: none;
 }
 
-:is(#authors,#provenance) a {
+:is(#authors, #provenance) a {
   margin-left: 16px;
 }
 
-.page:has(>img,svg) {
+.page:has(> img, svg) {
   overflow: hidden;
   scrollbar-gutter: auto;
 }
 
-.page > img,svg{
+.page > img,
+svg {
   width: auto !important;
   max-width: 100%;
   max-height: 100%;

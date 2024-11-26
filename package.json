@@ -1,6 +1,6 @@
 {
   "name": "wiki-client",
-  "version": "0.31.0-decaffeinate.5",
+  "version": "0.31.0-rc.7",
   "description": "Federated Wiki - Client-side Javascript",
   "keywords": [
     "wiki",
@@ -28,6 +28,8 @@
     "build": "npm run test && npm run build:client && npm run build:test",
     "build:client": "npm run clean:client; node --no-warnings scripts/build-client.mjs",
     "build:test": "npm run clean:test; node --no-warnings scripts/build-testclient.mjs",
+    "prettier:format": "prettier --write './**/*.js'",
+    "prettier:check": "prettier --check ./**/*.js",
     "clean": "npm run clean:client; npm run clean:test",
     "clean:client": "rm client/client.js client/client.js.map meta-client.json",
     "clean:test": "rm client/test/testclient.js",
@@ -41,11 +43,15 @@
     "underscore": "^1.13.6"
   },
   "devDependencies": {
+    "@eslint/js": "^9.14.0",
     "esbuild": "^0.24.0",
+    "eslint": "^9.14.0",
     "expect.js": "^0.3.1",
+    "globals": "^15.12.0",
     "grunt-git-authors": "^3.2.0",
     "minisearch": "^7.1.0",
     "mocha": "^10.2.0",
+    "prettier": "3.3.3",
     "serve": "^14.2.3",
     "sinon": "^19.0.2"
   },

@@ -16,3 +16,5 @@ client/test/testclient.js
 client/test/testclient.js.map
 # esbuild metadata
 meta-client.json
+# c8 output
+coverage
