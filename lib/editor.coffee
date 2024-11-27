@@ -95,7 +95,9 @@ textEditor = ($item, item, option={}) ->
     $item.removeClass 'textEditing'
     $textarea.off()
     $page = $item.parents('.page:first')
-    if item[option.field||'text'] = $textarea.val()
+    presave = option.presave or (item, value) ->
+      return value
+    if item[option.field||'text'] = presave item, $textarea.val()
       # Remove output and source styling as type may have changed.
       $item.removeClass("output-item")
       $item.removeClass (_index, className) ->
