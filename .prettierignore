@@ -1,0 +1,4 @@
+client/js
+client/test
+client/client.*
+coverage

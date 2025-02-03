@@ -19,8 +19,6 @@ link -> bind [dir=back];
 bind [shape=box];
 
 dialog [fillcolor=paleGreen];
-resolve -> dialog [dir=back];
-dialog [shape=box];
 
 drop [fillcolor=paleGreen];
 
@@ -40,18 +38,24 @@ pageHandler -> factory [dir=back];
 editor -> factory [dir=back];
 synopsis -> factory [dir=back];
 drop -> factory [dir=back];
+active -> factory [dir=back];
 factory [shape=box];
+
+forward [fillcolor=gold];
+forward [shape=box];
 
 future [fillcolor=paleGreen];
 resolve -> future [dir=back];
 neighborhood -> future [dir=back];
+lineup -> future [dir=back];
+refresh -> future [dir=back];
 future [shape=box];
 
-image [fillcolor=paleGreen];
-dialog -> image [dir=back];
-editor -> image [dir=back];
-resolve -> image [dir=back];
-image [shape=box];
+importer [fillcolor=gold];
+util -> importer [dir=back];
+link -> importer [dir=back];
+page -> importer [dir=back];
+importer [shape=box];
 
 itemz [fillcolor=paleGreen];
 pageHandler -> itemz [dir=back];
@@ -68,8 +72,18 @@ lineup -> legacy [dir=back];
 drop -> legacy [dir=back];
 dialog -> legacy [dir=back];
 link -> legacy [dir=back];
+target -> legacy [dir=back];
+license -> legacy [dir=back];
+plugin -> legacy [dir=back];
+util -> legacy [dir=back];
+page -> legacy [dir=back];
 page -> legacy [dir=back];
 legacy [shape=box];
+
+license [fillcolor=gold];
+resolve -> license [dir=back];
+lineup -> license [dir=back];
+license [shape=box];
 
 lineup [fillcolor=paleGreen];
 random -> lineup [dir=back];
@@ -86,12 +100,16 @@ neighborhood [shape=box];
 
 neighbors [fillcolor=paleGreen];
 link -> neighbors [dir=back];
+wiki -> neighbors [dir=back];
+neighborhood -> neighbors [dir=back];
+util -> neighbors [dir=back];
 neighbors [shape=box];
 
 page [fillcolor=paleGreen];
 util -> page [dir=back];
 random -> page [dir=back];
 revision -> page [dir=back];
+synopsis -> page [dir=back];
 
 pageHandler [fillcolor=gold];
 state -> pageHandler [dir=back];
@@ -100,31 +118,34 @@ addToJournal -> pageHandler [dir=back];
 page -> pageHandler [dir=back];
 random -> pageHandler [dir=back];
 lineup -> pageHandler [dir=back];
+neighborhood -> pageHandler [dir=back];
 pageHandler [shape=box];
 
 paragraph [fillcolor=paleGreen];
 editor -> paragraph [dir=back];
 resolve -> paragraph [dir=back];
+itemz -> paragraph [dir=back];
 paragraph [shape=box];
 
-persona [fillcolor=gold];
-persona [shape=box];
-
 plugin [fillcolor=gold];
+forward -> plugin [dir=back];
 plugin [shape=box];
 
 plugins [fillcolor=paleGreen];
+plugin -> plugins [dir=back];
 reference -> plugins [dir=back];
 factory -> plugins [dir=back];
 paragraph -> plugins [dir=back];
 image -> plugins [dir=back];
 future -> plugins [dir=back];
+importer -> plugins [dir=back];
 
 random [fillcolor=paleGreen];
 
 reference [fillcolor=gold];
 editor -> reference [dir=back];
 resolve -> reference [dir=back];
+page -> reference [dir=back];
 reference [shape=box];
 
 refresh [fillcolor=gold];
@@ -146,20 +167,33 @@ page -> resolve [dir=back];
 revision [fillcolor=gold];
 
 search [fillcolor=gold];
+pageHandler -> search [dir=back];
+random -> search [dir=back];
 link -> search [dir=back];
 active -> search [dir=back];
 page -> search [dir=back];
+resolve -> search [dir=back];
+page -> search [dir=back];
+search [shape=box];
 
 searchbox [fillcolor=paleGreen];
 search -> searchbox [dir=back];
 searchbox [shape=box];
 
+security [fillcolor=gold];
+plugin -> security [dir=back];
+
+siteAdapter [fillcolor=gold];
+siteAdapter [shape=box];
+
 state [fillcolor=gold];
 active -> state [dir=back];
 lineup -> state [dir=back];
-state [shape=box];
 
 synopsis [fillcolor=gold];
+
+target [fillcolor=gold];
+target [shape=box];
 
 util [fillcolor=gold];
 }

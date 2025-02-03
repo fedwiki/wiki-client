@@ -3,9 +3,9 @@
 
 @new = qw" page lineup drop dialog link tempwiki neighbors searchbox bind plugins future image paragraph resolve itemz editor actionSymbols random ";
 
-for (<../lib/*.coffee>) {
+for (<../lib/*.js>) {
 	next if /wiki/;
-  $from = $1 if /(\w+)\.coffee/;
+  $from = $1 if /(\w+)\.js/;
   $color = $from ~~ @new ? 'paleGreen' : 'gold';
   $dot .= "\n$from [fillcolor=$color];\n";
   open F, $_;
