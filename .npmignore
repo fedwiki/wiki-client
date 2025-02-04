@@ -1,9 +1,12 @@
+/client.js
+/testclient.js
 coverage
 scripts
 test
 meta-client.json
-eslint.config.json
+eslint.config.mjs
 .github
+.mailmap
 .prettier*
 .vscode
 .zed
