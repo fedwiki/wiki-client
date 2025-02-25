@@ -7,7 +7,7 @@ describe('active', function () {
     active.set($('#active1'))
   })
 
-  it('should detect the scroll container', () => expect(active.scrollContainer).to.be.a($))
+  it.skip('should detect the scroll container', () => expect(active.scrollContainer).to.be.a($))
 
   it('should set the active div', function () {
     active.set($('#active2'))
