@@ -74,7 +74,7 @@ describe('page', function () {
       expect(pageObject.getContext()).to.eql(['view', 'example.com', 'one.org'])
     })
 
-    it('should have neighbors from site, reference and journal (in order, without duplicates)', function () {
+    it('should have neighbors from site, and journal, but not from refernces (in order, without duplicates)', function () {
       const pageObject = newPage(
         {
           story: [
@@ -90,7 +90,7 @@ describe('page', function () {
         },
         'example.com',
       )
-      expect(pageObject.getNeighbors()).to.eql(['example.com', 'one.org', 'two.org', 'three.org', 'four.org'])
+      expect(pageObject.getNeighbors()).to.eql(['example.com', 'three.org', 'four.org'])
     })
   })
 
