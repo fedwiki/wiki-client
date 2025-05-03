@@ -1,6 +1,6 @@
 {
   "name": "wiki-client",
-  "version": "0.31.0-rc.10",
+  "version": "0.31.0",
   "description": "Federated Wiki - Client-side Javascript",
   "keywords": [
     "wiki",
