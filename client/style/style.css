@@ -527,6 +527,8 @@ textarea {
     width: 1%;
     margin: 8px;
     padding: 0;
+    flex: 0 0 100vw;
+    font-size: .87rem;
   }
 }
 
