@@ -260,7 +260,7 @@ div.image {
 /* end image plugin editor */
 
 .backlinks {
-  width: 420px;
+  /*width: 420px;*/
   margin-top: 2px;
   clear: both;
   background-color: #eeeeee;
@@ -294,7 +294,7 @@ div.image {
 }
 
 .journal.ui-draggable {
-  width: 420px;
+  /*width: 420px;*/
 }
 
 .action.fork {
@@ -527,6 +527,9 @@ textarea {
     width: 1%;
     margin: 8px;
     padding: 0;
+    flex: 0 0 100vw;
+    font-size: .87rem;
+    overflow-x: unset;
   }
 }
 
