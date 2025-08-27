@@ -55,6 +55,9 @@
     "serve": "^14.2.3",
     "sinon": "^21.0.0"
   },
+  "overrides": {
+    "compression": "1.8.1"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -64,6 +67,6 @@
     "url": "https://github.com/fedwiki/wiki-client/issues"
   },
   "engines": {
-    "node": ">=18.x"
+    "node": ">=20.x"
   }
 }
