@@ -1,6 +1,6 @@
 {
   "name": "wiki-client",
-  "version": "0.31.1",
+  "version": "0.31.3",
   "description": "Federated Wiki - Client-side Javascript",
   "keywords": [
     "wiki",
@@ -43,17 +43,20 @@
     "underscore": "^1.13.6"
   },
   "devDependencies": {
-    "@eslint/js": "^9.26.0",
-    "esbuild": "^0.25.4",
-    "eslint": "^9.26.0",
+    "@eslint/js": "^9.32.0",
+    "esbuild": "^0.25.8",
+    "eslint": "^9.32.0",
     "expect.js": "^0.3.1",
-    "globals": "^16.1.0",
+    "globals": "^16.3.0",
     "grunt-git-authors": "^3.2.0",
     "minisearch": "^7.1.2",
-    "mocha": "^11.2.2",
-    "prettier": "^3.5.3",
+    "mocha": "^11.7.1",
+    "prettier": "^3.6.2",
     "serve": "^14.2.3",
-    "sinon": "^20.0.0"
+    "sinon": "^21.0.0"
+  },
+  "overrides": {
+    "compression": "1.8.1"
   },
   "license": "MIT",
   "repository": {
@@ -64,6 +67,6 @@
     "url": "https://github.com/fedwiki/wiki-client/issues"
   },
   "engines": {
-    "node": ">=18.x"
+    "node": ">=20.x"
   }
 }
