@@ -30,7 +30,7 @@
     "build:test": "npm run clean:test && node --no-warnings scripts/build-testclient.mjs",
     "prettier:format": "prettier --write './**/*.js'",
     "prettier:check": "prettier --check ./**/*.js",
-    "clean": "npm run clean:client; npm run clean:test",
+    "clean": "npm run clean:client && npm run clean:test",
     "clean:client": "rm client/client.js client/client.js.map meta-client.json",
     "clean:test": "rm client/test/testclient.js",
     "test": "mocha test/util.js test/random.js test/page.js test/lineup.js test/drop.js test/revision.js test/resolve.js test/wiki.js",
