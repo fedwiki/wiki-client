@@ -528,11 +528,6 @@ textarea {
     flex: 0 0 100vw;
     font-size: 0.87rem;
     overflow-x: unset;
-    scroll-snap-align: center;
-  }
-
-  .main {
-    scroll-snap-type: x mandatory;
   }
 }
 
