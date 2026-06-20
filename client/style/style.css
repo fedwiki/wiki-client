@@ -168,10 +168,6 @@ header {
   cursor: grab;
 }
 
-footer {
-  bottom: 0;
-}
-
 .twins,
 .journal,
 .footer {
@@ -293,10 +289,6 @@ div.image {
   padding: 1px;
 }
 
-.journal.ui-draggable {
-  /*width: 420px;*/
-}
-
 .action.fork {
   color: black;
 }
@@ -414,11 +406,6 @@ p.caption {
   color: gray;
 }
 
-image.remote {
-  width: 16px;
-  height: 16px;
-}
-
 p.readout {
   text-align: center;
   font-size: 300%;
@@ -523,11 +510,8 @@ textarea {
 @media all and (max-width: 490px) {
   .page {
     width: 1%;
-    margin: 8px;
-    padding: 0;
     flex: 0 0 100vw;
-    font-size: 0.87rem;
-    overflow-x: unset;
+    font-size: 0.875rem;
   }
 }
 
