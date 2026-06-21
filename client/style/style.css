@@ -42,14 +42,7 @@ body {
 }
 
 .main {
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  /*  position: absolute;*/
-  bottom: 60px;
   margin: 0;
-  /*  width: 10000%; */
   display: flex;
   overflow-x: auto;
   height: calc(100vh - 40px);
@@ -176,9 +169,6 @@ header {
 }
 .twins:hover,
 .journal:hover,
-.footer:hover {
-  opacity: 1;
-}
 
 .story {
   padding-bottom: 5px;
@@ -489,12 +479,6 @@ div.pending-remove.page {
   position: relative;
 }
 
-.factory {
-  font-size: inherit;
-  width: 100%;
-  min-height: 150px;
-}
-
 textarea {
   font-size: inherit;
   margin-left: 2px;
@@ -509,7 +493,6 @@ textarea {
 
 @media all and (max-width: 490px) {
   .page {
-    width: 1%;
     flex: 0 0 100vw;
     font-size: 0.875rem;
   }
@@ -550,7 +533,11 @@ textarea {
   margin-top: 5px;
   margin-bottom: 5px;
   background-color: #eeeeee;
+  font-size: inherit;
+  width: 100%;
+  min-height: 150px;
 }
+
 .factory p {
   padding: 10px;
 }
