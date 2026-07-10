@@ -161,6 +161,10 @@ header {
   cursor: grab;
 }
 
+footer {
+  bottom: 0;
+}
+
 .twins,
 .journal,
 .footer {
@@ -169,7 +173,6 @@ header {
 }
 .twins:hover,
 .journal:hover,
-
 .story {
   padding-bottom: 5px;
 }
