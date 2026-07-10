@@ -55,6 +55,7 @@ footer {
   position: fixed;
   left: 0;
   right: 0;
+  bottom: 0;
   height: 20px;
   padding: 10px;
   font-size: 80%;
@@ -159,10 +160,6 @@ header {
 
 .page-handle {
   cursor: grab;
-}
-
-footer {
-  bottom: 0;
 }
 
 .twins,
