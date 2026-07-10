@@ -162,13 +162,6 @@ header {
   cursor: grab;
 }
 
-.twins,
-.journal,
-.footer {
-  min-height: 1em;
-  opacity: 1;
-}
-
 .story {
   padding-bottom: 5px;
 }
