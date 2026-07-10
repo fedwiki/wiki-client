@@ -42,14 +42,7 @@ body {
 }
 
 .main {
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  /*  position: absolute;*/
-  bottom: 60px;
   margin: 0;
-  /*  width: 10000%; */
   display: flex;
   overflow-x: auto;
   height: calc(100vh - 40px);
@@ -62,6 +55,7 @@ footer {
   position: fixed;
   left: 0;
   right: 0;
+  bottom: 0;
   height: 20px;
   padding: 10px;
   font-size: 80%;
@@ -168,19 +162,10 @@ header {
   cursor: grab;
 }
 
-footer {
-  bottom: 0;
-}
-
 .twins,
 .journal,
 .footer {
   min-height: 1em;
-  opacity: 1;
-}
-.twins:hover,
-.journal:hover,
-.footer:hover {
   opacity: 1;
 }
 
@@ -291,10 +276,6 @@ div.image {
   clear: both;
   background-color: #eeeeee;
   padding: 1px;
-}
-
-.journal.ui-draggable {
-  /*width: 420px;*/
 }
 
 .action.fork {
@@ -414,11 +395,6 @@ p.caption {
   color: gray;
 }
 
-image.remote {
-  width: 16px;
-  height: 16px;
-}
-
 p.readout {
   text-align: center;
   font-size: 300%;
@@ -502,12 +478,6 @@ div.pending-remove.page {
   position: relative;
 }
 
-.factory {
-  font-size: inherit;
-  width: 100%;
-  min-height: 150px;
-}
-
 textarea {
   font-size: inherit;
   margin-left: 2px;
@@ -522,12 +492,8 @@ textarea {
 
 @media all and (max-width: 490px) {
   .page {
-    width: 1%;
-    margin: 8px;
-    padding: 0;
     flex: 0 0 100vw;
-    font-size: 0.87rem;
-    overflow-x: unset;
+    font-size: 0.875rem;
   }
 }
 
@@ -566,7 +532,11 @@ textarea {
   margin-top: 5px;
   margin-bottom: 5px;
   background-color: #eeeeee;
+  font-size: inherit;
+  width: 100%;
+  min-height: 150px;
 }
+
 .factory p {
   padding: 10px;
 }
