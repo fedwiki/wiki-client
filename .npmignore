@@ -5,6 +5,7 @@ scripts
 test
 meta-client.json
 eslint.config.mjs
+cve-report
 .github
 .mailmap
 .prettier*

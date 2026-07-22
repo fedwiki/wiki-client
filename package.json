@@ -55,9 +55,6 @@
     "serve": "^14.2.6",
     "sinon": "^22.0.0"
   },
-  "overrides": {
-    "compression": "1.8.1"
-  },
   "license": "MIT",
   "repository": {
     "type": "git",

@@ -18,3 +18,5 @@ client/test/testclient.js.map
 meta-client.json
 # c8 output
 coverage
+# cve-lite-cli output
+cve-report
