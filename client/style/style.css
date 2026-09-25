@@ -619,3 +619,14 @@ textarea {
   opacity: 0.6;
   border-color: #eef2fe;
 }
+
+
+/* Mobile page scroll-snap */
+@media all and (max-width: 490px) {
+  .page {
+    scroll-snap-align: center;
+  }
+  .main {
+    scroll-snap-type: x mandatory;
+  }
+}
