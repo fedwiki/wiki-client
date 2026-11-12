@@ -5,12 +5,20 @@
     <link id="favicon" href="/favicon.png" rel="icon" type="image/png" />
     <link href="/dialog/style.css" rel="stylesheet" />
     <script>
-      window.addEventListener('message', event => {
-        const data = event.data
-        console.log('data', data)
-        document.title = data.title
-        document.querySelector('.page').innerHTML = data.body
-      })
+      try {
+        if (window.opener.origin == window.location.origin) {
+          window.addEventListener('message', event => {
+            if (event.origin !== window.location.origin) return
+            if (event.source !== window.opener) return
+            const data = event.data
+            console.log('data', data)
+            document.title = data.title
+            document.querySelector('.page').innerHTML = data.body
+          })
+        }
+      } catch (error) {
+        //
+      }
     </script>
   </head>
   <body>
